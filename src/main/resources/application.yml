@@ -1,3 +1,15 @@
 spring:
   profiles:
     include: secret
+  jpa:
+    hibernate:
+      ddl-auto: update
+    show-sql: true
+    properties:
+      hibernate:
+        format_sql: true
+  datasource:
+    driver-class-name: com.mysql.cj.jdbc.Driver
+    url: '${custom.db.url}'
+    username: '${custom.db.username}'
+    password: '${custom.db.password}'
