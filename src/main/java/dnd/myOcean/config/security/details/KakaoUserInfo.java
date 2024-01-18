@@ -1,4 +1,4 @@
-package dnd.myOcean.config.security.details.oauth2;
+package dnd.myOcean.config.security.details;
 
 import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.ObjectMapper;

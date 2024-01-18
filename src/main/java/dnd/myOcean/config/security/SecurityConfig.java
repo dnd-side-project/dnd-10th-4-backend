@@ -1,7 +1,7 @@
 package dnd.myOcean.config.security;
 
-import dnd.myOcean.config.security.details.oauth2.KakaoMemberDetailService;
 import dnd.myOcean.domain.member.RoleType;
+import dnd.myOcean.service.sign.KakaoMemberDetailService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
