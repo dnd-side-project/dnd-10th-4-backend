@@ -38,4 +38,5 @@ out/
 
 ### Custom ###
 application-secret.yml
+data.sql
 src/main/generated

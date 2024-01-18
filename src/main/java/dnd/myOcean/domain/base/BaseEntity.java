@@ -1,5 +1,6 @@
 package dnd.myOcean.domain.base;
 
+import jakarta.persistence.Column;
 import jakarta.persistence.EntityListeners;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
@@ -24,5 +25,6 @@ public abstract class BaseEntity {
     private Long id;
 
     @CreatedDate
+    @Column(updatable = false, nullable = false)
     private LocalDateTime createDate;
 }
