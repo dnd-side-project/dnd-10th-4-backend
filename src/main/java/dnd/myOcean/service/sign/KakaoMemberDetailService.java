@@ -6,7 +6,6 @@ import dnd.myOcean.config.security.details.MemberDetails;
 import dnd.myOcean.domain.member.Member;
 import dnd.myOcean.repository.member.MemberRepository;
 import java.util.Collections;
-import java.util.Map;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
@@ -28,17 +27,18 @@ public class KakaoMemberDetailService extends DefaultOAuth2UserService {
     @Override
     public OAuth2User loadUser(OAuth2UserRequest userRequest) throws OAuth2AuthenticationException {
         OAuth2User oAuth2User = super.loadUser(userRequest);
-        Map<String, Object> attributes = oAuth2User.getAttributes();
-
-        for (String line : attributes.keySet()) {
-            System.out.println(attributes.get(line));
-        }
-
         KakaoUserInfo kakaoUserInfo = new KakaoUserInfo(oAuth2User.getAttributes());
 
         Member member = memberRepository.findByUsername(kakaoUserInfo.getEmail())
-                .orElseGet(() -> memberRepository.save(
-                        new Member(kakaoUserInfo.getEmail(), "", kakaoUserInfo.getEmail())));
+                .orElseGet(() ->
+                        memberRepository.save(
+                                Member.builder()
+                                        .username(kakaoUserInfo.getEmail())
+                                        .nickname("temp")
+                                        .password("")
+                                        .build()
+                        )
+                );
 
         SimpleGrantedAuthority authority = new SimpleGrantedAuthority(member.getRoleType().name());
 
