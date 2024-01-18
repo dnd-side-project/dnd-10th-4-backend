@@ -1,5 +1,6 @@
 package dnd.myOcean.config.security.details.oauth2;
 
+
 import dnd.myOcean.config.security.details.MemberDetails;
 import dnd.myOcean.domain.member.Member;
 import dnd.myOcean.repository.member.MemberRepository;
