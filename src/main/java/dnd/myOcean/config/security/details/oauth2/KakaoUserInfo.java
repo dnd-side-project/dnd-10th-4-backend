@@ -1,5 +1,7 @@
 package dnd.myOcean.config.security.details.oauth2;
 
+import com.fasterxml.jackson.core.type.TypeReference;
+import com.fasterxml.jackson.databind.ObjectMapper;
 import java.util.Map;
 
 public class KakaoUserInfo {
@@ -11,10 +13,16 @@ public class KakaoUserInfo {
     private Map<String, Object> attributes;
 
     public KakaoUserInfo(Map<String, Object> attributes) {
+        System.out.println(attributes.get("email"));
         this.attributes = attributes;
     }
 
     public String getEmail() {
-        return (String) attributes.get(EMAIL);
+        ObjectMapper objectMapper = new ObjectMapper();
+        Object kakaoAccount = attributes.get(KAKAO_ACCOUNT);
+        Map<String, Object> account = objectMapper.convertValue(kakaoAccount, new TypeReference<Map<String, Object>>() {
+        });
+
+        return (String) account.get(EMAIL);
     }
 }
