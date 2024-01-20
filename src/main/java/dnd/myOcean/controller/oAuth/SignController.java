@@ -1,7 +1,7 @@
 package dnd.myOcean.controller.oAuth;
 
 import dnd.myOcean.dto.oAuth.response.MemberInfo;
-import dnd.myOcean.service.oAuth.OauthService;
+import dnd.myOcean.service.oAuth.KakaoService;
 import jakarta.servlet.http.HttpServletRequest;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
@@ -11,8 +11,9 @@ import org.springframework.web.bind.annotation.RestController;
 
 @RestController
 @RequiredArgsConstructor
-public class OauthController {
-    private final OauthService kakaoService;
+public class SignController {
+
+    private final KakaoService kakaoService;
 
     @GetMapping("/kakao-login")
     public ResponseEntity<MemberInfo> kakaoCalllback(HttpServletRequest request) throws Exception {

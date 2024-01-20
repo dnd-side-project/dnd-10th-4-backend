@@ -1,7 +1,6 @@
 package dnd.myOcean.service.oAuth;
 
 import dnd.myOcean.config.oAuth.KakaoConfig;
-import dnd.myOcean.dto.jwt.response.TokenDto;
 import dnd.myOcean.dto.oAuth.response.MemberInfo;
 import dnd.myOcean.service.member.MemberService;
 import lombok.RequiredArgsConstructor;
@@ -20,7 +19,7 @@ import java.util.Optional;
 
 @Service
 @RequiredArgsConstructor
-public class OauthServiceImpl implements OauthService {
+public class KakaoService {
 
     private final KakaoConfig kakaoConfig;
     private final MemberService memberService;
@@ -29,7 +28,6 @@ public class OauthServiceImpl implements OauthService {
     public MemberInfo getMemberInfo(String code) throws Exception {
         if (code == null) throw new Exception("Failed get authorization code");
 
-        TokenDto tokenDto = new TokenDto();
         String accessToken = "";
         String refreshToken = "";
 
@@ -52,14 +50,10 @@ public class OauthServiceImpl implements OauthService {
             accessToken = (String) jsonObj.get("access_token");
             refreshToken = (String) jsonObj.get("refresh_token");
 
-            tokenDto.setAccessToken(accessToken);
-            tokenDto.setRefreshToken(refreshToken);
-
         } catch (Exception e) {
             throw new Exception("API call failed");
         }
         MemberInfo memberInfo = getMemberInfoWithToken(accessToken);
-        memberService.createMember(memberInfo);
         return memberInfo;
     }
 
