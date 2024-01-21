@@ -17,7 +17,6 @@ public class SignController {
 
     @GetMapping("/login/oauth2/code/kakao")
     public ResponseEntity kakaoCallback(@RequestParam("code") String code) {
-        System.out.println(code);
         return new ResponseEntity(code, HttpStatus.OK);
     }
 }
