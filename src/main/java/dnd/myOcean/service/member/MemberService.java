@@ -19,20 +19,16 @@ import java.util.Collections;
 @Service
 @RequiredArgsConstructor
 public class MemberService implements OAuth2UserService<OAuth2UserRequest, OAuth2User> {
+
     private final MemberRepository memberRepository;
+    private final OAuth2UserService<OAuth2UserRequest, OAuth2User> delegate = new DefaultOAuth2UserService();
 
     @Transactional
     @Override
     public OAuth2User loadUser(OAuth2UserRequest userRequest) throws OAuth2AuthenticationException {
-        OAuth2UserService<OAuth2UserRequest, OAuth2User> delegate = new DefaultOAuth2UserService();
         OAuth2User oAuth2User = delegate.loadUser(userRequest);
 
-        System.out.println("----------------" + userRequest.getAccessToken());
-
-        String registrationId = userRequest.getClientRegistration().getRegistrationId();
-
-        OAuthAttributes attributes = OAuthAttributes.of(registrationId, oAuth2User.getAttributes());
-
+        OAuthAttributes attributes = OAuthAttributes.of("id", oAuth2User.getAttributes());
         Member member = saveOrUpdate(attributes);
 
         return new DefaultOAuth2User(
@@ -44,7 +40,7 @@ public class MemberService implements OAuth2UserService<OAuth2UserRequest, OAuth
 
     private Member saveOrUpdate(OAuthAttributes attributes) {
         Member member = memberRepository.findByEmail(attributes.getEmail())
-                .map(entity -> entity.update(attributes.getName()))
+                .map(entity -> entity.update(attributes.getName(), attributes.getProvider()))
                 .orElse(attributes.toEntity());
 
         return memberRepository.save(member);
