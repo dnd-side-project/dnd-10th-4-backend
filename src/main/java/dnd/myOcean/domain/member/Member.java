@@ -1,7 +1,6 @@
 package dnd.myOcean.domain.member;
 
 import dnd.myOcean.domain.base.BaseEntity;
-import dnd.myOcean.util.Role;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.EnumType;

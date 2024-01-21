@@ -1,6 +1,6 @@
 package dnd.myOcean.config.web;
 
-import dnd.myOcean.service.member.MemberService;
+import dnd.myOcean.service.sign.KakaoMemberDetailsService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -16,7 +16,7 @@ import org.springframework.security.web.SecurityFilterChain;
 @RequiredArgsConstructor
 public class WebSecurityConfig {
 
-    private final MemberService memberService;
+    private final KakaoMemberDetailsService kakaoMemberDetailsService;
 
     @Bean
     public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
@@ -29,7 +29,7 @@ public class WebSecurityConfig {
                 )
                 .oauth2Login(oAuth2Login -> oAuth2Login
                         .userInfoEndpoint(userInfoEndpoint -> userInfoEndpoint
-                                .userService(memberService)));
+                                .userService(kakaoMemberDetailsService)));
 //                        .successHandler(oAuth2AuthenticationSuccessHandler)
 //                        .failureHandler(oAuth2AuthenticationFailureHandler)
 
