@@ -24,10 +24,16 @@ public class WebSecurityConfig {
                         .requestMatchers("/**"
                         ).permitAll().anyRequest().authenticated())
                 .oauth2Login(oauth2 -> oauth2
-                        .loginPage("/members/login")
-                        .userInfoEndpoint(userInfoEndpointConfig ->
-                                userInfoEndpointConfig.userService(memberService)
+                        .authorizationEndpoint(a -> a
+                                .baseUri("/oauth2/authorize")
+//                                .authorizationRequestRepository(cookieAuthorizationRequestRepository())
                         )
+                        .redirectionEndpoint(r -> r
+                                .baseUri("/oauth2/callback/*"))
+                        .userInfoEndpoint(u -> u
+                                .userService(memberService))
+//                        .successHandler(oAuth2AuthenticationSuccessHandler)
+//                        .failureHandler(oAuth2AuthenticationFailureHandler)
                 );
 
         return http.build();
