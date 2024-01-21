@@ -38,3 +38,7 @@ spring:
             user-info-uri: https://kapi.kakao.com/v2/user/me
             user-name-attribute: id
 
+jwt:
+  secret_key: ${jwt.secret_key}
+  token-validity-in-seconds: 86400
+  refresh-token-validity-in-seconds: 3000 # 6시간
