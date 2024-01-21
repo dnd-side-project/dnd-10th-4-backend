@@ -21,4 +21,9 @@ public class SignController {
 
         return ResponseEntity.ok(memberInfo);
     }
+
+    @GetMapping("/")
+    public String login() {
+        return "메인 화면";
+    }
 }
