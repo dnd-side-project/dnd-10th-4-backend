@@ -2,7 +2,6 @@ package dnd.myOcean.service.oAuth;
 
 import dnd.myOcean.config.oAuth.KakaoConfig;
 import dnd.myOcean.dto.oAuth.response.MemberInfo;
-import dnd.myOcean.service.member.MemberService;
 import lombok.RequiredArgsConstructor;
 import net.minidev.json.JSONObject;
 import net.minidev.json.parser.JSONParser;
@@ -22,7 +21,6 @@ import java.util.Optional;
 public class KakaoService {
 
     private final KakaoConfig kakaoConfig;
-    private final MemberService memberService;
     private final RestTemplate restTemplate;
 
     public MemberInfo getMemberInfo(String code) throws Exception {
@@ -53,8 +51,7 @@ public class KakaoService {
         } catch (Exception e) {
             throw new Exception("API call failed");
         }
-        MemberInfo memberInfo = getMemberInfoWithToken(accessToken);
-        return memberInfo;
+        return getMemberInfoWithToken(accessToken);
     }
 
     private MemberInfo getMemberInfoWithToken(String accessToken) throws Exception {
@@ -77,11 +74,12 @@ public class KakaoService {
         JSONObject profile = (JSONObject) account.get("profile");
 
         long id = (long) jsonObj.get("id");
-        String profileImageUrl = String.valueOf(account.get("profileImageUrl"));
+        String email = String.valueOf(account.get("email"));
         String nickname = String.valueOf(profile.get("nickname"));
 
         return MemberInfo.builder()
                 .id(id)
+                .email(email)
                 .nickName(nickname)
                 .build();
     }
