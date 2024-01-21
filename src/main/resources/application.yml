@@ -1,6 +1,7 @@
 spring:
   profiles:
     include: secret
+
   jpa:
     hibernate:
       ddl-auto: create
@@ -9,11 +10,13 @@ spring:
       hibernate:
         default_batch_fetch_size: 1000
         format_sql: true
+
   datasource:
     driver-class-name: com.mysql.cj.jdbc.Driver
     url: '${custom.db.url}'
     username: '${custom.db.username}'
     password: '${custom.db.password}'
+
   security:
     oauth2:
       client:

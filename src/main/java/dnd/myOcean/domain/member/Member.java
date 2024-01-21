@@ -17,27 +17,8 @@ import lombok.experimental.SuperBuilder;
 public class Member extends BaseEntity {
 
     @Column
-    private String name;
-
-    @Column
     private String email;
-
-    @Column
-    private String password;
-
-    @Column
-    private String provider;
 
     @Enumerated(EnumType.STRING)
     private Role role;
-
-    public Member update(String name, String provider) {
-        this.name = name;
-        this.provider = provider;
-        return this;
-    }
-
-    public String getRoleKey() {
-        return this.role.getAuthority();
-    }
 }

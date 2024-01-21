@@ -31,16 +31,16 @@ public class KakaoMemberDetailsService extends DefaultOAuth2UserService {
                 .orElseGet(() ->
                         memberRepository.save(
                                 Member.builder()
-                                        .role(Role.USER)
                                         .email(kakaoUserInfo.getEmail())
-                                        .password("")
+                                        .role(Role.USER)
                                         .build()
                         )
                 );
 
-        SimpleGrantedAuthority authority = new SimpleGrantedAuthority(member.getRoleKey());
+        SimpleGrantedAuthority authority = new SimpleGrantedAuthority(member.getRole().name());
 
-        return new KakaoMemberDetails(String.valueOf(member.getId()), member.getEmail(), "",
-                Collections.singletonList(authority), oAuth2User.getAttributes());
+        return new KakaoMemberDetails(String.valueOf(member.getId()),
+                Collections.singletonList(authority),
+                oAuth2User.getAttributes());
     }
 }

@@ -1,11 +1,11 @@
 package dnd.myOcean.controller.oAuth;
 
-import dnd.myOcean.dto.oAuth.response.MemberInfo;
-import dnd.myOcean.service.oAuth.KakaoService;
-import jakarta.servlet.http.HttpServletRequest;
+import dnd.myOcean.service.token.TokenService;
 import lombok.RequiredArgsConstructor;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 
@@ -13,12 +13,11 @@ import org.springframework.web.bind.annotation.RestController;
 @RequiredArgsConstructor
 public class SignController {
 
-    private final KakaoService kakaoService;
+    private final TokenService tokenService;
 
     @GetMapping("/login/oauth2/code/kakao")
-    public ResponseEntity<MemberInfo> kakaoCallback(HttpServletRequest request) throws Exception {
-        MemberInfo memberInfo = kakaoService.getMemberInfo(request.getParameter("code"));
-
-        return ResponseEntity.ok(memberInfo);
+    public ResponseEntity kakaoCallback(@RequestParam("code") String code) {
+        System.out.println(code);
+        return new ResponseEntity(code, HttpStatus.OK);
     }
 }
