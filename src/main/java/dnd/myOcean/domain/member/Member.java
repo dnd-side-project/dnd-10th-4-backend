@@ -30,7 +30,7 @@ public class Member extends BaseEntity {
     @Enumerated(EnumType.STRING)
     private Role role;
 
-    public Member update(String name, String provider) {
+    public Member update(String name) {
         this.name = name;
         return this;
     }
