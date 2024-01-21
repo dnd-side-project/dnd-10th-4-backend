@@ -9,6 +9,6 @@ import lombok.Getter;
 @AllArgsConstructor
 public class MemberInfo {
     private final Long id;
+    private final String email;
     private final String nickName;
-    private final String profileImageUrl;
 }
