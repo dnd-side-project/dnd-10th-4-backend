@@ -1,4 +1,4 @@
-package dnd.myOcean.config.security.jwt;
+package dnd.myOcean.config.security.jwt.token;
 
 import dnd.myOcean.config.oAuth.kakao.KakaoMemberDetails;
 import dnd.myOcean.exception.InvalidTokenException;
@@ -22,8 +22,10 @@ import org.springframework.security.authentication.UsernamePasswordAuthenticatio
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
+import org.springframework.stereotype.Component;
 
 
+@Component
 public class TokenProvider {
 
     private static final String AUTH_KEY = "AUTHORITY";
