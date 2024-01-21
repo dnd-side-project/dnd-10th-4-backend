@@ -1,4 +1,4 @@
-package dnd.myOcean.config.oAuth;
+package dnd.myOcean.config.oAuth.kakao;
 
 import lombok.Getter;
 import org.springframework.beans.factory.annotation.Value;

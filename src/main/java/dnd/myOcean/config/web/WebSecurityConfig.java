@@ -27,12 +27,10 @@ public class WebSecurityConfig {
                 .sessionManagement((sessionManagement) ->
                         sessionManagement.sessionCreationPolicy(SessionCreationPolicy.STATELESS)
                 )
-                .oauth2Login(oAuth2Login -> oAuth2Login
-                        .userInfoEndpoint(userInfoEndpoint -> userInfoEndpoint
-                                .userService(kakaoMemberDetailsService)));
-//                        .successHandler(oAuth2AuthenticationSuccessHandler)
-//                        .failureHandler(oAuth2AuthenticationFailureHandler)
-
+                .oauth2Login(oAuth2Login ->
+                        oAuth2Login.userInfoEndpoint(userInfoEndpointConfig ->
+                                userInfoEndpointConfig.userService(kakaoMemberDetailsService)));
+        
         return http.build();
     }
 

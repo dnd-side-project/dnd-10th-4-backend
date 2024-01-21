@@ -1,7 +1,8 @@
 package dnd.myOcean.service.oAuth;
 
-import dnd.myOcean.config.oAuth.KakaoConfig;
+import dnd.myOcean.config.oAuth.kakao.KakaoConfig;
 import dnd.myOcean.dto.oAuth.response.MemberInfo;
+import java.util.Optional;
 import lombok.RequiredArgsConstructor;
 import net.minidev.json.JSONObject;
 import net.minidev.json.parser.JSONParser;
@@ -14,8 +15,6 @@ import org.springframework.util.LinkedMultiValueMap;
 import org.springframework.util.MultiValueMap;
 import org.springframework.web.client.RestTemplate;
 
-import java.util.Optional;
-
 @Service
 @RequiredArgsConstructor
 public class KakaoService {
@@ -24,7 +23,9 @@ public class KakaoService {
     private final RestTemplate restTemplate;
 
     public MemberInfo getMemberInfo(String code) throws Exception {
-        if (code == null) throw new Exception("Failed get authorization code");
+        if (code == null) {
+            throw new Exception("Failed get authorization code");
+        }
 
         String accessToken = "";
         String refreshToken = "";

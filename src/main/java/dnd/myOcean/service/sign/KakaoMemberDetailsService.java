@@ -1,48 +1,46 @@
 package dnd.myOcean.service.sign;
 
+import dnd.myOcean.config.oAuth.kakao.KakaoMemberDetails;
+import dnd.myOcean.config.oAuth.kakao.KakaoUserInfo;
 import dnd.myOcean.domain.member.Member;
-import dnd.myOcean.dto.oAuth.response.OAuthAttributes;
+import dnd.myOcean.domain.member.Role;
 import dnd.myOcean.repository.MemberRepository;
+import java.util.Collections;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.oauth2.client.userinfo.DefaultOAuth2UserService;
 import org.springframework.security.oauth2.client.userinfo.OAuth2UserRequest;
-import org.springframework.security.oauth2.client.userinfo.OAuth2UserService;
 import org.springframework.security.oauth2.core.OAuth2AuthenticationException;
-import org.springframework.security.oauth2.core.user.DefaultOAuth2User;
 import org.springframework.security.oauth2.core.user.OAuth2User;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import java.util.Collections;
-
 @Service
 @RequiredArgsConstructor
-public class KakaoMemberDetailsService implements OAuth2UserService<OAuth2UserRequest, OAuth2User> {
+public class KakaoMemberDetailsService extends DefaultOAuth2UserService {
 
     private final MemberRepository memberRepository;
-    private final OAuth2UserService<OAuth2UserRequest, OAuth2User> delegate = new DefaultOAuth2UserService();
 
     @Transactional
     @Override
     public OAuth2User loadUser(OAuth2UserRequest userRequest) throws OAuth2AuthenticationException {
-        OAuth2User oAuth2User = delegate.loadUser(userRequest);
+        OAuth2User oAuth2User = super.loadUser(userRequest);
+        KakaoUserInfo kakaoUserInfo = new KakaoUserInfo(oAuth2User.getAttributes());
 
-        OAuthAttributes attributes = OAuthAttributes.of("id", oAuth2User.getAttributes());
-        Member member = saveOrUpdate(attributes);
+        Member member = memberRepository.findByEmail(kakaoUserInfo.getEmail())
+                .orElseGet(() ->
+                        memberRepository.save(
+                                Member.builder()
+                                        .role(Role.USER)
+                                        .email(kakaoUserInfo.getEmail())
+                                        .password("")
+                                        .build()
+                        )
+                );
 
-        return new DefaultOAuth2User(
-                Collections.singleton(new SimpleGrantedAuthority(member.getRoleKey())),
-                attributes.getAttributes(),
-                attributes.getNameAttributeKey()
-        );
-    }
+        SimpleGrantedAuthority authority = new SimpleGrantedAuthority(member.getRoleKey());
 
-    private Member saveOrUpdate(OAuthAttributes attributes) {
-        Member member = memberRepository.findByEmail(attributes.getEmail())
-                .map(entity -> entity.update(attributes.getName(), attributes.getProvider()))
-                .orElse(attributes.toEntity());
-
-        return memberRepository.save(member);
+        return new KakaoMemberDetails(String.valueOf(member.getId()), member.getEmail(), "",
+                Collections.singletonList(authority), oAuth2User.getAttributes());
     }
 }

@@ -16,14 +16,9 @@ public class SignController {
     private final KakaoService kakaoService;
 
     @GetMapping("/login/oauth2/code/kakao")
-    public ResponseEntity<MemberInfo> kakaoCalllback(HttpServletRequest request) throws Exception {
+    public ResponseEntity<MemberInfo> kakaoCallback(HttpServletRequest request) throws Exception {
         MemberInfo memberInfo = kakaoService.getMemberInfo(request.getParameter("code"));
 
         return ResponseEntity.ok(memberInfo);
-    }
-
-    @GetMapping("/")
-    public String login() {
-        return "메인 화면";
     }
 }
