@@ -3,13 +3,35 @@ spring:
     include: secret
   jpa:
     hibernate:
-      ddl-auto: update
+      ddl-auto: create
     show-sql: true
     properties:
       hibernate:
+        default_batch_fetch_size: 1000
         format_sql: true
   datasource:
     driver-class-name: com.mysql.cj.jdbc.Driver
     url: '${custom.db.url}'
     username: '${custom.db.username}'
     password: '${custom.db.password}'
+  security:
+    oauth2:
+      client:
+        registration:
+          kakao:
+            client-id: '${kakao.client.id}'
+            client-secret: '${kakao.client.secret}'
+            client-authentication-method: client_secret_post
+            redirect-uri: '${kakao.redirect-url}'
+            authorization-grant-type: authorization_code
+            client-name: Kakao
+            scope:
+              - profile_nickname
+              - account_email
+        provider:
+          kakao:
+            authorization-uri: https://kauth.kakao.com/oauth/authorize
+            token-uri: https://kauth.kakao.com/oauth/token
+            user-info-uri: https://kapi.kakao.com/v2/user/me
+            user-name-attribute: id
+
