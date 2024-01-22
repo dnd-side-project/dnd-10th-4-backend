@@ -35,7 +35,7 @@ public class OAuth2SuccessHandler implements AuthenticationSuccessHandler {
         Member member = memberRepository.findByEmail(kakaoUserInfo.getEmail())
                 .orElseThrow(MemberNotFoundException::new);
 
-        TokenDto tokenDto = tokenProvider.createToken(member.getEmail());
+        TokenDto tokenDto = tokenProvider.createToken(member.getEmail(), member.getRole().name());
         writeTokenResponse(response, tokenDto);
     }
 

@@ -51,7 +51,7 @@ public class TokenService {
         this.secretkey = Keys.hmacShaKeyFor(keyBytes);
     }
 
-    public TokenDto createToken(String email) {
+    public TokenDto createToken(String email, String role) {
         long now = (new Date()).getTime();
 
         Date accessValidity = new Date(now + this.accessTokenValidityMilliSeconds);
@@ -59,12 +59,14 @@ public class TokenService {
 
         String accessToken = Jwts.builder()
                 .addClaims(Map.of(AUTH_EMAIL, email))
+                .addClaims(Map.of(AUTH_KEY, role))
                 .signWith(secretkey, SignatureAlgorithm.HS256)
                 .setExpiration(accessValidity)
                 .compact();
 
         String refreshToken = Jwts.builder()
                 .addClaims(Map.of(AUTH_EMAIL, email))
+                .addClaims(Map.of(AUTH_KEY, role))
                 .signWith(secretkey, SignatureAlgorithm.HS256)
                 .setExpiration(refreshValidity)
                 .compact();

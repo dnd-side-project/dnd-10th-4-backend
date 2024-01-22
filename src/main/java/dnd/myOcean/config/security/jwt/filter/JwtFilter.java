@@ -18,9 +18,6 @@ public class JwtFilter extends OncePerRequestFilter {
 
     public static final String ACCESS_HEADER = "Auth";
     public static final String REFRESH_HEADER = "Refresh";
-    public static final String LOGIN_PATH = "/api/auth/login";
-    public static final String EXCEPTION_PATH = "/api/exception";
-
 
     private final TokenService tokenService;
 
@@ -31,7 +28,7 @@ public class JwtFilter extends OncePerRequestFilter {
         String accessToken = getAccessToken(request);
         String refreshToken = getRefreshToken(request);
 
-        if (validateExpire(accessToken) && validateExpire(refreshToken)) {
+        if (tokenService.validateToken(accessToken) && tokenService.validateToken(refreshToken)) {
             SecurityContextHolder.getContext().setAuthentication(tokenService.getAuthentication(accessToken));
         }
 
