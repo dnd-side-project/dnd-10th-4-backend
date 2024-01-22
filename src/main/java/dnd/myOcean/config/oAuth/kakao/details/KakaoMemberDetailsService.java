@@ -1,6 +1,5 @@
-package dnd.myOcean.service.sign;
+package dnd.myOcean.config.oAuth.kakao.details;
 
-import dnd.myOcean.config.oAuth.kakao.KakaoMemberDetails;
 import dnd.myOcean.config.oAuth.kakao.KakaoUserInfo;
 import dnd.myOcean.domain.member.Member;
 import dnd.myOcean.domain.member.Role;

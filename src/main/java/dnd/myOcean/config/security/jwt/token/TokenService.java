@@ -1,7 +1,8 @@
 package dnd.myOcean.config.security.jwt.token;
 
-import dnd.myOcean.config.oAuth.kakao.KakaoMemberDetails;
-import dnd.myOcean.exception.InvalidTokenException;
+import dnd.myOcean.config.oAuth.kakao.details.KakaoMemberDetails;
+import dnd.myOcean.dto.jwt.response.TokenDto;
+import dnd.myOcean.exception.token.InvalidTokenException;
 import io.jsonwebtoken.Claims;
 import io.jsonwebtoken.ExpiredJwtException;
 import io.jsonwebtoken.Jwts;
@@ -26,19 +27,22 @@ import org.springframework.stereotype.Component;
 
 
 @Component
-public class TokenProvider {
+public class TokenService {
 
     private static final String AUTH_KEY = "AUTHORITY";
     private static final String AUTH_EMAIL = "EMAIL";
 
     private final String secretKey;
     private final long accessTokenValidityMilliSeconds;
+    private final long refreshTokenValidityMilliSeconds;
     private Key secretkey;
 
-    public TokenProvider(@Value("${jwt.secret_key}") String secretKey,
-                         @Value("${jwt.token-validity-in-seconds}") long accessTokenValidityMilliSeconds) {
+    public TokenService(@Value("${jwt.secret_key}") String secretKey,
+                        @Value("${jwt.token-validity-in-seconds}") long accessTokenValidityMilliSeconds,
+                        @Value("${jwt.refresh-token-validity-in-seconds}") long refreshTokenValidityMilliSeconds) {
         this.secretKey = secretKey;
         this.accessTokenValidityMilliSeconds = accessTokenValidityMilliSeconds * 1000;
+        this.refreshTokenValidityMilliSeconds = refreshTokenValidityMilliSeconds * 1000;
     }
 
     @PostConstruct
@@ -47,22 +51,25 @@ public class TokenProvider {
         this.secretkey = Keys.hmacShaKeyFor(keyBytes);
     }
 
-    public String createToken(Authentication authentication) {
-        KakaoMemberDetails principal = (KakaoMemberDetails) authentication.getPrincipal();
-
-        String authorities = authentication.getAuthorities().stream()
-                .map(GrantedAuthority::getAuthority)
-                .collect(Collectors.joining(","));
-
+    public TokenDto createToken(String email) {
         long now = (new Date()).getTime();
-        Date validity = new Date(now + this.accessTokenValidityMilliSeconds);
 
-        return Jwts.builder()
-                .addClaims(Map.of(AUTH_EMAIL, principal.getName()))
-                .addClaims(Map.of(AUTH_KEY, authorities))
+        Date accessValidity = new Date(now + this.accessTokenValidityMilliSeconds);
+        Date refreshValidity = new Date(now + this.refreshTokenValidityMilliSeconds);
+
+        String accessToken = Jwts.builder()
+                .addClaims(Map.of(AUTH_EMAIL, email))
                 .signWith(secretkey, SignatureAlgorithm.HS256)
-                .setExpiration(validity)
+                .setExpiration(accessValidity)
                 .compact();
+
+        String refreshToken = Jwts.builder()
+                .addClaims(Map.of(AUTH_EMAIL, email))
+                .signWith(secretkey, SignatureAlgorithm.HS256)
+                .setExpiration(refreshValidity)
+                .compact();
+
+        return new TokenDto(accessToken, refreshToken);
     }
 
     public Authentication getAuthentication(String token) {
@@ -86,7 +93,6 @@ public class TokenProvider {
 
         return new UsernamePasswordAuthenticationToken(principal, token, simpleGrantedAuthorities);
     }
-
 
     public boolean validateToken(String token) {
         try {

@@ -1,9 +1,10 @@
 package dnd.myOcean.config.security;
 
+import dnd.myOcean.config.oAuth.handler.OAuth2SuccessHandler;
+import dnd.myOcean.config.oAuth.kakao.details.KakaoMemberDetailsService;
 import dnd.myOcean.config.security.jwt.filter.JwtFilter;
 import dnd.myOcean.config.security.jwt.handler.JwtAccessDeniedHandler;
 import dnd.myOcean.config.security.jwt.handler.JwtAuthenticationFailEntryPoint;
-import dnd.myOcean.service.sign.KakaoMemberDetailsService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -21,17 +22,15 @@ import org.springframework.security.web.authentication.UsernamePasswordAuthentic
 @RequiredArgsConstructor
 public class WebSecurityConfig {
 
-    private final KakaoMemberDetailsService kakaoMemberDetailsService;
-    private final JwtFilter jwtFilter;
     private final JwtAuthenticationFailEntryPoint jwtAuthenticationFailEntryPoint;
     private final JwtAccessDeniedHandler jwtAccessDeniedHandler;
+    private final KakaoMemberDetailsService kakaoMemberDetailsService;
+    private final OAuth2SuccessHandler oAuth2SuccessHandler;
+    private final JwtFilter jwtFilter;
 
     @Bean
     public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
         http
-                .formLogin(formLogin ->
-                        formLogin.disable())
-
                 .httpBasic(httpBasic ->
                         httpBasic.disable())
 
@@ -46,9 +45,11 @@ public class WebSecurityConfig {
 
                 .addFilterBefore(jwtFilter, UsernamePasswordAuthenticationFilter.class)
 
-                .oauth2Login(oAuth2Login ->
-                        oAuth2Login.userInfoEndpoint(userInfoEndpointConfig ->
-                                userInfoEndpointConfig.userService(kakaoMemberDetailsService)));
+                .oauth2Login(oAuth2Login -> {
+                    oAuth2Login.userInfoEndpoint(userInfoEndpointConfig ->
+                            userInfoEndpointConfig.userService(kakaoMemberDetailsService));
+                    oAuth2Login.successHandler(oAuth2SuccessHandler);
+                });
 
         return http.build();
     }

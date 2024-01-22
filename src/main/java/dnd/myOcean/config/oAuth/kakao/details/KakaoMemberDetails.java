@@ -1,4 +1,4 @@
-package dnd.myOcean.config.oAuth.kakao;
+package dnd.myOcean.config.oAuth.kakao.details;
 
 import java.util.Collection;
 import java.util.List;
@@ -15,13 +15,13 @@ public class KakaoMemberDetails implements OAuth2User {
     private final Map<String, Object> attributes;
 
     @Override
-    public Collection<? extends GrantedAuthority> getAuthorities() {
-        return authorities;
+    public String getName() {
+        return email;
     }
 
     @Override
-    public String getName() {
-        return email;
+    public Collection<? extends GrantedAuthority> getAuthorities() {
+        return authorities;
     }
 
     @Override

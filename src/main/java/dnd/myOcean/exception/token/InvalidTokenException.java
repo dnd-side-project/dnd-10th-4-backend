@@ -1,4 +1,4 @@
-package dnd.myOcean.exception;
+package dnd.myOcean.exception.token;
 
 public class InvalidTokenException extends RuntimeException {
 }
