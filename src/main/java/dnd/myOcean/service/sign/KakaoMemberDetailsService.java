@@ -2,8 +2,11 @@ package dnd.myOcean.service.sign;
 
 import dnd.myOcean.config.oAuth.kakao.KakaoMemberDetails;
 import dnd.myOcean.config.oAuth.kakao.KakaoUserInfo;
+import dnd.myOcean.domain.member.Gender;
 import dnd.myOcean.domain.member.Member;
 import dnd.myOcean.domain.member.Role;
+import dnd.myOcean.dto.member.request.MemberBirthdayRequest;
+import dnd.myOcean.dto.member.request.MemberGenderRequest;
 import dnd.myOcean.repository.MemberRepository;
 import java.util.Collections;
 import lombok.RequiredArgsConstructor;
@@ -32,6 +35,7 @@ public class KakaoMemberDetailsService extends DefaultOAuth2UserService {
                         memberRepository.save(
                                 Member.builder()
                                         .email(kakaoUserInfo.getEmail())
+                                        .nickName(kakaoUserInfo.getName())
                                         .role(Role.USER)
                                         .build()
                         )
@@ -42,5 +46,23 @@ public class KakaoMemberDetailsService extends DefaultOAuth2UserService {
         return new KakaoMemberDetails(String.valueOf(member.getId()),
                 Collections.singletonList(authority),
                 oAuth2User.getAttributes());
+    }
+
+    @Transactional
+    public Member updateBirthday(Long memberId, MemberBirthdayRequest memberBirthday) {
+        Member member = memberRepository.findById(memberId).orElseThrow();
+        member.updateBirthday(memberBirthday);
+
+        return memberRepository.save(member);
+    }
+
+    @Transactional
+    public Member updateGender(Long memberId, MemberGenderRequest memberGender) {
+        Member member = memberRepository.findById(memberId).orElseThrow();
+
+        Gender gender = Gender.valueOf(memberGender.toString());
+        member.updateGender(Gender.valueOf(memberGender.toString()));
+
+        return memberRepository.save(member);
     }
 }
