@@ -11,16 +11,15 @@ import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import java.io.IOException;
-import java.io.PrintWriter;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.oauth2.core.user.OAuth2User;
-import org.springframework.security.web.authentication.AuthenticationSuccessHandler;
+import org.springframework.security.web.authentication.SimpleUrlAuthenticationSuccessHandler;
 import org.springframework.stereotype.Component;
 
 @Component
 @RequiredArgsConstructor
-public class OAuth2SuccessHandler implements AuthenticationSuccessHandler {
+public class OAuth2SuccessHandler extends SimpleUrlAuthenticationSuccessHandler {
 
     private final TokenService tokenProvider;
     private final MemberRepository memberRepository;
@@ -36,18 +35,11 @@ public class OAuth2SuccessHandler implements AuthenticationSuccessHandler {
                 .orElseThrow(MemberNotFoundException::new);
 
         TokenDto tokenDto = tokenProvider.createToken(member.getEmail(), member.getRole().name());
-        writeTokenResponse(response, tokenDto);
-    }
 
-    private void writeTokenResponse(HttpServletResponse response, TokenDto tokenDto)
-            throws IOException {
-        response.setContentType("text/html;charset=UTF-8");
-        response.addHeader("Auth", tokenDto.getAccessToken());
-        response.addHeader("Refresh", tokenDto.getRefreshToken());
-        response.setContentType("application/json;charset=UTF-8");
+        String redirectURI = String.format(
+                "http://localhost:8080/api/sign/login/kakao?accessToken=%s&refreshToken=%s",
+                tokenDto.getAccessToken(), tokenDto.getRefreshToken());
 
-        PrintWriter writer = response.getWriter();
-        writer.println(objectMapper.writeValueAsString(tokenDto));
-        writer.flush();
+        getRedirectStrategy().sendRedirect(request, response, redirectURI);
     }
 }

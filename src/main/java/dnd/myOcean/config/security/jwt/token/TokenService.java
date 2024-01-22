@@ -71,7 +71,7 @@ public class TokenService {
                 .setExpiration(refreshValidity)
                 .compact();
 
-        return new TokenDto(accessToken, refreshToken);
+        return TokenDto.of(accessToken, refreshToken);
     }
 
     public Authentication getAuthentication(String token) {
