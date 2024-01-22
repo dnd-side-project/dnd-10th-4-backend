@@ -7,7 +7,9 @@ import java.util.Map;
 public class KakaoUserInfo {
 
     public static final String KAKAO_ACCOUNT = "kakao_account";
+    private static final String PROFILE = "profile";
     public static final String EMAIL = "email";
+    private static final String NICKNAME = "nickname";
 
     private Map<String, Object> attributes;
 
@@ -24,5 +26,19 @@ public class KakaoUserInfo {
                 });
 
         return (String) account.get(EMAIL);
+    }
+
+    public String getName() {
+        ObjectMapper objectMapper = new ObjectMapper();
+        Object kakaoAccount = attributes.get(KAKAO_ACCOUNT);
+
+        Map<String, Object> account = objectMapper.convertValue(kakaoAccount, new TypeReference<>() {
+        });
+
+        Object profile = account.get(PROFILE);
+        Map<String, Object> profileMap = objectMapper.convertValue(profile, new TypeReference<>() {
+        });
+
+        return (String) profileMap.get(NICKNAME);
     }
 }
