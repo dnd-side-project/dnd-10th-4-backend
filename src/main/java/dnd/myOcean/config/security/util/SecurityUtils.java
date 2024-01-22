@@ -11,7 +11,7 @@ import org.springframework.security.core.context.SecurityContextHolder;
 
 public class SecurityUtils {
 
-    public static Optional<String> getCurrentEmail() {
+    public static Optional<String> getCurrentEmailCheck() {
         final Authentication authentication = getAuthenticationFromContext();
         Object principal = authentication.getPrincipal();
 
@@ -30,8 +30,8 @@ public class SecurityUtils {
         throw new IllegalAuthenticationException();
     }
 
-    public static String getCurrentEmailCheck() {
-        return getCurrentEmail()
+    public static String getCurrentEmail() {
+        return getCurrentEmailCheck()
                 .orElseThrow(AccessDeniedException::new);
     }
 

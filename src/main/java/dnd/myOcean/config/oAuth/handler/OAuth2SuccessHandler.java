@@ -1,6 +1,5 @@
 package dnd.myOcean.config.oAuth.handler;
 
-import com.fasterxml.jackson.databind.ObjectMapper;
 import dnd.myOcean.config.oAuth.kakao.details.KakaoUserInfo;
 import dnd.myOcean.config.security.jwt.token.TokenService;
 import dnd.myOcean.domain.member.Member;
@@ -21,9 +20,10 @@ import org.springframework.stereotype.Component;
 @RequiredArgsConstructor
 public class OAuth2SuccessHandler extends SimpleUrlAuthenticationSuccessHandler {
 
+    private static final String REDIRECT_URI = "http://localhost:8080/api/sign/login/kakao?accessToken=%s&refreshToken=%s";
+
     private final TokenService tokenProvider;
     private final MemberRepository memberRepository;
-    private final ObjectMapper objectMapper;
 
     @Override
     public void onAuthenticationSuccess(HttpServletRequest request, HttpServletResponse response,
@@ -35,11 +35,7 @@ public class OAuth2SuccessHandler extends SimpleUrlAuthenticationSuccessHandler 
                 .orElseThrow(MemberNotFoundException::new);
 
         TokenDto tokenDto = tokenProvider.createToken(member.getEmail(), member.getRole().name());
-
-        String redirectURI = String.format(
-                "http://localhost:8080/api/sign/login/kakao?accessToken=%s&refreshToken=%s",
-                tokenDto.getAccessToken(), tokenDto.getRefreshToken());
-
+        String redirectURI = String.format(REDIRECT_URI, tokenDto.getAccessToken(), tokenDto.getRefreshToken());
         getRedirectStrategy().sendRedirect(request, response, redirectURI);
     }
 }
