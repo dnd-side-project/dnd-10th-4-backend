@@ -1,6 +1,5 @@
 package dnd.myOcean.config.oAuth.kakao.details;
 
-import dnd.myOcean.config.oAuth.kakao.KakaoUserInfo;
 import dnd.myOcean.domain.member.Member;
 import dnd.myOcean.domain.member.Role;
 import dnd.myOcean.repository.MemberRepository;
@@ -38,7 +37,7 @@ public class KakaoMemberDetailsService extends DefaultOAuth2UserService {
 
         SimpleGrantedAuthority authority = new SimpleGrantedAuthority(member.getRole().name());
 
-        return new KakaoMemberDetails(String.valueOf(member.getId()),
+        return new KakaoMemberDetails(String.valueOf(member.getEmail()),
                 Collections.singletonList(authority),
                 oAuth2User.getAttributes());
     }

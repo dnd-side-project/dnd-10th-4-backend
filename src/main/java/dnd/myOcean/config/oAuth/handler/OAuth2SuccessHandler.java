@@ -1,7 +1,7 @@
 package dnd.myOcean.config.oAuth.handler;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
-import dnd.myOcean.config.oAuth.kakao.KakaoUserInfo;
+import dnd.myOcean.config.oAuth.kakao.details.KakaoUserInfo;
 import dnd.myOcean.config.security.jwt.token.TokenService;
 import dnd.myOcean.domain.member.Member;
 import dnd.myOcean.dto.jwt.response.TokenDto;

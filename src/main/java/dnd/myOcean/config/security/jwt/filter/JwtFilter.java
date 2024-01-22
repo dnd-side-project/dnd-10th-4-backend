@@ -28,6 +28,13 @@ public class JwtFilter extends OncePerRequestFilter {
         String accessToken = getAccessToken(request);
         String refreshToken = getRefreshToken(request);
 
+        /**
+         * TODO : accessToken, refreshToken 만료에 따른 처리
+         * 1. accessToken 정상, refreshToken 정상 -> Context에 authentication 담기 -> doFilter
+         * 2. accessToken 만료, refreshToken 정상 -> refreshToken으로 accessToken reIssue -> Context에 authentication 담기 -> doFilter
+         * 3. accessToken 정상, refreshToken 만료 -> accessToken으로 refreshToken reIssue -> Context에 authentication 담기 -> doFilter
+         * 4. accessToken 만료, refreshToken 만료 -> 재로그인 요청
+         */
         if (tokenService.validateToken(accessToken) && tokenService.validateToken(refreshToken)) {
             SecurityContextHolder.getContext().setAuthentication(tokenService.getAuthentication(accessToken));
         }

@@ -3,7 +3,7 @@ package dnd.myOcean.config.security.util;
 import dnd.myOcean.config.oAuth.kakao.details.KakaoMemberDetails;
 import dnd.myOcean.exception.auth.AccessDeniedException;
 import dnd.myOcean.exception.auth.AuthenticationEntryPointException;
-import dnd.myOcean.exception.sign.IllegalAuthenticationException;
+import dnd.myOcean.exception.auth.IllegalAuthenticationException;
 import java.util.Optional;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;

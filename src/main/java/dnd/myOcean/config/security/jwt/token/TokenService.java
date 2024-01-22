@@ -2,7 +2,7 @@ package dnd.myOcean.config.security.jwt.token;
 
 import dnd.myOcean.config.oAuth.kakao.details.KakaoMemberDetails;
 import dnd.myOcean.dto.jwt.response.TokenDto;
-import dnd.myOcean.exception.token.InvalidTokenException;
+import dnd.myOcean.exception.auth.InvalidTokenException;
 import io.jsonwebtoken.Claims;
 import io.jsonwebtoken.ExpiredJwtException;
 import io.jsonwebtoken.Jwts;
@@ -109,13 +109,6 @@ public class TokenService {
         }
     }
 
-    private void validate(String token) {
-        Jwts.parserBuilder()
-                .setSigningKey(secretKey)
-                .build()
-                .parseClaimsJws(token);
-    }
-
     public boolean validateExpire(String token) {
         try {
             validate(token);
@@ -123,5 +116,12 @@ public class TokenService {
         } catch (ExpiredJwtException e) {
             return false;
         }
+    }
+
+    private void validate(String token) {
+        Jwts.parserBuilder()
+                .setSigningKey(secretKey)
+                .build()
+                .parseClaimsJws(token);
     }
 }
