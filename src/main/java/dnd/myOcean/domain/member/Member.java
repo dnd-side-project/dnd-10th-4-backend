@@ -8,6 +8,8 @@ import jakarta.persistence.Enumerated;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
+import java.time.LocalDate;
+import java.time.Period;
 import lombok.AccessLevel;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -34,20 +36,22 @@ public class Member extends BaseEntity {
     private String nickName;
 
     @Column
-    private String birthday;
+    private Integer age;
 
     @Enumerated(EnumType.STRING)
     private Gender gender;
 
     @Column
-    private Integer updatedBirthday;
+    private Integer updatedAge;
 
     @Column
     private Integer updatedGender;
 
-    public void updateBirthday(final String birthday) {
-        this.birthday = birthday;
-        this.updatedBirthday++;
+    public void updateAge(final String birthday) {
+        LocalDate birthDay = LocalDate.parse(birthday);
+        LocalDate now = LocalDate.now();
+        this.age = calculateAge(birthDay, now);
+        this.updatedAge++;
     }
 
     public void updateGender(final Gender gender) {
@@ -56,10 +60,19 @@ public class Member extends BaseEntity {
     }
 
     public boolean isBirthDayChangeLimitExceeded() {
-        return updatedBirthday >= 2;
+        return updatedAge >= 2;
     }
 
     public boolean isGenderChangeLimitExceeded() {
         return updatedGender >= 2;
+    }
+
+    private static Integer calculateAge(LocalDate birthday, LocalDate currentDate) {
+        Period period = Period.between(birthday, currentDate);
+        int age = period.getYears();
+        if (currentDate.isBefore(birthday.plusYears(age))) {
+            age--;
+        }
+        return age;
     }
 }

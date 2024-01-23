@@ -1,13 +1,14 @@
 package dnd.myOcean.dto.member;
 
 
-import dnd.myOcean.domain.member.Gender;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
+import lombok.NoArgsConstructor;
 
 @Getter
 @AllArgsConstructor
+@NoArgsConstructor
 public class MemberGenderUpdateRequest {
 
-    private final Gender gender;
+    private String gender;
 }

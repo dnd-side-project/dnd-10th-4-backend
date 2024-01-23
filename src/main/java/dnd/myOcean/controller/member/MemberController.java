@@ -23,7 +23,7 @@ public class MemberController {
 
     @PatchMapping("/birthday")
     public ResponseEntity updateBirthday(@RequestBody MemberBirthdayUpdateRequest memberBirthdayUpdateRequest) {
-        memberService.updateBirthday(getCurrentEmail(), memberBirthdayUpdateRequest);
+        memberService.updateAge(getCurrentEmail(), memberBirthdayUpdateRequest);
         return new ResponseEntity<>(HttpStatus.OK);
     }
 

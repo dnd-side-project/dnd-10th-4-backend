@@ -1,6 +1,7 @@
 package dnd.myOcean.service.member;
 
 
+import dnd.myOcean.domain.member.Gender;
 import dnd.myOcean.domain.member.Member;
 import dnd.myOcean.dto.member.MemberBirthdayUpdateRequest;
 import dnd.myOcean.dto.member.MemberGenderUpdateRequest;
@@ -20,7 +21,7 @@ public class MemberService {
     private final MemberRepository memberRepository;
 
     @Transactional
-    public void updateBirthday(final String email, final MemberBirthdayUpdateRequest memberBirthdayUpdateRequest) {
+    public void updateAge(final String email, final MemberBirthdayUpdateRequest memberBirthdayUpdateRequest) {
         Member member = memberRepository.findByEmail(email)
                 .orElseThrow(MemberNotFoundException::new);
 
@@ -28,7 +29,7 @@ public class MemberService {
             throw new AlreadyUpdatedBirthdayException();
         }
 
-        member.updateBirthday(memberBirthdayUpdateRequest.getBirthday());
+        member.updateAge(memberBirthdayUpdateRequest.getBirthday());
     }
 
     @Transactional
@@ -40,7 +41,7 @@ public class MemberService {
             throw new AlreadyUpdatedGenderException();
         }
 
-        member.updateGender(memberGenderUpdateRequest.getGender());
+        member.updateGender(Gender.from(memberGenderUpdateRequest.getGender()));
     }
 }
 

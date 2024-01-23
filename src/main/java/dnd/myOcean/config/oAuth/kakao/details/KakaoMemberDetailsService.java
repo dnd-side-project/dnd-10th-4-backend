@@ -37,7 +37,7 @@ public class KakaoMemberDetailsService extends DefaultOAuth2UserService {
                                         .role(Role.USER)
                                         .nickName(PREFIX)
                                         .gender(Gender.NONE)
-                                        .updatedBirthday(0)
+                                        .updatedAge(0)
                                         .updatedGender(0)
                                         .build()
                         )
