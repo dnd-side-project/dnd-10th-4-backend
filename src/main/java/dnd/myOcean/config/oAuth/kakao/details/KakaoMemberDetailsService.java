@@ -1,7 +1,6 @@
-package dnd.myOcean.service.sign;
+package dnd.myOcean.config.oAuth.kakao.details;
 
-import dnd.myOcean.config.oAuth.kakao.KakaoMemberDetails;
-import dnd.myOcean.config.oAuth.kakao.KakaoUserInfo;
+import dnd.myOcean.domain.member.Gender;
 import dnd.myOcean.domain.member.Member;
 import dnd.myOcean.domain.member.Role;
 import dnd.myOcean.repository.MemberRepository;
@@ -19,6 +18,9 @@ import org.springframework.transaction.annotation.Transactional;
 @RequiredArgsConstructor
 public class KakaoMemberDetailsService extends DefaultOAuth2UserService {
 
+    private static final String PREFIX = "낯선 ";
+
+
     private final MemberRepository memberRepository;
 
     @Transactional
@@ -33,13 +35,17 @@ public class KakaoMemberDetailsService extends DefaultOAuth2UserService {
                                 Member.builder()
                                         .email(kakaoUserInfo.getEmail())
                                         .role(Role.USER)
+                                        .nickName(PREFIX)
+                                        .gender(Gender.NONE)
+                                        .updatedAge(0)
+                                        .updatedGender(0)
                                         .build()
                         )
                 );
 
         SimpleGrantedAuthority authority = new SimpleGrantedAuthority(member.getRole().name());
 
-        return new KakaoMemberDetails(String.valueOf(member.getId()),
+        return new KakaoMemberDetails(String.valueOf(member.getEmail()),
                 Collections.singletonList(authority),
                 oAuth2User.getAttributes());
     }
