@@ -24,7 +24,7 @@ public class MemberService {
         Member member = memberRepository.findByEmail(email)
                 .orElseThrow(MemberNotFoundException::new);
 
-        if (member.isAlreadyUpdateBirthday()) {
+        if (member.isBirthDayChangeLimitExceeded()) {
             throw new AlreadyUpdatedBirthdayException();
         }
 
@@ -36,16 +36,11 @@ public class MemberService {
         Member member = memberRepository.findByEmail(email)
                 .orElseThrow(MemberNotFoundException::new);
 
-        if (member.isAlreadyUpdateGender()) {
+        if (member.isGenderChangeLimitExceeded()) {
             throw new AlreadyUpdatedGenderException();
         }
 
-        if (member.isGenderEqualToRequest(memberGenderUpdateRequest.getGender())) {
-            member.updateGender(memberGenderUpdateRequest.getGender(), false);
-            return;
-        }
-
-        member.updateGender(memberGenderUpdateRequest.getGender(), true);
+        member.updateGender(memberGenderUpdateRequest.getGender());
     }
 }
 

@@ -40,30 +40,26 @@ public class Member extends BaseEntity {
     private Gender gender;
 
     @Column
-    private boolean updatedBirthday;
+    private Integer updatedBirthday;
 
     @Column
-    private boolean updatedGender;
+    private Integer updatedGender;
 
     public void updateBirthday(final String birthday) {
         this.birthday = birthday;
-        this.updatedBirthday = true;
+        this.updatedBirthday++;
     }
 
-    public void updateGender(final Gender gender, final boolean updated) {
+    public void updateGender(final Gender gender) {
         this.gender = gender;
-        this.updatedGender = updated;
+        this.updatedGender++;
     }
 
-    public boolean isAlreadyUpdateBirthday() {
-        return updatedBirthday;
+    public boolean isBirthDayChangeLimitExceeded() {
+        return updatedBirthday >= 2;
     }
 
-    public boolean isAlreadyUpdateGender() {
-        return updatedGender;
-    }
-
-    public boolean isGenderEqualToRequest(final Gender gender) {
-        return this.gender.equals(gender);
+    public boolean isGenderChangeLimitExceeded() {
+        return updatedGender >= 2;
     }
 }

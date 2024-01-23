@@ -6,3 +6,4 @@ import lombok.Getter;
 public enum Gender {
     MALE, FEMALE, NONE;
 }
+
