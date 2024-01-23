@@ -5,8 +5,8 @@ import dnd.myOcean.domain.member.Gender;
 import dnd.myOcean.domain.member.Member;
 import dnd.myOcean.dto.member.MemberBirthdayUpdateRequest;
 import dnd.myOcean.dto.member.MemberGenderUpdateRequest;
-import dnd.myOcean.exception.member.AlreadyUpdatedBirthdayException;
-import dnd.myOcean.exception.member.AlreadyUpdatedGenderException;
+import dnd.myOcean.exception.member.BirthdayUpdateLimitExceedException;
+import dnd.myOcean.exception.member.GenderUpdateLimitExceedException;
 import dnd.myOcean.exception.member.MemberNotFoundException;
 import dnd.myOcean.repository.MemberRepository;
 import lombok.RequiredArgsConstructor;
@@ -26,7 +26,7 @@ public class MemberService {
                 .orElseThrow(MemberNotFoundException::new);
 
         if (member.isBirthDayChangeLimitExceeded()) {
-            throw new AlreadyUpdatedBirthdayException();
+            throw new BirthdayUpdateLimitExceedException();
         }
 
         member.updateAge(memberBirthdayUpdateRequest.getBirthday());
@@ -38,7 +38,7 @@ public class MemberService {
                 .orElseThrow(MemberNotFoundException::new);
 
         if (member.isGenderChangeLimitExceeded()) {
-            throw new AlreadyUpdatedGenderException();
+            throw new GenderUpdateLimitExceedException();
         }
 
         member.updateGender(Gender.from(memberGenderUpdateRequest.getGender()));
