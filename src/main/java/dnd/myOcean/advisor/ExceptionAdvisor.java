@@ -2,9 +2,7 @@ package dnd.myOcean.advisor;
 
 import dnd.myOcean.exception.auth.AccessDeniedException;
 import dnd.myOcean.exception.auth.AuthenticationEntryPointException;
-import dnd.myOcean.exception.member.BirthdayUpdateLimitExceedException;
-import dnd.myOcean.exception.member.GenderUpdateLimitExceedException;
-import dnd.myOcean.exception.member.NoSuchGenderException;
+import dnd.myOcean.exception.member.*;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.ExceptionHandler;
@@ -36,6 +34,18 @@ public class ExceptionAdvisor {
     @ResponseStatus(HttpStatus.NOT_MODIFIED)
     public ResponseEntity genderUpdateLimitExceedException(GenderUpdateLimitExceedException e) {
         return new ResponseEntity("성별 수정 가능한 횟수를 초과했습니다.", HttpStatus.NOT_MODIFIED);
+    }
+
+    @ExceptionHandler(NicknameUpdateLimitExceedException.class)
+    @ResponseStatus(HttpStatus.NOT_MODIFIED)
+    public ResponseEntity nicknameUpdateLimitExceedException(NicknameUpdateLimitExceedException e) {
+        return new ResponseEntity("닉네임 수정 가능한 횟수를 초과했습니다.", HttpStatus.NOT_MODIFIED);
+    }
+
+    @ExceptionHandler(WorryUpdateLimitExceedException.class)
+    @ResponseStatus(HttpStatus.NOT_MODIFIED)
+    public ResponseEntity worryUpdateLimitExceedException(WorryUpdateLimitExceedException e) {
+        return new ResponseEntity("고민 수정 가능한 횟수를 초과했습니다.", HttpStatus.NOT_MODIFIED);
     }
 
     @ExceptionHandler(NoSuchGenderException.class)
