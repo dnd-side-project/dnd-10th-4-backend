@@ -3,15 +3,19 @@ package dnd.myOcean.service.member;
 
 import dnd.myOcean.domain.member.Gender;
 import dnd.myOcean.domain.member.Member;
+import dnd.myOcean.domain.member.Worry;
 import dnd.myOcean.dto.member.MemberBirthdayUpdateRequest;
 import dnd.myOcean.dto.member.MemberGenderUpdateRequest;
-import dnd.myOcean.exception.member.BirthdayUpdateLimitExceedException;
-import dnd.myOcean.exception.member.GenderUpdateLimitExceedException;
-import dnd.myOcean.exception.member.MemberNotFoundException;
+import dnd.myOcean.dto.member.MemberNicknameUpdateRequest;
+import dnd.myOcean.dto.member.MemberWorryUpdateRequest;
+import dnd.myOcean.exception.member.*;
 import dnd.myOcean.repository.MemberRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+
+import java.util.ArrayList;
+import java.util.List;
 
 @Service
 @Transactional(readOnly = true)
@@ -42,6 +46,32 @@ public class MemberService {
         }
 
         member.updateGender(Gender.from(memberGenderUpdateRequest.getGender()));
+    }
+
+    @Transactional
+    public void updateNickname(final String email, final MemberNicknameUpdateRequest memberNicknameUpdateRequest) {
+        Member member = memberRepository.findByEmail(email)
+                .orElseThrow(MemberNotFoundException::new);
+
+        if(member.isNicknameChangeLimitExceeded()){
+            throw new NicknameUpdateLimitExceedException();
+        }
+
+        member.updateNickname(memberNicknameUpdateRequest.getNickname());
+    }
+
+    @Transactional
+    public void updateWorry(final String email, final MemberWorryUpdateRequest memberWorryUpdateRequest) {
+        Member member = memberRepository.findByEmail(email)
+                .orElseThrow(MemberNotFoundException::new);
+
+        List<Worry> worries = memberWorryUpdateRequest.getWorries();
+
+        if(worries.size() > 3) {
+            throw new WorryUpdateLimitExceedException();
+        }
+
+        member.updateWorry(worries);
     }
 }
 
