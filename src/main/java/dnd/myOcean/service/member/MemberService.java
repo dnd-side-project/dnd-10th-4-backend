@@ -34,7 +34,6 @@ public class MemberService {
 
     @Transactional
     public void updateGender(final MemberGenderUpdateRequest memberGenderUpdateRequest) {
-        System.out.println(memberGenderUpdateRequest.getEmail());
         Member member = memberRepository.findByEmail(memberGenderUpdateRequest.getEmail())
                 .orElseThrow(MemberNotFoundException::new);
 
