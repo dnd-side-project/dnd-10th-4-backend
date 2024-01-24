@@ -1,8 +1,7 @@
 package dnd.myOcean.controller.member;
 
 
-import static dnd.myOcean.config.security.util.SecurityUtils.getCurrentEmail;
-
+import dnd.myOcean.aop.AssignCurrentEmail;
 import dnd.myOcean.dto.member.MemberBirthdayUpdateRequest;
 import dnd.myOcean.dto.member.MemberGenderUpdateRequest;
 import dnd.myOcean.service.member.MemberService;
@@ -22,14 +21,16 @@ public class MemberController {
     private final MemberService memberService;
 
     @PatchMapping("/birthday")
+    @AssignCurrentEmail
     public ResponseEntity updateBirthday(@RequestBody MemberBirthdayUpdateRequest memberBirthdayUpdateRequest) {
-        memberService.updateAge(getCurrentEmail(), memberBirthdayUpdateRequest);
+        memberService.updateAge(memberBirthdayUpdateRequest);
         return new ResponseEntity<>(HttpStatus.OK);
     }
 
     @PatchMapping("/gender")
+    @AssignCurrentEmail
     public ResponseEntity updateGender(@RequestBody MemberGenderUpdateRequest memberGenderUpdateRequest) {
-        memberService.updateGender(getCurrentEmail(), memberGenderUpdateRequest);
+        memberService.updateGender(memberGenderUpdateRequest);
         return new ResponseEntity<>(HttpStatus.OK);
     }
 }
