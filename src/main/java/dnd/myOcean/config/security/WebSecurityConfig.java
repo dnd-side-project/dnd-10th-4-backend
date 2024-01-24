@@ -41,6 +41,7 @@ public class WebSecurityConfig {
                 .authorizeHttpRequests((authz) -> authz
                         .requestMatchers("/api/oauth2/authorization/kakao").permitAll()
                         .requestMatchers("/api/sign/login/kakao").permitAll()
+                        .requestMatchers("/api/exception/**").permitAll()
                         .anyRequest().authenticated()
                 )
 

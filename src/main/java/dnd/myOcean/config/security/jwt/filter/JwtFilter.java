@@ -25,7 +25,13 @@ public class JwtFilter extends OncePerRequestFilter {
     protected void doFilterInternal(HttpServletRequest request,
                                     HttpServletResponse response,
                                     FilterChain filterChain) throws ServletException, IOException {
+
         if (request.getRequestURI().startsWith("/api/sign/login")) {
+            filterChain.doFilter(request, response);
+            return;
+        }
+
+        if (request.getRequestURI().startsWith("/api/exception")) {
             filterChain.doFilter(request, response);
             return;
         }

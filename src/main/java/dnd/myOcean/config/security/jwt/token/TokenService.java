@@ -2,7 +2,6 @@ package dnd.myOcean.config.security.jwt.token;
 
 import dnd.myOcean.config.oAuth.kakao.details.KakaoMemberDetails;
 import dnd.myOcean.dto.jwt.response.TokenDto;
-import dnd.myOcean.exception.auth.InvalidTokenException;
 import io.jsonwebtoken.Claims;
 import io.jsonwebtoken.ExpiredJwtException;
 import io.jsonwebtoken.Jwts;
@@ -101,11 +100,11 @@ public class TokenService {
             validate(token);
             return true;
         } catch (io.jsonwebtoken.security.SecurityException | MalformedJwtException e) {
-            throw new InvalidTokenException();
+            return false;
         } catch (UnsupportedJwtException e) {
-            throw new InvalidTokenException();
+            return false;
         } catch (IllegalArgumentException e) {
-            throw new InvalidTokenException();
+            return false;
         }
     }
 
