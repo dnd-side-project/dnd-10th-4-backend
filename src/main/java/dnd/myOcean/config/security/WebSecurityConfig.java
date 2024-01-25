@@ -38,6 +38,13 @@ public class WebSecurityConfig {
                 .sessionManagement((sessionManagement) ->
                         sessionManagement.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
 
+                .authorizeHttpRequests((authz) -> authz
+                        .requestMatchers("/api/oauth2/authorization/kakao").permitAll()
+                        .requestMatchers("/api/sign/login/kakao").permitAll()
+                        .requestMatchers("/api/exception/**").permitAll()
+                        .anyRequest().authenticated()
+                )
+
                 .exceptionHandling(exceptionHandling -> {
                     exceptionHandling.authenticationEntryPoint(jwtAuthenticationFailEntryPoint);
                     exceptionHandling.accessDeniedHandler(jwtAccessDeniedHandler);
