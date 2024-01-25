@@ -1,12 +1,18 @@
 package dnd.myOcean.dto.member;
 
 
-import lombok.Getter;
+import jakarta.validation.constraints.NotEmpty;
+import jakarta.validation.constraints.Null;
+import lombok.Data;
 import lombok.NoArgsConstructor;
 
-@Getter
+@Data
 @NoArgsConstructor
 public class MemberGenderUpdateRequest {
 
+    @Null
+    private String email;
+
+    @NotEmpty
     private String gender;
 }

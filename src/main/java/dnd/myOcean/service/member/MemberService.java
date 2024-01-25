@@ -21,8 +21,8 @@ public class MemberService {
     private final MemberRepository memberRepository;
 
     @Transactional
-    public void updateAge(final String email, final MemberBirthdayUpdateRequest memberBirthdayUpdateRequest) {
-        Member member = memberRepository.findByEmail(email)
+    public void updateAge(final MemberBirthdayUpdateRequest memberBirthdayUpdateRequest) {
+        Member member = memberRepository.findByEmail(memberBirthdayUpdateRequest.getEmail())
                 .orElseThrow(MemberNotFoundException::new);
 
         if (member.isBirthDayChangeLimitExceeded()) {
@@ -33,8 +33,8 @@ public class MemberService {
     }
 
     @Transactional
-    public void updateGender(final String email, final MemberGenderUpdateRequest memberGenderUpdateRequest) {
-        Member member = memberRepository.findByEmail(email)
+    public void updateGender(final MemberGenderUpdateRequest memberGenderUpdateRequest) {
+        Member member = memberRepository.findByEmail(memberGenderUpdateRequest.getEmail())
                 .orElseThrow(MemberNotFoundException::new);
 
         if (member.isGenderChangeLimitExceeded()) {
