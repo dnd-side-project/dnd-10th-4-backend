@@ -8,14 +8,16 @@ import dnd.myOcean.dto.member.MemberBirthdayUpdateRequest;
 import dnd.myOcean.dto.member.MemberGenderUpdateRequest;
 import dnd.myOcean.dto.member.MemberNicknameUpdateRequest;
 import dnd.myOcean.dto.member.MemberWorryUpdateRequest;
-import dnd.myOcean.exception.member.*;
+import dnd.myOcean.exception.member.BirthdayUpdateLimitExceedException;
+import dnd.myOcean.exception.member.GenderUpdateLimitExceedException;
+import dnd.myOcean.exception.member.MemberNotFoundException;
+import dnd.myOcean.exception.member.NicknameUpdateLimitExceedException;
+import dnd.myOcean.exception.member.WorryUpdateLimitExceedException;
 import dnd.myOcean.repository.MemberRepository;
+import java.util.List;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-
-import java.util.ArrayList;
-import java.util.List;
 
 @Service
 @Transactional(readOnly = true)
@@ -49,11 +51,11 @@ public class MemberService {
     }
 
     @Transactional
-    public void updateNickname(final String email, final MemberNicknameUpdateRequest memberNicknameUpdateRequest) {
-        Member member = memberRepository.findByEmail(email)
+    public void updateNickname(final MemberNicknameUpdateRequest memberNicknameUpdateRequest) {
+        Member member = memberRepository.findByEmail(memberNicknameUpdateRequest.getEmail())
                 .orElseThrow(MemberNotFoundException::new);
 
-        if(member.isNicknameChangeLimitExceeded()){
+        if (member.isNicknameChangeLimitExceeded()) {
             throw new NicknameUpdateLimitExceedException();
         }
 
@@ -61,13 +63,13 @@ public class MemberService {
     }
 
     @Transactional
-    public void updateWorry(final String email, final MemberWorryUpdateRequest memberWorryUpdateRequest) {
-        Member member = memberRepository.findByEmail(email)
+    public void updateWorry(final MemberWorryUpdateRequest memberWorryUpdateRequest) {
+        Member member = memberRepository.findByEmail(memberWorryUpdateRequest.getEmail())
                 .orElseThrow(MemberNotFoundException::new);
 
         List<Worry> worries = memberWorryUpdateRequest.getWorries();
 
-        if(worries.size() > 3) {
+        if (worries.size() > 3) {
             throw new WorryUpdateLimitExceedException();
         }
 

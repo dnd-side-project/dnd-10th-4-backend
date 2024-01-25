@@ -15,8 +15,6 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
-import static dnd.myOcean.config.security.util.SecurityUtils.getCurrentEmail;
-
 @RestController
 @RequiredArgsConstructor
 @RequestMapping("/api/member")
@@ -38,15 +36,15 @@ public class MemberController {
         return new ResponseEntity<>(HttpStatus.OK);
     }
 
-    @PatchMapping("/nick-name")
+    @PatchMapping("/nickname")
     public ResponseEntity updateNickname(@RequestBody MemberNicknameUpdateRequest memberNicknameUpdateRequest) {
-        memberService.updateNickname(getCurrentEmail(), memberNicknameUpdateRequest);
+        memberService.updateNickname(memberNicknameUpdateRequest);
         return new ResponseEntity<>(HttpStatus.OK);
     }
 
     @PatchMapping("/worry")
     public ResponseEntity updateWorry(@RequestBody MemberWorryUpdateRequest memberWorryUpdateRequest) {
-        memberService.updateWorry(getCurrentEmail(), memberWorryUpdateRequest);
+        memberService.updateWorry(memberWorryUpdateRequest);
         return new ResponseEntity<>(HttpStatus.OK);
     }
 }

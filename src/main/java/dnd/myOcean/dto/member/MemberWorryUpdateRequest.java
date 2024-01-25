@@ -1,15 +1,18 @@
 package dnd.myOcean.dto.member;
 
 import dnd.myOcean.domain.member.Worry;
-import lombok.Getter;
-import lombok.NoArgsConstructor;
-
+import jakarta.validation.constraints.Null;
 import java.util.ArrayList;
 import java.util.List;
+import lombok.Getter;
+import lombok.NoArgsConstructor;
 
 @Getter
 @NoArgsConstructor
 public class MemberWorryUpdateRequest {
+
+    @Null
+    private String email;
 
     private List<String> worries;
 
