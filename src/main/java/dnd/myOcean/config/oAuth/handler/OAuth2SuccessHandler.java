@@ -22,7 +22,7 @@ public class OAuth2SuccessHandler extends SimpleUrlAuthenticationSuccessHandler 
 
     private static final String REDIRECT_URI = "http://localhost:8080/api/sign/login/kakao?accessToken=%s&refreshToken=%s";
 
-    private final TokenService tokenProvider;
+    private final TokenService tokenService;
     private final MemberRepository memberRepository;
 
     @Override
@@ -34,7 +34,7 @@ public class OAuth2SuccessHandler extends SimpleUrlAuthenticationSuccessHandler 
         Member member = memberRepository.findByEmail(kakaoUserInfo.getEmail())
                 .orElseThrow(MemberNotFoundException::new);
 
-        TokenDto tokenDto = tokenProvider.createToken(member.getEmail(), member.getRole().name());
+        TokenDto tokenDto = tokenService.createToken(member.getEmail(), member.getRole().name());
         String redirectURI = String.format(REDIRECT_URI, tokenDto.getAccessToken(), tokenDto.getRefreshToken());
         getRedirectStrategy().sendRedirect(request, response, redirectURI);
     }

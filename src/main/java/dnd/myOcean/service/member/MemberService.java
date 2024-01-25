@@ -83,7 +83,7 @@ public class MemberService {
     }
 
     public boolean isNicknameAvailable(String nickname) {
-        Optional<Member> existingMember = memberRepository.findByNickname(nickname);
+        Optional<Member> existingMember = memberRepository.findByNickName(nickname);
         return existingMember.isEmpty();
     }
 }
