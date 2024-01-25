@@ -10,9 +10,8 @@ import dnd.myOcean.dto.member.MemberNicknameUpdateRequest;
 import dnd.myOcean.dto.member.MemberWorryUpdateRequest;
 import dnd.myOcean.exception.member.BirthdayUpdateLimitExceedException;
 import dnd.myOcean.exception.member.GenderUpdateLimitExceedException;
+import dnd.myOcean.exception.member.MaxWorrySelectionLimitException;
 import dnd.myOcean.exception.member.MemberNotFoundException;
-import dnd.myOcean.exception.member.NicknameUpdateLimitExceedException;
-import dnd.myOcean.exception.member.WorryUpdateLimitExceedException;
 import dnd.myOcean.repository.MemberRepository;
 import java.util.List;
 import lombok.RequiredArgsConstructor;
@@ -55,10 +54,6 @@ public class MemberService {
         Member member = memberRepository.findByEmail(memberNicknameUpdateRequest.getEmail())
                 .orElseThrow(MemberNotFoundException::new);
 
-        if (member.isNicknameChangeLimitExceeded()) {
-            throw new NicknameUpdateLimitExceedException();
-        }
-
         member.updateNickname(memberNicknameUpdateRequest.getNickname());
     }
 
@@ -70,7 +65,7 @@ public class MemberService {
         List<Worry> worries = memberWorryUpdateRequest.getWorries();
 
         if (worries.size() > 3) {
-            throw new WorryUpdateLimitExceedException();
+            throw new MaxWorrySelectionLimitException();
         }
 
         member.updateWorry(worries);
