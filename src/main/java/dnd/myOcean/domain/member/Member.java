@@ -1,15 +1,21 @@
 package dnd.myOcean.domain.member;
 
 import dnd.myOcean.domain.base.BaseEntity;
-import jakarta.persistence.*;
+import jakarta.persistence.Column;
+import jakarta.persistence.ElementCollection;
+import jakarta.persistence.Entity;
+import jakarta.persistence.EnumType;
+import jakarta.persistence.Enumerated;
+import jakarta.persistence.GeneratedValue;
+import jakarta.persistence.GenerationType;
+import jakarta.persistence.Id;
+import java.time.LocalDate;
+import java.time.Period;
+import java.util.List;
 import lombok.AccessLevel;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.experimental.SuperBuilder;
-
-import java.time.LocalDate;
-import java.time.Period;
-import java.util.List;
 
 @Entity
 @Getter
@@ -42,49 +48,37 @@ public class Member extends BaseEntity {
     private List<Worry> worry;
 
     @Column
-    private Integer updatedAge;
+    private Integer updateAgeCount;
 
     @Column
-    private Integer updatedGender;
-
-    @Column
-    private Integer updateNickname;
-
-    @Column
-    private Integer updateWorry;
+    private Integer updateGenderCount;
 
     public void updateAge(final String birthday) {
         LocalDate birthDay = LocalDate.parse(birthday);
         LocalDate now = LocalDate.now();
         this.age = calculateAge(birthDay, now);
-        this.updatedAge++;
+        this.updateAgeCount++;
     }
 
     public void updateGender(final Gender gender) {
         this.gender = gender;
-        this.updatedGender++;
+        this.updateGenderCount++;
     }
 
     public void updateNickname(final String nickname) {
         this.nickName = nickname;
-        this.updateNickname++;
     }
 
     public void updateWorry(final List<Worry> worries) {
         this.worry = worries;
-        this.updateWorry = worries.size();
     }
 
     public boolean isBirthDayChangeLimitExceeded() {
-        return updatedAge >= 2;
+        return updateAgeCount >= 2;
     }
 
     public boolean isGenderChangeLimitExceeded() {
-        return updatedGender >= 2;
-    }
-
-    public boolean isNicknameChangeLimitExceeded() {
-        return updateNickname >= 2;
+        return updateGenderCount >= 2;
     }
 
     private static Integer calculateAge(LocalDate birthday, LocalDate currentDate) {
@@ -94,5 +88,9 @@ public class Member extends BaseEntity {
             age--;
         }
         return age;
+    }
+
+    public boolean isNicknameEqualTo(String nickname) {
+        return this.nickName.equals(nickname);
     }
 }

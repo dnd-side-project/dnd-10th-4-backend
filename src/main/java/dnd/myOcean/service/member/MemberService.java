@@ -8,14 +8,18 @@ import dnd.myOcean.dto.member.MemberBirthdayUpdateRequest;
 import dnd.myOcean.dto.member.MemberGenderUpdateRequest;
 import dnd.myOcean.dto.member.MemberNicknameUpdateRequest;
 import dnd.myOcean.dto.member.MemberWorryUpdateRequest;
-import dnd.myOcean.exception.member.*;
+import dnd.myOcean.exception.member.AlreadyExistNicknameException;
+import dnd.myOcean.exception.member.BirthdayUpdateLimitExceedException;
+import dnd.myOcean.exception.member.GenderUpdateLimitExceedException;
+import dnd.myOcean.exception.member.MaxWorrySelectionLimitException;
+import dnd.myOcean.exception.member.MemberNotFoundException;
+import dnd.myOcean.exception.member.SameNicknameModifyRequestException;
 import dnd.myOcean.repository.MemberRepository;
+import java.util.List;
+import java.util.Optional;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-
-import java.util.ArrayList;
-import java.util.List;
 
 @Service
 @Transactional(readOnly = true)
@@ -49,29 +53,38 @@ public class MemberService {
     }
 
     @Transactional
-    public void updateNickname(final String email, final MemberNicknameUpdateRequest memberNicknameUpdateRequest) {
-        Member member = memberRepository.findByEmail(email)
+    public void updateNickname(final MemberNicknameUpdateRequest memberNicknameUpdateRequest) {
+        Member member = memberRepository.findByEmail(memberNicknameUpdateRequest.getEmail())
                 .orElseThrow(MemberNotFoundException::new);
 
-        if(member.isNicknameChangeLimitExceeded()){
-            throw new NicknameUpdateLimitExceedException();
+        if (member.isNicknameEqualTo(memberNicknameUpdateRequest.getNickname())) {
+            throw new SameNicknameModifyRequestException();
+        }
+
+        if (!isNicknameAvailable(memberNicknameUpdateRequest.getNickname())) {
+            throw new AlreadyExistNicknameException();
         }
 
         member.updateNickname(memberNicknameUpdateRequest.getNickname());
     }
 
     @Transactional
-    public void updateWorry(final String email, final MemberWorryUpdateRequest memberWorryUpdateRequest) {
-        Member member = memberRepository.findByEmail(email)
+    public void updateWorry(final MemberWorryUpdateRequest memberWorryUpdateRequest) {
+        Member member = memberRepository.findByEmail(memberWorryUpdateRequest.getEmail())
                 .orElseThrow(MemberNotFoundException::new);
 
         List<Worry> worries = memberWorryUpdateRequest.getWorries();
 
-        if(worries.size() > 3) {
-            throw new WorryUpdateLimitExceedException();
+        if (worries.size() > 3) {
+            throw new MaxWorrySelectionLimitException();
         }
 
         member.updateWorry(worries);
+    }
+
+    public boolean isNicknameAvailable(String nickname) {
+        Optional<Member> existingMember = memberRepository.findByNickname(nickname);
+        return existingMember.isEmpty();
     }
 }
 
