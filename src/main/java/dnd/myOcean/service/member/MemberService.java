@@ -8,12 +8,14 @@ import dnd.myOcean.dto.member.MemberBirthdayUpdateRequest;
 import dnd.myOcean.dto.member.MemberGenderUpdateRequest;
 import dnd.myOcean.dto.member.MemberNicknameUpdateRequest;
 import dnd.myOcean.dto.member.MemberWorryUpdateRequest;
+import dnd.myOcean.exception.member.AlreadyExistNicknameException;
 import dnd.myOcean.exception.member.BirthdayUpdateLimitExceedException;
 import dnd.myOcean.exception.member.GenderUpdateLimitExceedException;
 import dnd.myOcean.exception.member.MaxWorrySelectionLimitException;
 import dnd.myOcean.exception.member.MemberNotFoundException;
 import dnd.myOcean.repository.MemberRepository;
 import java.util.List;
+import java.util.Optional;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -54,6 +56,10 @@ public class MemberService {
         Member member = memberRepository.findByEmail(memberNicknameUpdateRequest.getEmail())
                 .orElseThrow(MemberNotFoundException::new);
 
+        if (!isNicknameAvailable(memberNicknameUpdateRequest.getNickname())) {
+            throw new AlreadyExistNicknameException();
+        }
+
         member.updateNickname(memberNicknameUpdateRequest.getNickname());
     }
 
@@ -69,6 +75,11 @@ public class MemberService {
         }
 
         member.updateWorry(worries);
+    }
+
+    public boolean isNicknameAvailable(String nickname) {
+        Optional<Member> existingMember = memberRepository.findByNickname(nickname);
+        return existingMember.isEmpty();
     }
 }
 
