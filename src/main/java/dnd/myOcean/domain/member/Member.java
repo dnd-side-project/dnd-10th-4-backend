@@ -89,4 +89,8 @@ public class Member extends BaseEntity {
         }
         return age;
     }
+
+    public boolean isNicknameEqualTo(String nickname) {
+        return this.nickName.equals(nickname);
+    }
 }

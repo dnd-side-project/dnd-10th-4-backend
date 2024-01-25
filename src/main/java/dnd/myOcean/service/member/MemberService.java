@@ -13,6 +13,7 @@ import dnd.myOcean.exception.member.BirthdayUpdateLimitExceedException;
 import dnd.myOcean.exception.member.GenderUpdateLimitExceedException;
 import dnd.myOcean.exception.member.MaxWorrySelectionLimitException;
 import dnd.myOcean.exception.member.MemberNotFoundException;
+import dnd.myOcean.exception.member.SameNicknameModifyRequestException;
 import dnd.myOcean.repository.MemberRepository;
 import java.util.List;
 import java.util.Optional;
@@ -55,6 +56,10 @@ public class MemberService {
     public void updateNickname(final MemberNicknameUpdateRequest memberNicknameUpdateRequest) {
         Member member = memberRepository.findByEmail(memberNicknameUpdateRequest.getEmail())
                 .orElseThrow(MemberNotFoundException::new);
+
+        if (member.isNicknameEqualTo(memberNicknameUpdateRequest.getNickname())) {
+            throw new SameNicknameModifyRequestException();
+        }
 
         if (!isNicknameAvailable(memberNicknameUpdateRequest.getNickname())) {
             throw new AlreadyExistNicknameException();

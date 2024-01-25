@@ -7,6 +7,7 @@ import dnd.myOcean.exception.member.BirthdayUpdateLimitExceedException;
 import dnd.myOcean.exception.member.GenderUpdateLimitExceedException;
 import dnd.myOcean.exception.member.MaxWorrySelectionLimitException;
 import dnd.myOcean.exception.member.NoSuchGenderException;
+import dnd.myOcean.exception.member.SameNicknameModifyRequestException;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.ExceptionHandler;
@@ -56,5 +57,11 @@ public class ExceptionAdvisor {
     @ResponseStatus(HttpStatus.CONFLICT)
     public ResponseEntity alreadyExistNicknameException(AlreadyExistNicknameException e) {
         return new ResponseEntity("이미 사용 중인 닉네임 입니다.", HttpStatus.CONFLICT);
+    }
+
+    @ExceptionHandler(SameNicknameModifyRequestException.class)
+    @ResponseStatus(HttpStatus.CONFLICT)
+    public ResponseEntity sameNicknameModifyRequestException(SameNicknameModifyRequestException e) {
+        return new ResponseEntity("현재 로그인한 계정에서 이미 사용 중인 닉네임입니다.", HttpStatus.CONFLICT);
     }
 }
