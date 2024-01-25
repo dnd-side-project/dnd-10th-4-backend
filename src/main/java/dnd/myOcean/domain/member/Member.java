@@ -1,19 +1,15 @@
 package dnd.myOcean.domain.member;
 
 import dnd.myOcean.domain.base.BaseEntity;
-import jakarta.persistence.Column;
-import jakarta.persistence.Entity;
-import jakarta.persistence.EnumType;
-import jakarta.persistence.Enumerated;
-import jakarta.persistence.GeneratedValue;
-import jakarta.persistence.GenerationType;
-import jakarta.persistence.Id;
-import java.time.LocalDate;
-import java.time.Period;
+import jakarta.persistence.*;
 import lombok.AccessLevel;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.experimental.SuperBuilder;
+
+import java.time.LocalDate;
+import java.time.Period;
+import java.util.List;
 
 @Entity
 @Getter
@@ -41,11 +37,21 @@ public class Member extends BaseEntity {
     @Enumerated(EnumType.STRING)
     private Gender gender;
 
+    @ElementCollection(targetClass = Worry.class) // JPA가 해당 필드를 컬렉션으로 관리하기 위한 어노테이션
+    @Enumerated(EnumType.STRING)
+    private List<Worry> worry;
+
     @Column
     private Integer updatedAge;
 
     @Column
     private Integer updatedGender;
+
+    @Column
+    private Integer updateNickname;
+
+    @Column
+    private Integer updateWorry;
 
     public void updateAge(final String birthday) {
         LocalDate birthDay = LocalDate.parse(birthday);
@@ -59,12 +65,26 @@ public class Member extends BaseEntity {
         this.updatedGender++;
     }
 
+    public void updateNickname(final String nickname) {
+        this.nickName = nickname;
+        this.updateNickname++;
+    }
+
+    public void updateWorry(final List<Worry> worries) {
+        this.worry = worries;
+        this.updateWorry = worries.size();
+    }
+
     public boolean isBirthDayChangeLimitExceeded() {
         return updatedAge >= 2;
     }
 
     public boolean isGenderChangeLimitExceeded() {
         return updatedGender >= 2;
+    }
+
+    public boolean isNicknameChangeLimitExceeded() {
+        return updateNickname >= 2;
     }
 
     private static Integer calculateAge(LocalDate birthday, LocalDate currentDate) {
