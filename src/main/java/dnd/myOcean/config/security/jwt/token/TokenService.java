@@ -133,7 +133,6 @@ public class TokenService {
 
     @Transactional
     public TokenDto reIssueAccessToken(String refreshToken, HttpServletRequest request) {
-        System.out.println("REISSUE");
         if (validateToken(refreshToken) && validateExpire(refreshToken)) {
             RefreshToken findToken = refreshTokenRedisRepository.findByRefreshToken(refreshToken);
             String currentIp = HttpRequestUtil.getClientIp(request);

@@ -38,8 +38,7 @@ public class SignService {
     private final TokenService tokenService;
     private final MemberRepository memberRepository;
     private final RefreshTokenRedisRepository refreshTokenRedisRepository;
-
-
+    
     @Value("${kakao.client.id}")
     private String kakaoClientId;
 
@@ -48,13 +47,14 @@ public class SignService {
 
     public TokenDto kakaoLogin(HttpServletRequest request, String code) throws JsonProcessingException {
         /**
-         * 1. code로 사용자 정보 받기 ( code -> 토큰 발급 -> 토큰으로 사용자 정보 요청 Flow인데, 포스트맨 내부적으로 token 요청을 하는 것 같음)
-         * // 포스트맨이 아닌 실제 배포 시에는 getKakaoUserInfo(code) -> getKakaoUserInfo(getToken(code)) 으로 변경해주어야 할 듯함.
+         * 1. code로 사용자 정보 받기 (원래는 받은 code를 가지고 토큰 발급 -> 토큰으로 사용자 정보 요청 Flow인데,
+         *    포스트맨 내부적으로 code로 token 요청하고, token으로 사용자정보를 받아오는 거 같음.
+         * // 포스트맨이 아닌 실제 배포 시에는 getKakaoUserInfo(code) -> getKakaoUserInfo(getToken(code)) 으로 변경해주어야 할 듯.
          */
         LoginKakaoRequestDto loginKakaoRequestDto = getKakaoUserInfo(code);
 
         /**
-         * 2. 받은 사용자 정보가 데이터베이스에 없다면 가입 후 리턴, 있으면 리턴
+         * 2. 받아온 사용자 정보가 데이터베이스에 없다면 가입 후 리턴, 있으면 리턴
          */
         Member member = saveIfNonExist(loginKakaoRequestDto);
 
@@ -66,8 +66,6 @@ public class SignService {
         /**
          * 4. Redis에 RefreshToken 저장
          */
-        String clientIp = HttpRequestUtil.getClientIp(request);
-        System.out.println(clientIp);
         saveRefreshTokenOnRedis(request, member, tokenDto);
 
         /**

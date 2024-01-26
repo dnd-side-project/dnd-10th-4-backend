@@ -46,9 +46,7 @@ public class OAuth2SuccessHandler extends SimpleUrlAuthenticationSuccessHandler 
         TokenDto tokenDto = tokenService.createToken(member.getEmail(), member.getRole().name());
 
         saveRefreshTokenOnRedis(request, member, tokenDto);
-
         String redirectURI = String.format(REDIRECT_URI, tokenDto.getAccessToken(), tokenDto.getRefreshToken());
-
         getRedirectStrategy().sendRedirect(request, response, redirectURI);
     }
 

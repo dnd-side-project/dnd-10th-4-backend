@@ -21,15 +21,17 @@ public class SignController {
 
     private final SignService signService;
 
+    /**
+     * 실제 배포에서 사용하는 로그인 API
+     */
     @GetMapping("/login/kakao")
     public ResponseEntity loginKakao(@RequestParam(name = "accessToken") String accessToken,
                                      @RequestParam(name = "refreshToken") String refreshToken) {
-        System.out.println("HI");
         return new ResponseEntity(TokenDto.of(accessToken, refreshToken), HttpStatus.OK);
     }
 
     /**
-     * for 포스트맨 테스트 API
+     * 포스트맨으로 테스트하기 위한 로그인 API
      */
     @PostMapping("/login/kakao/postman")
     public ResponseEntity loginKakao(HttpServletRequest request, @RequestParam(name = "code") String code)
