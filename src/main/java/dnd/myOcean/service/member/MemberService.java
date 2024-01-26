@@ -6,8 +6,10 @@ import dnd.myOcean.domain.member.Member;
 import dnd.myOcean.domain.member.Worry;
 import dnd.myOcean.dto.member.MemberBirthdayUpdateRequest;
 import dnd.myOcean.dto.member.MemberGenderUpdateRequest;
+import dnd.myOcean.dto.member.MemberInfoRequest;
 import dnd.myOcean.dto.member.MemberNicknameUpdateRequest;
 import dnd.myOcean.dto.member.MemberWorryUpdateRequest;
+import dnd.myOcean.dto.member.response.MemberInfoResponse;
 import dnd.myOcean.exception.member.AlreadyExistNicknameException;
 import dnd.myOcean.exception.member.BirthdayUpdateLimitExceedException;
 import dnd.myOcean.exception.member.GenderUpdateLimitExceedException;
@@ -42,6 +44,7 @@ public class MemberService {
 
     @Transactional
     public void updateGender(final MemberGenderUpdateRequest memberGenderUpdateRequest) {
+        System.out.println(memberGenderUpdateRequest.getEmail());
         Member member = memberRepository.findByEmail(memberGenderUpdateRequest.getEmail())
                 .orElseThrow(MemberNotFoundException::new);
 
@@ -85,6 +88,17 @@ public class MemberService {
     public boolean isNicknameAvailable(String nickname) {
         Optional<Member> existingMember = memberRepository.findByNickName(nickname);
         return existingMember.isEmpty();
+    }
+
+    public MemberInfoResponse getMyInfo(MemberInfoRequest memberInfoRequest) {
+        Member member = memberRepository.findByEmail(memberInfoRequest.getEmail())
+                .orElseThrow(MemberNotFoundException::new);
+
+        return new MemberInfoResponse(member.getId(),
+                member.getEmail(),
+                member.getGender().name(),
+                member.getAge(),
+                member.getRole().name());
     }
 }
 

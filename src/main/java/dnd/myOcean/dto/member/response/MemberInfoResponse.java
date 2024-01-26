@@ -1,21 +1,19 @@
-package dnd.myOcean.dto.member;
+package dnd.myOcean.dto.member.response;
 
 
-import jakarta.validation.constraints.NotEmpty;
-import jakarta.validation.constraints.Null;
 import lombok.AccessLevel;
 import lombok.AllArgsConstructor;
-import lombok.Data;
+import lombok.Getter;
 import lombok.NoArgsConstructor;
 
-@Data
+@Getter
 @AllArgsConstructor
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
-public class MemberGenderUpdateRequest {
-
-    @Null
+public class MemberInfoResponse {
+    
+    private Long id;
     private String email;
-
-    @NotEmpty
     private String gender;
+    private Integer age;
+    private String role;
 }
