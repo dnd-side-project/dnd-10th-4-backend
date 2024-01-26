@@ -16,8 +16,8 @@ import org.springframework.web.filter.OncePerRequestFilter;
 @RequiredArgsConstructor
 public class JwtFilter extends OncePerRequestFilter {
 
-    public static final String ACCESS_HEADER = "Auth";
-    public static final String REFRESH_HEADER = "Refresh";
+    public static final String ACCESS_HEADER = "AccessToken";
+    public static final String REFRESH_HEADER = "RefreshToken";
 
     private final TokenService tokenService;
 
