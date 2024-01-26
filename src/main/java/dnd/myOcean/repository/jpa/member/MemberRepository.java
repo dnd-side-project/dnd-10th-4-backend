@@ -1,4 +1,4 @@
-package dnd.myOcean.repository;
+package dnd.myOcean.repository.jpa.member;
 
 import dnd.myOcean.domain.member.Member;
 import java.util.Optional;

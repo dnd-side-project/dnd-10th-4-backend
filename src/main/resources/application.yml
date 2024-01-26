@@ -5,7 +5,7 @@ spring:
   jpa:
     hibernate:
       ddl-auto: create
-    show-sql: true
+    show-sql: false
     properties:
       hibernate:
         default_batch_fetch_size: 1000
@@ -16,6 +16,9 @@ spring:
     url: '${custom.db.url}'
     username: '${custom.db.username}'
     password: '${custom.db.password}'
+    redis:
+      host: localhost
+      port: 6379
 
   security:
     oauth2:
@@ -38,7 +41,9 @@ spring:
             user-info-uri: https://kapi.kakao.com/v2/user/me
             user-name-attribute: id
 
+
+
 jwt:
   secret_key: ${jwt.secret_key}
-  token-validity-in-seconds: 86400
-  refresh-token-validity-in-seconds: 3000 # 6시간
+  access-token-validity-in-seconds: 10 # 6시간
+  refresh-token-validity-in-seconds: 300 # 7일

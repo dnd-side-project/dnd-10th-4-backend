@@ -1,17 +1,25 @@
 package dnd.myOcean.config.security.jwt.filter;
 
+import dnd.myOcean.config.oAuth.kakao.details.KakaoMemberDetails;
 import dnd.myOcean.config.security.jwt.token.TokenService;
+import dnd.myOcean.dto.jwt.response.TokenDto;
 import jakarta.servlet.FilterChain;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import java.io.IOException;
+import java.util.Collection;
+import java.util.stream.Collectors;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
+import org.springframework.security.core.Authentication;
+import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Component;
 import org.springframework.util.StringUtils;
 import org.springframework.web.filter.OncePerRequestFilter;
 
+@Slf4j
 @Component
 @RequiredArgsConstructor
 public class JwtFilter extends OncePerRequestFilter {
@@ -39,15 +47,52 @@ public class JwtFilter extends OncePerRequestFilter {
         String accessToken = getAccessToken(request);
         String refreshToken = getRefreshToken(request);
 
-        /**
-         * TODO : accessToken, refreshToken 만료에 따른 처리
-         * 1. accessToken 정상, refreshToken 정상 -> Context에 authentication 담기 -> doFilter
-         * 2. accessToken 만료, refreshToken 정상 -> refreshToken으로 accessToken reIssue -> Context에 authentication 담기 -> doFilter
-         * 3. accessToken 정상, refreshToken 만료 -> accessToken으로 refreshToken reIssue -> Context에 authentication 담기 -> doFilter
-         * 4. accessToken 만료, refreshToken 만료 -> 재로그인 요청
-         */
-        if (tokenService.validateToken(accessToken) && tokenService.validateToken(refreshToken)) {
+        if (validateExpire(accessToken) && validateExpire(refreshToken)) {
+            log.info("DID1");
             SecurityContextHolder.getContext().setAuthentication(tokenService.getAuthentication(accessToken));
+            request.setAttribute(ACCESS_HEADER, accessToken);
+            request.setAttribute(ACCESS_HEADER, refreshToken);
+
+        } else if (!validateExpire(accessToken) && validateExpire(refreshToken) && tokenService.validateToken(
+                refreshToken)) {
+            log.info("DID2");
+            Authentication authentication = tokenService.getAuthentication(refreshToken);
+
+            KakaoMemberDetails principal = (KakaoMemberDetails) authentication.getPrincipal();
+            String email = principal.getName();
+
+            Collection<? extends GrantedAuthority> authorities = principal.getAuthorities();
+
+            String role = authorities.stream()
+                    .map(GrantedAuthority::getAuthority)
+                    .collect(Collectors.joining(","));
+
+            TokenDto token = tokenService.createToken(email, role);
+
+            SecurityContextHolder.getContext()
+                    .setAuthentication(tokenService.getAuthentication(token.getAccessToken()));
+
+            request.setAttribute(ACCESS_HEADER, token.getAccessToken());
+
+        } else if (validateExpire(accessToken) && !validateExpire(refreshToken) && tokenService.validateToken(
+                accessToken)) {
+            Authentication authentication = tokenService.getAuthentication(accessToken);
+
+            KakaoMemberDetails principal = (KakaoMemberDetails) authentication.getPrincipal();
+            String email = principal.getName();
+
+            Collection<? extends GrantedAuthority> authorities = principal.getAuthorities();
+
+            String role = authorities.stream()
+                    .map(GrantedAuthority::getAuthority)
+                    .collect(Collectors.joining(","));
+
+            TokenDto token = tokenService.createToken(email, role);
+
+            SecurityContextHolder.getContext()
+                    .setAuthentication(tokenService.getAuthentication(token.getAccessToken()));
+
+            request.setAttribute(REFRESH_HEADER, token.getRefreshToken());
         }
 
         filterChain.doFilter(request, response);
@@ -62,9 +107,9 @@ public class JwtFilter extends OncePerRequestFilter {
     }
 
     private String getRefreshToken(HttpServletRequest request) {
-        String accessToken = request.getHeader(REFRESH_HEADER);
-        if (StringUtils.hasText(accessToken)) {
-            return accessToken;
+        String refreshToken = request.getHeader(REFRESH_HEADER);
+        if (StringUtils.hasText(refreshToken)) {
+            return refreshToken;
         }
         return null;
     }

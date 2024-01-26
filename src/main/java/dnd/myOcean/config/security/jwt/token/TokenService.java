@@ -37,11 +37,11 @@ public class TokenService {
     private Key secretkey;
 
     public TokenService(@Value("${jwt.secret_key}") String secretKey,
-                        @Value("${jwt.token-validity-in-seconds}") long accessTokenValidityMilliSeconds,
-                        @Value("${jwt.refresh-token-validity-in-seconds}") long refreshTokenValidityMilliSeconds) {
+                        @Value("${jwt.access-token-validity-in-seconds}") long accessTokenValiditySeconds,
+                        @Value("${jwt.refresh-token-validity-in-seconds}") long refreshTokenValiditySeconds) {
         this.secretKey = secretKey;
-        this.accessTokenValidityMilliSeconds = accessTokenValidityMilliSeconds * 1000;
-        this.refreshTokenValidityMilliSeconds = refreshTokenValidityMilliSeconds * 1000;
+        this.accessTokenValidityMilliSeconds = accessTokenValiditySeconds * 1000;
+        this.refreshTokenValidityMilliSeconds = refreshTokenValiditySeconds * 1000;
     }
 
     @PostConstruct

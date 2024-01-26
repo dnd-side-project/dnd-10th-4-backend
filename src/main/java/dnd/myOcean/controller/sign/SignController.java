@@ -4,6 +4,7 @@ package dnd.myOcean.controller.sign;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import dnd.myOcean.dto.jwt.response.TokenDto;
 import dnd.myOcean.service.sign.SignService;
+import jakarta.servlet.http.HttpServletRequest;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -30,8 +31,8 @@ public class SignController {
      * for 포스트맨 테스트 API
      */
     @PostMapping("/login/kakao/postman")
-    public ResponseEntity loginKakao(@RequestParam(name = "code") String code)
+    public ResponseEntity loginKakao(HttpServletRequest request, @RequestParam(name = "code") String code)
             throws JsonProcessingException {
-        return new ResponseEntity(signService.kakaoLogin(code), HttpStatus.OK);
+        return new ResponseEntity(signService.kakaoLogin(request, code), HttpStatus.OK);
     }
 }

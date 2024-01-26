@@ -7,15 +7,22 @@ import dnd.myOcean.config.security.jwt.token.TokenService;
 import dnd.myOcean.domain.member.Gender;
 import dnd.myOcean.domain.member.Member;
 import dnd.myOcean.domain.member.Role;
+import dnd.myOcean.domain.refreshtoken.RefreshToken;
 import dnd.myOcean.dto.jwt.response.TokenDto;
 import dnd.myOcean.dto.sign.LoginKakaoRequestDto;
-import dnd.myOcean.repository.MemberRepository;
+import dnd.myOcean.repository.jpa.member.MemberRepository;
+import dnd.myOcean.repository.redis.RefreshTokenRedisRepository;
+import dnd.myOcean.util.HttpRequestUtil;
+import jakarta.servlet.http.HttpServletRequest;
+import java.util.ArrayList;
+import java.util.List;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.HttpEntity;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpMethod;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.stereotype.Service;
 import org.springframework.util.LinkedMultiValueMap;
 import org.springframework.util.MultiValueMap;
@@ -30,6 +37,8 @@ public class SignService {
     private final RestTemplate restTemplate;
     private final TokenService tokenService;
     private final MemberRepository memberRepository;
+    private final RefreshTokenRedisRepository refreshTokenRedisRepository;
+
 
     @Value("${kakao.client.id}")
     private String kakaoClientId;
@@ -37,7 +46,7 @@ public class SignService {
     @Value("${kakao.redirect-url}")
     private String redirect_uri;
 
-    public TokenDto kakaoLogin(String code) throws JsonProcessingException {
+    public TokenDto kakaoLogin(HttpServletRequest request, String code) throws JsonProcessingException {
         /**
          * 1. code로 사용자 정보 받기 ( code -> 토큰 발급 -> 토큰으로 사용자 정보 요청 Flow인데, 포스트맨 내부적으로 token 요청을 하는 것 같음)
          * // 포스트맨이 아닌 실제 배포 시에는 getKakaoUserInfo(code) -> getKakaoUserInfo(getToken(code)) 으로 변경해주어야 할 듯함.
@@ -50,9 +59,32 @@ public class SignService {
         Member member = saveIfNonExist(loginKakaoRequestDto);
 
         /**
-         * 3. JWT 생성 및 리턴
+         * 3. JWT 생성
          */
-        return tokenService.createToken(member.getEmail(), member.getRole().name());
+        TokenDto tokenDto = tokenService.createToken(member.getEmail(), member.getRole().name());
+
+        /**
+         * 4. Redis에 RefreshToken 저장
+         */
+        String clientIp = HttpRequestUtil.getClientIp(request);
+        System.out.println(clientIp);
+        saveRefreshTokenOnRedis(request, member, tokenDto);
+
+        /**
+         * 5. token 리턴
+         */
+        return tokenDto;
+    }
+
+    private void saveRefreshTokenOnRedis(HttpServletRequest request, Member member, TokenDto tokenDto) {
+        List<SimpleGrantedAuthority> simpleGrantedAuthorities = new ArrayList<>();
+        simpleGrantedAuthorities.add(new SimpleGrantedAuthority(member.getRole().name()));
+        refreshTokenRedisRepository.save(RefreshToken.builder()
+                .id(member.getEmail())
+                .ip(HttpRequestUtil.getClientIp(request))
+                .authorities(simpleGrantedAuthorities)
+                .refreshToken(tokenDto.getRefreshToken())
+                .build());
     }
 
     private Member saveIfNonExist(LoginKakaoRequestDto loginKakaoRequestDto) {

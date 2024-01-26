@@ -16,7 +16,7 @@ import dnd.myOcean.exception.member.GenderUpdateLimitExceedException;
 import dnd.myOcean.exception.member.MaxWorrySelectionLimitException;
 import dnd.myOcean.exception.member.MemberNotFoundException;
 import dnd.myOcean.exception.member.SameNicknameModifyRequestException;
-import dnd.myOcean.repository.MemberRepository;
+import dnd.myOcean.repository.jpa.member.MemberRepository;
 import java.util.List;
 import java.util.Optional;
 import lombok.RequiredArgsConstructor;
