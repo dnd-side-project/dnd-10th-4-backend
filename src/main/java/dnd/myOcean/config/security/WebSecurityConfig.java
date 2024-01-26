@@ -42,6 +42,7 @@ public class WebSecurityConfig {
                         .requestMatchers("/api/sign/**").permitAll()
                         .requestMatchers("/login/oauth2/code/kakao").permitAll() // for Postman - redirect_uri
                         .requestMatchers("/api/exception/**").permitAll()
+                        .requestMatchers("/favicon.ico").permitAll()
                         .anyRequest().authenticated()
                 )
 

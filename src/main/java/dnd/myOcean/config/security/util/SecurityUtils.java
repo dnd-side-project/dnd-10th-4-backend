@@ -23,6 +23,7 @@ public class SecurityUtils {
             KakaoMemberDetails kakaoMemberDetails = (KakaoMemberDetails) authentication.getPrincipal();
             return Optional.ofNullable(kakaoMemberDetails.getName());
         }
+        
         if (principal instanceof String) {
             throw new AuthenticationEntryPointException();
         }

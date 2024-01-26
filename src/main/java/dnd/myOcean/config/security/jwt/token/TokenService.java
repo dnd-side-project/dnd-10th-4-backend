@@ -1,7 +1,10 @@
 package dnd.myOcean.config.security.jwt.token;
 
 import dnd.myOcean.config.oAuth.kakao.details.KakaoMemberDetails;
+import dnd.myOcean.domain.refreshtoken.RefreshToken;
 import dnd.myOcean.dto.jwt.response.TokenDto;
+import dnd.myOcean.repository.redis.RefreshTokenRedisRepository;
+import dnd.myOcean.util.HttpRequestUtil;
 import io.jsonwebtoken.Claims;
 import io.jsonwebtoken.ExpiredJwtException;
 import io.jsonwebtoken.Jwts;
@@ -11,6 +14,7 @@ import io.jsonwebtoken.UnsupportedJwtException;
 import io.jsonwebtoken.io.Decoders;
 import io.jsonwebtoken.security.Keys;
 import jakarta.annotation.PostConstruct;
+import jakarta.servlet.http.HttpServletRequest;
 import java.security.Key;
 import java.util.Arrays;
 import java.util.Date;
@@ -23,6 +27,7 @@ import org.springframework.security.core.Authentication;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.stereotype.Component;
+import org.springframework.transaction.annotation.Transactional;
 
 
 @Component
@@ -34,14 +39,17 @@ public class TokenService {
     private final String secretKey;
     private final long accessTokenValidityMilliSeconds;
     private final long refreshTokenValidityMilliSeconds;
+    private final RefreshTokenRedisRepository refreshTokenRedisRepository;
     private Key secretkey;
 
     public TokenService(@Value("${jwt.secret_key}") String secretKey,
                         @Value("${jwt.access-token-validity-in-seconds}") long accessTokenValiditySeconds,
-                        @Value("${jwt.refresh-token-validity-in-seconds}") long refreshTokenValiditySeconds) {
+                        @Value("${jwt.refresh-token-validity-in-seconds}") long refreshTokenValiditySeconds,
+                        RefreshTokenRedisRepository refreshTokenRedisRepository) {
         this.secretKey = secretKey;
         this.accessTokenValidityMilliSeconds = accessTokenValiditySeconds * 1000;
         this.refreshTokenValidityMilliSeconds = refreshTokenValiditySeconds * 1000;
+        this.refreshTokenRedisRepository = refreshTokenRedisRepository;
     }
 
     @PostConstruct
@@ -97,7 +105,10 @@ public class TokenService {
 
     public boolean validateToken(String token) {
         try {
-            validate(token);
+            Jwts.parserBuilder()
+                    .setSigningKey(secretKey)
+                    .build()
+                    .parseClaimsJws(token);
             return true;
         } catch (io.jsonwebtoken.security.SecurityException | MalformedJwtException e) {
             return false;
@@ -110,17 +121,35 @@ public class TokenService {
 
     public boolean validateExpire(String token) {
         try {
-            validate(token);
+            Jwts.parserBuilder()
+                    .setSigningKey(secretKey)
+                    .build()
+                    .parseClaimsJws(token);
             return true;
         } catch (ExpiredJwtException e) {
             return false;
         }
     }
 
-    private void validate(String token) {
-        Jwts.parserBuilder()
-                .setSigningKey(secretKey)
-                .build()
-                .parseClaimsJws(token);
+    @Transactional
+    public TokenDto reIssueAccessToken(String refreshToken, HttpServletRequest request) {
+        System.out.println("REISSUE");
+        if (validateToken(refreshToken) && validateExpire(refreshToken)) {
+            RefreshToken findToken = refreshTokenRedisRepository.findByRefreshToken(refreshToken);
+            String currentIp = HttpRequestUtil.getClientIp(request);
+
+            if (findToken.isIpEqualTo(currentIp)) {
+                TokenDto tokenDto = createToken(findToken.getId(), findToken.getAuthority());
+                refreshTokenRedisRepository.save(RefreshToken.builder()
+                        .id(findToken.getId())
+                        .ip(currentIp)
+                        .authorities(findToken.getAuthorities())
+                        .refreshToken(tokenDto.getRefreshToken())
+                        .build());
+
+                return tokenDto;
+            }
+        }
+        throw new RuntimeException("FAIL");
     }
 }

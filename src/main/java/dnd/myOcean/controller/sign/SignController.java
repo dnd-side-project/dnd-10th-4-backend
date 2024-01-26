@@ -24,6 +24,7 @@ public class SignController {
     @GetMapping("/login/kakao")
     public ResponseEntity loginKakao(@RequestParam(name = "accessToken") String accessToken,
                                      @RequestParam(name = "refreshToken") String refreshToken) {
+        System.out.println("HI");
         return new ResponseEntity(TokenDto.of(accessToken, refreshToken), HttpStatus.OK);
     }
 

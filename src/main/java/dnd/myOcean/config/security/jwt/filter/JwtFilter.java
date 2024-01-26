@@ -1,6 +1,7 @@
 package dnd.myOcean.config.security.jwt.filter;
 
 import dnd.myOcean.config.security.jwt.token.TokenService;
+import dnd.myOcean.dto.jwt.response.TokenDto;
 import jakarta.servlet.FilterChain;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServletRequest;
@@ -27,44 +28,59 @@ public class JwtFilter extends OncePerRequestFilter {
     protected void doFilterInternal(HttpServletRequest request,
                                     HttpServletResponse response,
                                     FilterChain filterChain) throws ServletException, IOException {
-
-        if (request.getRequestURI().startsWith("/api/sign/login")) {
-            filterChain.doFilter(request, response);
+        if (isRequestPassURI(request, response, filterChain)) {
             return;
         }
 
-        if (request.getRequestURI().startsWith("/api/exception")) {
-            filterChain.doFilter(request, response);
-            return;
-        }
+        String accessToken = getTokenFromHeader(request, ACCESS_HEADER);
 
-        String accessToken = getAccessToken(request);
-
-        // accessToken 만료 X
         if (validateExpire(accessToken)) {
             SecurityContextHolder.getContext().setAuthentication(tokenService.getAuthentication(accessToken));
         }
 
-        // accessToken 만료 , refreshToken
-        if (!validateExpire(accessToken) && validateExpire(getRefreshToken(request))) {
+        if (!validateExpire(accessToken)) {
+            String refreshToken = getTokenFromHeader(request, REFRESH_HEADER);
 
+            // accessToken, refreshToken 재발급
+            TokenDto tokenDto = tokenService.reIssueAccessToken(refreshToken, request);
+
+            SecurityContextHolder.getContext()
+                    .setAuthentication(tokenService.getAuthentication(tokenDto.getAccessToken()));
         }
 
         filterChain.doFilter(request, response);
     }
 
-    private static String getAccessToken(HttpServletRequest request) {
-        String accessToken = request.getHeader(ACCESS_HEADER);
-        if (StringUtils.hasText(accessToken)) {
-            return accessToken;
+    private static boolean isRequestPassURI(HttpServletRequest request, HttpServletResponse response,
+                                            FilterChain filterChain)
+            throws IOException, ServletException {
+        if (request.getRequestURI().startsWith("/api/sign/login")) {
+            filterChain.doFilter(request, response);
+            return true;
         }
-        return null;
+
+        if (request.getRequestURI().startsWith("/api/exception")) {
+            filterChain.doFilter(request, response);
+            return true;
+        }
+
+        if (request.getRequestURI().startsWith("/api/token/reIssue")) {
+            filterChain.doFilter(request, response);
+            return true;
+        }
+
+        if (request.getRequestURI().startsWith("/favicon.ico")) {
+            filterChain.doFilter(request, response);
+            return true;
+        }
+        
+        return false;
     }
 
-    private String getRefreshToken(HttpServletRequest request) {
-        String refreshToken = request.getHeader(REFRESH_HEADER);
-        if (StringUtils.hasText(refreshToken)) {
-            return refreshToken;
+    private static String getTokenFromHeader(HttpServletRequest request, String headerName) {
+        String token = request.getHeader(headerName);
+        if (StringUtils.hasText(token)) {
+            return token;
         }
         return null;
     }
