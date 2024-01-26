@@ -4,22 +4,19 @@ package dnd.myOcean.service.member;
 import dnd.myOcean.domain.member.Gender;
 import dnd.myOcean.domain.member.Member;
 import dnd.myOcean.domain.member.Worry;
+import dnd.myOcean.domain.member.WorryType;
 import dnd.myOcean.dto.member.MemberBirthdayUpdateRequest;
 import dnd.myOcean.dto.member.MemberGenderUpdateRequest;
 import dnd.myOcean.dto.member.MemberNicknameUpdateRequest;
 import dnd.myOcean.dto.member.MemberWorryUpdateRequest;
-import dnd.myOcean.exception.member.AlreadyExistNicknameException;
-import dnd.myOcean.exception.member.BirthdayUpdateLimitExceedException;
-import dnd.myOcean.exception.member.GenderUpdateLimitExceedException;
-import dnd.myOcean.exception.member.MaxWorrySelectionLimitException;
-import dnd.myOcean.exception.member.MemberNotFoundException;
-import dnd.myOcean.exception.member.SameNicknameModifyRequestException;
+import dnd.myOcean.exception.member.*;
 import dnd.myOcean.repository.MemberRepository;
-import java.util.List;
-import java.util.Optional;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+
+import java.util.List;
+import java.util.Optional;
 
 @Service
 @Transactional(readOnly = true)
@@ -73,13 +70,23 @@ public class MemberService {
         Member member = memberRepository.findByEmail(memberWorryUpdateRequest.getEmail())
                 .orElseThrow(MemberNotFoundException::new);
 
-        List<Worry> worries = memberWorryUpdateRequest.getWorries();
+        List<WorryType> worries = memberWorryUpdateRequest.getWorries();
 
-        if (worries.size() > 3) {
-            throw new MaxWorrySelectionLimitException();
+        if (worries.size() < 1 || worries.size() > 3) {
+            throw new WorrySelectionRangeLimitException();
         }
 
-        member.updateWorry(worries);
+        // 기존의 고민을 clear
+        member.getWorries().clear();
+
+        for (WorryType findWorry : worries) {
+            Worry worry = Worry.builder()
+                    .worryType(findWorry)
+                    .member(member)
+                    .build();
+
+            member.updateWorry(worry);
+        }
     }
 
     public boolean isNicknameAvailable(String nickname) {
