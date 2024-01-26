@@ -5,7 +5,7 @@ import dnd.myOcean.exception.auth.AuthenticationEntryPointException;
 import dnd.myOcean.exception.member.AlreadyExistNicknameException;
 import dnd.myOcean.exception.member.BirthdayUpdateLimitExceedException;
 import dnd.myOcean.exception.member.GenderUpdateLimitExceedException;
-import dnd.myOcean.exception.member.MaxWorrySelectionLimitException;
+import dnd.myOcean.exception.member.WorrySelectionRangeLimitException;
 import dnd.myOcean.exception.member.NoSuchGenderException;
 import dnd.myOcean.exception.member.SameNicknameModifyRequestException;
 import org.springframework.http.HttpStatus;
@@ -41,10 +41,10 @@ public class ExceptionAdvisor {
         return new ResponseEntity("성별 수정 가능한 횟수를 초과했습니다.", HttpStatus.FORBIDDEN);
     }
 
-    @ExceptionHandler(MaxWorrySelectionLimitException.class)
+    @ExceptionHandler(WorrySelectionRangeLimitException.class)
     @ResponseStatus(HttpStatus.FORBIDDEN)
-    public ResponseEntity maxWorrySelectionLimitException(MaxWorrySelectionLimitException e) {
-        return new ResponseEntity("고민은 최대 3개까지만 선택할 수 있습니다.", HttpStatus.FORBIDDEN);
+    public ResponseEntity maxWorrySelectionLimitException(WorrySelectionRangeLimitException e) {
+        return new ResponseEntity("고민은 최소 1개, 최대 3개까지만 가능합니다.", HttpStatus.FORBIDDEN);
     }
 
     @ExceptionHandler(NoSuchGenderException.class)
