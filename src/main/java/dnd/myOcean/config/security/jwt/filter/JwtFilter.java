@@ -42,8 +42,6 @@ public class JwtFilter extends OncePerRequestFilter {
         if (!validateExpire(accessToken)) {
             String refreshToken = getTokenFromHeader(request, REFRESH_HEADER);
 
-            System.out.println(refreshToken);
-
             // accessToken, refreshToken 재발급
             TokenDto tokenDto = tokenProvider.reIssueAccessToken(refreshToken, request);
             SecurityContextHolder.getContext()
