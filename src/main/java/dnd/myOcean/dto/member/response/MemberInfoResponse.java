@@ -10,9 +10,10 @@ import lombok.NoArgsConstructor;
 @AllArgsConstructor
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 public class MemberInfoResponse {
-    
+
     private Long id;
     private String email;
+    private String nickname;
     private String gender;
     private Integer age;
     private String role;
