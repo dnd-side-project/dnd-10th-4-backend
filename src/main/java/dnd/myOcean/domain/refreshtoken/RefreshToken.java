@@ -19,15 +19,10 @@ import org.springframework.security.core.authority.SimpleGrantedAuthority;
 public class RefreshToken {
 
     private String id;
-    private String ip;
     private Collection<? extends GrantedAuthority> authorities;
 
     @Indexed
     private String refreshToken;
-
-    public boolean isIpEqualTo(String currentIp) {
-        return ip.equals(currentIp);
-    }
 
     public String getAuthority() {
         return authorities.stream()

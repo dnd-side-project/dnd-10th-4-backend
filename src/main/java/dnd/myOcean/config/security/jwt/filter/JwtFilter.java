@@ -43,7 +43,7 @@ public class JwtFilter extends OncePerRequestFilter {
             String refreshToken = getTokenFromHeader(request, REFRESH_HEADER);
 
             // accessToken, refreshToken 재발급
-            TokenDto tokenDto = tokenProvider.reIssueAccessToken(refreshToken, request);
+            TokenDto tokenDto = tokenProvider.reIssueAccessToken(refreshToken);
             SecurityContextHolder.getContext()
                     .setAuthentication(tokenProvider.getAuthentication(tokenDto.getAccessToken()));
 

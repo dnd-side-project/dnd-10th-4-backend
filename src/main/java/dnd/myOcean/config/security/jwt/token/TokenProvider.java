@@ -5,7 +5,6 @@ import dnd.myOcean.domain.refreshtoken.RefreshToken;
 import dnd.myOcean.dto.jwt.response.TokenDto;
 import dnd.myOcean.exception.auth.ReissueFailException;
 import dnd.myOcean.repository.redis.RefreshTokenRedisRepository;
-import dnd.myOcean.util.HttpRequestUtil;
 import io.jsonwebtoken.Claims;
 import io.jsonwebtoken.ExpiredJwtException;
 import io.jsonwebtoken.Jwts;
@@ -15,7 +14,6 @@ import io.jsonwebtoken.UnsupportedJwtException;
 import io.jsonwebtoken.io.Decoders;
 import io.jsonwebtoken.security.Keys;
 import jakarta.annotation.PostConstruct;
-import jakarta.servlet.http.HttpServletRequest;
 import java.security.Key;
 import java.util.Arrays;
 import java.util.Date;
@@ -133,24 +131,20 @@ public class TokenProvider {
     }
 
     @Transactional
-    public TokenDto reIssueAccessToken(String refreshToken, HttpServletRequest request) {
+    public TokenDto reIssueAccessToken(String refreshToken) {
         if (validateToken(refreshToken) && validateExpire(refreshToken)) {
             RefreshToken findToken = refreshTokenRedisRepository.findByRefreshToken(refreshToken);
-            String currentIp = HttpRequestUtil.getClientIp(request);
 
-            if (findToken.isIpEqualTo(currentIp)) {
-                TokenDto tokenDto = createToken(findToken.getId(), findToken.getAuthority());
-                refreshTokenRedisRepository.save(RefreshToken.builder()
-                        .id(findToken.getId())
-                        .ip(currentIp)
-                        .authorities(findToken.getAuthorities())
-                        .refreshToken(tokenDto.getRefreshToken())
-                        .build());
+            TokenDto tokenDto = createToken(findToken.getId(), findToken.getAuthority());
+            refreshTokenRedisRepository.save(RefreshToken.builder()
+                    .id(findToken.getId())
+                    .authorities(findToken.getAuthorities())
+                    .refreshToken(tokenDto.getRefreshToken())
+                    .build());
 
-                return tokenDto;
-            }
+            return tokenDto;
         }
-        
+
         throw new ReissueFailException("토큰 재발급에 실패하였습니다.");
     }
 }

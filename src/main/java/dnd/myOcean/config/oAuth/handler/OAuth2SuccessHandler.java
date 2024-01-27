@@ -8,7 +8,6 @@ import dnd.myOcean.dto.jwt.response.TokenDto;
 import dnd.myOcean.exception.member.MemberNotFoundException;
 import dnd.myOcean.repository.jpa.member.MemberRepository;
 import dnd.myOcean.repository.redis.RefreshTokenRedisRepository;
-import dnd.myOcean.util.HttpRequestUtil;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
@@ -45,17 +44,16 @@ public class OAuth2SuccessHandler extends SimpleUrlAuthenticationSuccessHandler 
 
         TokenDto tokenDto = tokenProvider.createToken(member.getEmail(), member.getRole().name());
 
-        saveRefreshTokenOnRedis(request, member, tokenDto);
+        saveRefreshTokenOnRedis(member, tokenDto);
         String redirectURI = String.format(REDIRECT_URI, tokenDto.getAccessToken(), tokenDto.getRefreshToken());
         getRedirectStrategy().sendRedirect(request, response, redirectURI);
     }
 
-    private void saveRefreshTokenOnRedis(HttpServletRequest request, Member member, TokenDto tokenDto) {
+    private void saveRefreshTokenOnRedis(Member member, TokenDto tokenDto) {
         List<SimpleGrantedAuthority> simpleGrantedAuthorities = new ArrayList<>();
         simpleGrantedAuthorities.add(new SimpleGrantedAuthority(member.getRole().name()));
         refreshTokenRedisRepository.save(RefreshToken.builder()
                 .id(member.getEmail())
-                .ip(HttpRequestUtil.getClientIp(request))
                 .authorities(simpleGrantedAuthorities)
                 .refreshToken(tokenDto.getRefreshToken())
                 .build());

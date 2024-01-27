@@ -12,7 +12,6 @@ import dnd.myOcean.dto.jwt.response.TokenDto;
 import dnd.myOcean.dto.sign.LoginKakaoRequestDto;
 import dnd.myOcean.repository.jpa.member.MemberRepository;
 import dnd.myOcean.repository.redis.RefreshTokenRedisRepository;
-import dnd.myOcean.util.HttpRequestUtil;
 import jakarta.servlet.http.HttpServletRequest;
 import java.util.ArrayList;
 import java.util.List;
@@ -66,7 +65,7 @@ public class SignService {
         /**
          * 4. Redis에 RefreshToken 저장
          */
-        saveRefreshTokenOnRedis(request, member, tokenDto);
+        saveRefreshTokenOnRedis(member, tokenDto);
 
         /**
          * 5. token 리턴
@@ -74,12 +73,11 @@ public class SignService {
         return tokenDto;
     }
 
-    private void saveRefreshTokenOnRedis(HttpServletRequest request, Member member, TokenDto tokenDto) {
+    private void saveRefreshTokenOnRedis(Member member, TokenDto tokenDto) {
         List<SimpleGrantedAuthority> simpleGrantedAuthorities = new ArrayList<>();
         simpleGrantedAuthorities.add(new SimpleGrantedAuthority(member.getRole().name()));
         refreshTokenRedisRepository.save(RefreshToken.builder()
                 .id(member.getEmail())
-                .ip(HttpRequestUtil.getClientIp(request))
                 .authorities(simpleGrantedAuthorities)
                 .refreshToken(tokenDto.getRefreshToken())
                 .build());
