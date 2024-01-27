@@ -33,6 +33,7 @@ public class RefreshToken {
         return authorities.stream()
                 .map(authority -> new SimpleGrantedAuthority(authority.getAuthority()))
                 .collect(Collectors.toList())
-                .get(0).getAuthority();
+                .get(0)
+                .getAuthority();
     }
 }

@@ -1,11 +1,12 @@
 package dnd.myOcean.config.security.jwt.filter;
 
-import dnd.myOcean.config.security.jwt.token.TokenService;
+import dnd.myOcean.config.security.jwt.token.TokenProvider;
 import dnd.myOcean.dto.jwt.response.TokenDto;
 import jakarta.servlet.FilterChain;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
+import jakarta.servlet.http.HttpSession;
 import java.io.IOException;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -19,10 +20,10 @@ import org.springframework.web.filter.OncePerRequestFilter;
 @RequiredArgsConstructor
 public class JwtFilter extends OncePerRequestFilter {
 
-    public static final String ACCESS_HEADER = "AccessToken";
-    public static final String REFRESH_HEADER = "RefreshToken";
+    private static final String ACCESS_HEADER = "AccessToken";
+    private static final String REFRESH_HEADER = "RefreshToken";
 
-    private final TokenService tokenService;
+    private final TokenProvider tokenProvider;
 
     @Override
     protected void doFilterInternal(HttpServletRequest request,
@@ -35,17 +36,22 @@ public class JwtFilter extends OncePerRequestFilter {
         String accessToken = getTokenFromHeader(request, ACCESS_HEADER);
 
         if (validateExpire(accessToken)) {
-            SecurityContextHolder.getContext().setAuthentication(tokenService.getAuthentication(accessToken));
+            SecurityContextHolder.getContext().setAuthentication(tokenProvider.getAuthentication(accessToken));
         }
 
         if (!validateExpire(accessToken)) {
             String refreshToken = getTokenFromHeader(request, REFRESH_HEADER);
 
-            // accessToken, refreshToken 재발급
-            TokenDto tokenDto = tokenService.reIssueAccessToken(refreshToken, request);
+            System.out.println(refreshToken);
 
+            // accessToken, refreshToken 재발급
+            TokenDto tokenDto = tokenProvider.reIssueAccessToken(refreshToken, request);
             SecurityContextHolder.getContext()
-                    .setAuthentication(tokenService.getAuthentication(tokenDto.getAccessToken()));
+                    .setAuthentication(tokenProvider.getAuthentication(tokenDto.getAccessToken()));
+
+            redirectReissueURI(request, response, tokenDto);
+
+            return;
         }
 
         filterChain.doFilter(request, response);
@@ -54,7 +60,7 @@ public class JwtFilter extends OncePerRequestFilter {
     private static boolean isRequestPassURI(HttpServletRequest request, HttpServletResponse response,
                                             FilterChain filterChain)
             throws IOException, ServletException {
-        if (request.getRequestURI().startsWith("/api/sign/login")) {
+        if (request.getRequestURI().startsWith("/api/sign")) {
             filterChain.doFilter(request, response);
             return true;
         }
@@ -64,16 +70,11 @@ public class JwtFilter extends OncePerRequestFilter {
             return true;
         }
 
-        if (request.getRequestURI().startsWith("/api/token/reIssue")) {
-            filterChain.doFilter(request, response);
-            return true;
-        }
-
         if (request.getRequestURI().startsWith("/favicon.ico")) {
             filterChain.doFilter(request, response);
             return true;
         }
-        
+
         return false;
     }
 
@@ -86,6 +87,14 @@ public class JwtFilter extends OncePerRequestFilter {
     }
 
     private boolean validateExpire(String token) {
-        return StringUtils.hasText(token) && tokenService.validateExpire(token);
+        return StringUtils.hasText(token) && tokenProvider.validateExpire(token);
+    }
+
+    private static void redirectReissueURI(HttpServletRequest request, HttpServletResponse response, TokenDto tokenDto)
+            throws IOException {
+        HttpSession session = request.getSession();
+        session.setAttribute("accessToken", tokenDto.getAccessToken());
+        session.setAttribute("refreshToken", tokenDto.getRefreshToken());
+        response.sendRedirect("/api/sign/reissue");
     }
 }

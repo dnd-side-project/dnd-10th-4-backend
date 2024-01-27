@@ -5,6 +5,7 @@ import com.fasterxml.jackson.core.JsonProcessingException;
 import dnd.myOcean.dto.jwt.response.TokenDto;
 import dnd.myOcean.service.sign.SignService;
 import jakarta.servlet.http.HttpServletRequest;
+import jakarta.servlet.http.HttpSession;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -37,5 +38,17 @@ public class SignController {
     public ResponseEntity loginKakao(HttpServletRequest request, @RequestParam(name = "code") String code)
             throws JsonProcessingException {
         return new ResponseEntity(signService.kakaoLogin(request, code), HttpStatus.OK);
+    }
+
+    /**
+     * 액세스 토큰 재발급 API
+     */
+    @GetMapping("/reissue")
+    public ResponseEntity reissueToken(HttpServletRequest request) {
+        HttpSession session = request.getSession();
+        String accessToken = (String) session.getAttribute("accessToken");
+        String refreshToken = (String) session.getAttribute("refreshToken");
+
+        return new ResponseEntity(new TokenDto(accessToken, refreshToken), HttpStatus.OK);
     }
 }

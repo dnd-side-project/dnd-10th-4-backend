@@ -3,6 +3,7 @@ package dnd.myOcean.config.security.jwt.token;
 import dnd.myOcean.config.oAuth.kakao.details.KakaoMemberDetails;
 import dnd.myOcean.domain.refreshtoken.RefreshToken;
 import dnd.myOcean.dto.jwt.response.TokenDto;
+import dnd.myOcean.exception.auth.ReissueFailException;
 import dnd.myOcean.repository.redis.RefreshTokenRedisRepository;
 import dnd.myOcean.util.HttpRequestUtil;
 import io.jsonwebtoken.Claims;
@@ -31,7 +32,7 @@ import org.springframework.transaction.annotation.Transactional;
 
 
 @Component
-public class TokenService {
+public class TokenProvider {
 
     private static final String AUTH_KEY = "AUTHORITY";
     private static final String AUTH_EMAIL = "EMAIL";
@@ -42,10 +43,10 @@ public class TokenService {
     private final RefreshTokenRedisRepository refreshTokenRedisRepository;
     private Key secretkey;
 
-    public TokenService(@Value("${jwt.secret_key}") String secretKey,
-                        @Value("${jwt.access-token-validity-in-seconds}") long accessTokenValiditySeconds,
-                        @Value("${jwt.refresh-token-validity-in-seconds}") long refreshTokenValiditySeconds,
-                        RefreshTokenRedisRepository refreshTokenRedisRepository) {
+    public TokenProvider(@Value("${jwt.secret_key}") String secretKey,
+                         @Value("${jwt.access-token-validity-in-seconds}") long accessTokenValiditySeconds,
+                         @Value("${jwt.refresh-token-validity-in-seconds}") long refreshTokenValiditySeconds,
+                         RefreshTokenRedisRepository refreshTokenRedisRepository) {
         this.secretKey = secretKey;
         this.accessTokenValidityMilliSeconds = accessTokenValiditySeconds * 1000;
         this.refreshTokenValidityMilliSeconds = refreshTokenValiditySeconds * 1000;
@@ -149,6 +150,8 @@ public class TokenService {
                 return tokenDto;
             }
         }
-        throw new RuntimeException("FAIL");
+
+        System.out.println("?");
+        throw new ReissueFailException("토큰 재발급에 실패하였습니다.");
     }
 }

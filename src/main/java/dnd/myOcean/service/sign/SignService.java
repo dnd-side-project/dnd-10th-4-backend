@@ -3,7 +3,7 @@ package dnd.myOcean.service.sign;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
-import dnd.myOcean.config.security.jwt.token.TokenService;
+import dnd.myOcean.config.security.jwt.token.TokenProvider;
 import dnd.myOcean.domain.member.Gender;
 import dnd.myOcean.domain.member.Member;
 import dnd.myOcean.domain.member.Role;
@@ -35,10 +35,10 @@ public class SignService {
     private static final String PREFIX = "낯선 ";
 
     private final RestTemplate restTemplate;
-    private final TokenService tokenService;
+    private final TokenProvider tokenProvider;
     private final MemberRepository memberRepository;
     private final RefreshTokenRedisRepository refreshTokenRedisRepository;
-    
+
     @Value("${kakao.client.id}")
     private String kakaoClientId;
 
@@ -61,7 +61,7 @@ public class SignService {
         /**
          * 3. JWT 생성
          */
-        TokenDto tokenDto = tokenService.createToken(member.getEmail(), member.getRole().name());
+        TokenDto tokenDto = tokenProvider.createToken(member.getEmail(), member.getRole().name());
 
         /**
          * 4. Redis에 RefreshToken 저장
