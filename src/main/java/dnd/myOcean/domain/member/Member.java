@@ -55,7 +55,7 @@ public class Member extends BaseEntity {
     }
 
     public void updateNickname(final String nickname) {
-        this.nickName = nickname;
+        this.nickName = "낯선 " + nickname;
     }
 
     public boolean isBirthDayChangeLimitExceeded() {

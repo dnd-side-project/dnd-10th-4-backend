@@ -5,7 +5,7 @@ spring:
   jpa:
     hibernate:
       ddl-auto: create
-    show-sql: true
+    show-sql: false
     properties:
       hibernate:
         default_batch_fetch_size: 1000
@@ -16,6 +16,9 @@ spring:
     url: '${custom.db.url}'
     username: '${custom.db.username}'
     password: '${custom.db.password}'
+    redis:
+      host: localhost
+      port: 6379
 
   security:
     oauth2:
@@ -40,5 +43,5 @@ spring:
 
 jwt:
   secret_key: ${jwt.secret_key}
-  token-validity-in-seconds: 86400
-  refresh-token-validity-in-seconds: 3000 # 6시간
+  access-token-validity-in-seconds: 30000 # (배포 시 30분 -> 1800 설정)
+  refresh-token-validity-in-seconds: 86400 # (배포 시 1일 -> 86400설정)
