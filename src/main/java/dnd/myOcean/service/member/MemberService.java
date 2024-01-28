@@ -11,6 +11,7 @@ import dnd.myOcean.dto.member.MemberNicknameUpdateRequest;
 import dnd.myOcean.dto.member.MemberWorryUpdateRequest;
 import dnd.myOcean.exception.member.*;
 import dnd.myOcean.repository.MemberRepository;
+import dnd.myOcean.repository.WorryRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -24,6 +25,7 @@ import java.util.Optional;
 public class MemberService {
 
     private final MemberRepository memberRepository;
+    private final WorryRepository worryRepository;
 
     @Transactional
     public void updateAge(final MemberBirthdayUpdateRequest memberBirthdayUpdateRequest) {
@@ -75,17 +77,16 @@ public class MemberService {
         if (worries.size() < 1 || worries.size() > 3) {
             throw new WorrySelectionRangeLimitException();
         }
-
-        // 기존의 고민을 clear
-        member.getWorries().clear();
+        
+        // 기존의 저장된 고민을 삭제
+        worryRepository.deleteByMember(member);
 
         for (WorryType findWorry : worries) {
             Worry worry = Worry.builder()
                     .worryType(findWorry)
                     .member(member)
                     .build();
-
-            member.updateWorry(worry);
+            worryRepository.save(worry);
         }
     }
 
