@@ -35,21 +35,20 @@ public class JwtFilter extends OncePerRequestFilter {
 
         String accessToken = getTokenFromHeader(request, ACCESS_HEADER);
 
-        if (validateExpire(accessToken)) {
+        if (validateExpire(accessToken) && validate(accessToken)) {
             SecurityContextHolder.getContext().setAuthentication(tokenProvider.getAuthentication(accessToken));
         }
 
-        if (!validateExpire(accessToken)) {
+        if (!validateExpire(accessToken) && validate(accessToken)) {
             String refreshToken = getTokenFromHeader(request, REFRESH_HEADER);
+            if (validate(refreshToken) && validateExpire(refreshToken)) {
+                // accessToken, refreshToken 재발급
+                TokenDto tokenDto = tokenProvider.reIssueAccessToken(refreshToken);
+                SecurityContextHolder.getContext()
+                        .setAuthentication(tokenProvider.getAuthentication(tokenDto.getAccessToken()));
 
-            // accessToken, refreshToken 재발급
-            TokenDto tokenDto = tokenProvider.reIssueAccessToken(refreshToken);
-            SecurityContextHolder.getContext()
-                    .setAuthentication(tokenProvider.getAuthentication(tokenDto.getAccessToken()));
-
-            redirectReissueURI(request, response, tokenDto);
-
-            return;
+                redirectReissueURI(request, response, tokenDto);
+            }
         }
 
         filterChain.doFilter(request, response);
@@ -86,6 +85,10 @@ public class JwtFilter extends OncePerRequestFilter {
 
     private boolean validateExpire(String token) {
         return StringUtils.hasText(token) && tokenProvider.validateExpire(token);
+    }
+
+    private boolean validate(String token) {
+        return StringUtils.hasText(token) && tokenProvider.validate(token);
     }
 
     private static void redirectReissueURI(HttpServletRequest request, HttpServletResponse response, TokenDto tokenDto)

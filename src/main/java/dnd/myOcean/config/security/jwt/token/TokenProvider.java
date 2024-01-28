@@ -3,7 +3,6 @@ package dnd.myOcean.config.security.jwt.token;
 import dnd.myOcean.config.oAuth.kakao.details.KakaoMemberDetails;
 import dnd.myOcean.domain.refreshtoken.RefreshToken;
 import dnd.myOcean.dto.jwt.response.TokenDto;
-import dnd.myOcean.exception.auth.ReissueFailException;
 import dnd.myOcean.repository.redis.RefreshTokenRedisRepository;
 import io.jsonwebtoken.Claims;
 import io.jsonwebtoken.ExpiredJwtException;
@@ -102,7 +101,7 @@ public class TokenProvider {
         return new UsernamePasswordAuthenticationToken(principal, token, simpleGrantedAuthorities);
     }
 
-    public boolean validateToken(String token) {
+    public boolean validate(String token) {
         try {
             Jwts.parserBuilder()
                     .setSigningKey(secretKey)
@@ -115,6 +114,8 @@ public class TokenProvider {
             return false;
         } catch (IllegalArgumentException e) {
             return false;
+        } catch (ExpiredJwtException e) {
+            return true;
         }
     }
 
@@ -132,19 +133,15 @@ public class TokenProvider {
 
     @Transactional
     public TokenDto reIssueAccessToken(String refreshToken) {
-        if (validateToken(refreshToken) && validateExpire(refreshToken)) {
-            RefreshToken findToken = refreshTokenRedisRepository.findByRefreshToken(refreshToken);
+        RefreshToken findToken = refreshTokenRedisRepository.findByRefreshToken(refreshToken);
 
-            TokenDto tokenDto = createToken(findToken.getId(), findToken.getAuthority());
-            refreshTokenRedisRepository.save(RefreshToken.builder()
-                    .id(findToken.getId())
-                    .authorities(findToken.getAuthorities())
-                    .refreshToken(tokenDto.getRefreshToken())
-                    .build());
+        TokenDto tokenDto = createToken(findToken.getId(), findToken.getAuthority());
+        refreshTokenRedisRepository.save(RefreshToken.builder()
+                .id(findToken.getId())
+                .authorities(findToken.getAuthorities())
+                .refreshToken(tokenDto.getRefreshToken())
+                .build());
 
-            return tokenDto;
-        }
-
-        throw new ReissueFailException("토큰 재발급에 실패하였습니다.");
+        return tokenDto;
     }
 }
