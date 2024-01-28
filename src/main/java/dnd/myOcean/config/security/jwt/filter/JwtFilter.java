@@ -1,75 +1,98 @@
 package dnd.myOcean.config.security.jwt.filter;
 
-import dnd.myOcean.config.security.jwt.token.TokenService;
+import dnd.myOcean.config.security.jwt.token.TokenProvider;
+import dnd.myOcean.dto.jwt.response.TokenDto;
 import jakarta.servlet.FilterChain;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
+import jakarta.servlet.http.HttpSession;
 import java.io.IOException;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Component;
 import org.springframework.util.StringUtils;
 import org.springframework.web.filter.OncePerRequestFilter;
 
+@Slf4j
 @Component
 @RequiredArgsConstructor
 public class JwtFilter extends OncePerRequestFilter {
 
-    public static final String ACCESS_HEADER = "Auth";
-    public static final String REFRESH_HEADER = "Refresh";
+    private static final String ACCESS_HEADER = "AccessToken";
+    private static final String REFRESH_HEADER = "RefreshToken";
 
-    private final TokenService tokenService;
+    private final TokenProvider tokenProvider;
 
     @Override
     protected void doFilterInternal(HttpServletRequest request,
                                     HttpServletResponse response,
                                     FilterChain filterChain) throws ServletException, IOException {
-
-        if (request.getRequestURI().startsWith("/api/sign/login")) {
-            filterChain.doFilter(request, response);
+        if (isRequestPassURI(request, response, filterChain)) {
             return;
         }
 
-        if (request.getRequestURI().startsWith("/api/exception")) {
-            filterChain.doFilter(request, response);
-            return;
+        String accessToken = getTokenFromHeader(request, ACCESS_HEADER);
+
+        if (validateExpire(accessToken)) {
+            SecurityContextHolder.getContext().setAuthentication(tokenProvider.getAuthentication(accessToken));
         }
 
-        String accessToken = getAccessToken(request);
-        String refreshToken = getRefreshToken(request);
+        if (!validateExpire(accessToken)) {
+            String refreshToken = getTokenFromHeader(request, REFRESH_HEADER);
 
-        /**
-         * TODO : accessToken, refreshToken 만료에 따른 처리
-         * 1. accessToken 정상, refreshToken 정상 -> Context에 authentication 담기 -> doFilter
-         * 2. accessToken 만료, refreshToken 정상 -> refreshToken으로 accessToken reIssue -> Context에 authentication 담기 -> doFilter
-         * 3. accessToken 정상, refreshToken 만료 -> accessToken으로 refreshToken reIssue -> Context에 authentication 담기 -> doFilter
-         * 4. accessToken 만료, refreshToken 만료 -> 재로그인 요청
-         */
-        if (tokenService.validateToken(accessToken) && tokenService.validateToken(refreshToken)) {
-            SecurityContextHolder.getContext().setAuthentication(tokenService.getAuthentication(accessToken));
+            // accessToken, refreshToken 재발급
+            TokenDto tokenDto = tokenProvider.reIssueAccessToken(refreshToken);
+            SecurityContextHolder.getContext()
+                    .setAuthentication(tokenProvider.getAuthentication(tokenDto.getAccessToken()));
+
+            redirectReissueURI(request, response, tokenDto);
+
+            return;
         }
 
         filterChain.doFilter(request, response);
     }
 
-    private static String getAccessToken(HttpServletRequest request) {
-        String accessToken = request.getHeader(ACCESS_HEADER);
-        if (StringUtils.hasText(accessToken)) {
-            return accessToken;
+    private static boolean isRequestPassURI(HttpServletRequest request, HttpServletResponse response,
+                                            FilterChain filterChain)
+            throws IOException, ServletException {
+        if (request.getRequestURI().startsWith("/api/sign")) {
+            filterChain.doFilter(request, response);
+            return true;
         }
-        return null;
+
+        if (request.getRequestURI().startsWith("/api/exception")) {
+            filterChain.doFilter(request, response);
+            return true;
+        }
+
+        if (request.getRequestURI().startsWith("/favicon.ico")) {
+            filterChain.doFilter(request, response);
+            return true;
+        }
+
+        return false;
     }
 
-    private String getRefreshToken(HttpServletRequest request) {
-        String accessToken = request.getHeader(REFRESH_HEADER);
-        if (StringUtils.hasText(accessToken)) {
-            return accessToken;
+    private static String getTokenFromHeader(HttpServletRequest request, String headerName) {
+        String token = request.getHeader(headerName);
+        if (StringUtils.hasText(token)) {
+            return token;
         }
         return null;
     }
 
     private boolean validateExpire(String token) {
-        return StringUtils.hasText(token) && tokenService.validateExpire(token);
+        return StringUtils.hasText(token) && tokenProvider.validateExpire(token);
+    }
+
+    private static void redirectReissueURI(HttpServletRequest request, HttpServletResponse response, TokenDto tokenDto)
+            throws IOException {
+        HttpSession session = request.getSession();
+        session.setAttribute("accessToken", tokenDto.getAccessToken());
+        session.setAttribute("refreshToken", tokenDto.getRefreshToken());
+        response.sendRedirect("/api/sign/reissue");
     }
 }

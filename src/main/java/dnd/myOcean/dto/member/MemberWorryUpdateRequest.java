@@ -4,11 +4,14 @@ import dnd.myOcean.domain.member.Worry;
 import jakarta.validation.constraints.Null;
 import java.util.ArrayList;
 import java.util.List;
-import lombok.Getter;
+import lombok.AccessLevel;
+import lombok.AllArgsConstructor;
+import lombok.Data;
 import lombok.NoArgsConstructor;
 
-@Getter
-@NoArgsConstructor
+@Data
+@AllArgsConstructor
+@NoArgsConstructor(access = AccessLevel.PROTECTED)
 public class MemberWorryUpdateRequest {
 
     @Null

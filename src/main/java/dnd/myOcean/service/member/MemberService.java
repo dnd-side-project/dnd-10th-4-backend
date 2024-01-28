@@ -6,15 +6,17 @@ import dnd.myOcean.domain.member.Member;
 import dnd.myOcean.domain.member.Worry;
 import dnd.myOcean.dto.member.MemberBirthdayUpdateRequest;
 import dnd.myOcean.dto.member.MemberGenderUpdateRequest;
+import dnd.myOcean.dto.member.MemberInfoRequest;
 import dnd.myOcean.dto.member.MemberNicknameUpdateRequest;
 import dnd.myOcean.dto.member.MemberWorryUpdateRequest;
+import dnd.myOcean.dto.member.response.MemberInfoResponse;
 import dnd.myOcean.exception.member.AlreadyExistNicknameException;
 import dnd.myOcean.exception.member.BirthdayUpdateLimitExceedException;
 import dnd.myOcean.exception.member.GenderUpdateLimitExceedException;
 import dnd.myOcean.exception.member.MaxWorrySelectionLimitException;
 import dnd.myOcean.exception.member.MemberNotFoundException;
 import dnd.myOcean.exception.member.SameNicknameModifyRequestException;
-import dnd.myOcean.repository.MemberRepository;
+import dnd.myOcean.repository.jpa.member.MemberRepository;
 import java.util.List;
 import java.util.Optional;
 import lombok.RequiredArgsConstructor;
@@ -83,8 +85,20 @@ public class MemberService {
     }
 
     public boolean isNicknameAvailable(String nickname) {
-        Optional<Member> existingMember = memberRepository.findByNickname(nickname);
+        Optional<Member> existingMember = memberRepository.findByNickName(nickname);
         return existingMember.isEmpty();
+    }
+
+    public MemberInfoResponse getMyInfo(MemberInfoRequest memberInfoRequest) {
+        Member member = memberRepository.findByEmail(memberInfoRequest.getEmail())
+                .orElseThrow(MemberNotFoundException::new);
+
+        return new MemberInfoResponse(member.getId(),
+                member.getEmail(),
+                member.getNickName(),
+                member.getGender().name(),
+                member.getAge(),
+                member.getRole().name());
     }
 }
 

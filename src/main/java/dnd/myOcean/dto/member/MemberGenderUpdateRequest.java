@@ -3,11 +3,14 @@ package dnd.myOcean.dto.member;
 
 import jakarta.validation.constraints.NotEmpty;
 import jakarta.validation.constraints.Null;
+import lombok.AccessLevel;
+import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
 @Data
-@NoArgsConstructor
+@AllArgsConstructor
+@NoArgsConstructor(access = AccessLevel.PROTECTED)
 public class MemberGenderUpdateRequest {
 
     @Null
