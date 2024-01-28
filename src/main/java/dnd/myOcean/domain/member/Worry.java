@@ -24,8 +24,4 @@ public class Worry extends BaseEntity {
 
     @Enumerated(EnumType.STRING)
     private WorryType worryType;
-
-    public void setMember(Member member) {
-        this.member = member;
-    }
 }
