@@ -77,7 +77,7 @@ public class MemberService {
         if (worries.size() < 1 || worries.size() > 3) {
             throw new WorrySelectionRangeLimitException();
         }
-        
+
         // 기존의 저장된 고민을 삭제
         worryRepository.deleteByMember(member);
 
