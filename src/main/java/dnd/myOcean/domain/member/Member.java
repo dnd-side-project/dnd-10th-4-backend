@@ -9,8 +9,6 @@ import lombok.experimental.SuperBuilder;
 
 import java.time.LocalDate;
 import java.time.Period;
-import java.util.ArrayList;
-import java.util.List;
 
 @Entity
 @Getter
@@ -38,9 +36,6 @@ public class Member extends BaseEntity {
     @Enumerated(EnumType.STRING)
     private Gender gender;
 
-    @OneToMany(mappedBy = "member", cascade = CascadeType.ALL, orphanRemoval = true)
-    private List<Worry> worries = new ArrayList<>();
-
     @Column
     private Integer updateAgeCount;
 
@@ -57,11 +52,6 @@ public class Member extends BaseEntity {
     public void updateGender(final Gender gender) {
         this.gender = gender;
         this.updateGenderCount++;
-    }
-
-    public void updateWorry(Worry worry) {
-        this.worries.add(worry);
-        worry.setMember(this);
     }
 
     public void updateNickname(final String nickname) {
