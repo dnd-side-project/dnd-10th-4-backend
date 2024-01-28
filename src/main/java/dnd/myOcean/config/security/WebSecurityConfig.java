@@ -38,6 +38,12 @@ public class WebSecurityConfig {
                 .sessionManagement((sessionManagement) ->
                         sessionManagement.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
 
+                .oauth2Login(oAuth2Login -> {
+                    oAuth2Login.userInfoEndpoint(userInfoEndpointConfig ->
+                            userInfoEndpointConfig.userService(kakaoMemberDetailsService));
+                    oAuth2Login.successHandler(oAuth2SuccessHandler);
+                })
+
                 .authorizeHttpRequests((authz) -> authz
                         .requestMatchers("/api/sign/**").permitAll()
                         .requestMatchers("/login/oauth2/code/kakao").permitAll() // for Postman - redirect_uri
@@ -46,17 +52,11 @@ public class WebSecurityConfig {
                         .anyRequest().authenticated()
                 )
 
+                .addFilterBefore(jwtFilter, UsernamePasswordAuthenticationFilter.class)
+
                 .exceptionHandling(exceptionHandling -> {
                     exceptionHandling.authenticationEntryPoint(jwtAuthenticationFailEntryPoint);
                     exceptionHandling.accessDeniedHandler(jwtAccessDeniedHandler);
-                })
-
-                .addFilterBefore(jwtFilter, UsernamePasswordAuthenticationFilter.class)
-
-                .oauth2Login(oAuth2Login -> {
-                    oAuth2Login.userInfoEndpoint(userInfoEndpointConfig ->
-                            userInfoEndpointConfig.userService(kakaoMemberDetailsService));
-                    oAuth2Login.successHandler(oAuth2SuccessHandler);
                 });
 
         return http.build();

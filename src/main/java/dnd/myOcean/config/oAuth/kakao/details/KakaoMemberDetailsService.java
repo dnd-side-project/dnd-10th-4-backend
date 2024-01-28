@@ -20,7 +20,6 @@ public class KakaoMemberDetailsService extends DefaultOAuth2UserService {
 
     private static final String PREFIX = "낯선 ";
 
-
     private final MemberRepository memberRepository;
 
     @Transactional
@@ -42,7 +41,7 @@ public class KakaoMemberDetailsService extends DefaultOAuth2UserService {
                                         .build()
                         )
                 );
-
+        
         SimpleGrantedAuthority authority = new SimpleGrantedAuthority(member.getRole().name());
 
         return new KakaoMemberDetails(String.valueOf(member.getEmail()),
