@@ -11,10 +11,10 @@ import java.io.Serializable;
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 public class MemberWorryId implements Serializable {
 
-    @Column(name = "member_id")
+    @Column(name = "custom_member_id")
     private Long memberId;
 
-    @Column(name = "worry_id")
+    @Column(name = "custom_worry_id")
     private Long worryId;
 
     public MemberWorryId(Long memberId, Long worryId) {
