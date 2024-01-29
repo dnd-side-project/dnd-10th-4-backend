@@ -49,8 +49,7 @@ public class AssignCurrentEmailAspect {
     }
 
     private Optional<String> getCurrentEmailCheck() {
-        final Authentication authentication = SecurityContextHolder.getContext()
-                .getAuthentication();
+        final Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
 
         Object principal = authentication.getPrincipal();
 
