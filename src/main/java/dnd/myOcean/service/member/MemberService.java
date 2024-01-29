@@ -75,15 +75,10 @@ public class MemberService {
 
         memberWorryRepository.deleteByMember(member);
 
-        for (WorryType worryType : worries) {
-            Worry worry = Worry.createWorry(worryType);
-
-            MemberWorry memberWorry = MemberWorry.builder()
-                    .member(member)
-                    .worry(worry)
-                    .build();
-            memberWorryRepository.save(memberWorry);
-        }
+        worries.stream()
+                .map(Worry::createWorry)
+                .map(worry -> MemberWorry.builder().member(member).worry(worry).build())
+                .forEach(memberWorryRepository::save);
     }
 
     public boolean isNicknameAvailable(String nickname) {
