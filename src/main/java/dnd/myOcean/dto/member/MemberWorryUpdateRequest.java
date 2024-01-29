@@ -1,13 +1,14 @@
 package dnd.myOcean.dto.member;
 
-import dnd.myOcean.domain.member.Worry;
+import dnd.myOcean.domain.member.WorryType;
 import jakarta.validation.constraints.Null;
-import java.util.ArrayList;
-import java.util.List;
 import lombok.AccessLevel;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
+
+import java.util.ArrayList;
+import java.util.List;
 
 @Data
 @AllArgsConstructor
@@ -19,10 +20,10 @@ public class MemberWorryUpdateRequest {
 
     private List<String> worries;
 
-    public List<Worry> getWorries() {
-        List<Worry> store = new ArrayList<>();
+    public List<WorryType> getWorries() {
+        List<WorryType> store = new ArrayList<>();
         for (String worry : worries) {
-            Worry findWorry = Worry.from(worry);
+            WorryType findWorry = WorryType.from(worry);
             store.add(findWorry);
         }
         return store;
