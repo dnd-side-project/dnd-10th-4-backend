@@ -2,32 +2,26 @@ package dnd.myOcean.domain.member;
 
 import jakarta.persistence.*;
 import jakarta.validation.constraints.NotNull;
-import lombok.AccessLevel;
-import lombok.Builder;
-import lombok.NoArgsConstructor;
+import lombok.*;
 
 @Entity
+@Getter
+@AllArgsConstructor
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
+@EqualsAndHashCode
+@IdClass(MemberWorryId.class)
+@Builder
 public class MemberWorry {
 
-    @EmbeddedId
-    private MemberWorryId  id;
-
+    @Id
     @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "member_id")
+    @JoinColumn(name = "member_id", insertable = false, updatable = false)
     @NotNull
     private Member member;
 
+    @Id
     @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "worry_id")
+    @JoinColumn(name = "worry_id", insertable = false, updatable = false)
     @NotNull
     private Worry worry;
-
-
-    @Builder
-    public MemberWorry(Member member, Worry worry) {
-        this.member = member;
-        this.worry = worry;
-        this.id = new MemberWorryId(member.getId(), worry.getId());
-    }
 }
