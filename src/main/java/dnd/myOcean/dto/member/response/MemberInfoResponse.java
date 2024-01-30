@@ -1,6 +1,8 @@
 package dnd.myOcean.dto.member.response;
 
 
+import dnd.myOcean.domain.worry.WorryType;
+import java.util.List;
 import lombok.AccessLevel;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
@@ -14,6 +16,7 @@ public class MemberInfoResponse {
     private Long id;
     private String email;
     private String nickname;
+    private List<WorryType> worryTypes;
     private String gender;
     private Integer age;
     private String role;

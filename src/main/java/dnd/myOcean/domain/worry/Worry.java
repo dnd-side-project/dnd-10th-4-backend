@@ -1,4 +1,4 @@
-package dnd.myOcean.domain.member;
+package dnd.myOcean.domain.worry;
 
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
@@ -23,14 +23,4 @@ public class Worry {
 
     @Enumerated(EnumType.STRING)
     private WorryType worryType;
-
-    public static Worry createWorry(WorryType worryType) {
-        Worry worry = new Worry();
-        worry.initWorryType(worryType);
-        return worry;
-    }
-
-    private void initWorryType(WorryType worryType) {
-        this.worryType = worryType;
-    }
 }

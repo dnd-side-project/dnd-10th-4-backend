@@ -3,13 +3,14 @@ package dnd.myOcean.service.member;
 
 import dnd.myOcean.domain.member.Gender;
 import dnd.myOcean.domain.member.Member;
-import dnd.myOcean.domain.member.MemberWorry;
-import dnd.myOcean.domain.member.Worry;
-import dnd.myOcean.domain.member.WorryType;
+import dnd.myOcean.domain.memberworry.MemberWorry;
+import dnd.myOcean.domain.worry.Worry;
+import dnd.myOcean.domain.worry.WorryType;
 import dnd.myOcean.dto.member.request.MemberBirthdayUpdateRequest;
 import dnd.myOcean.dto.member.request.MemberGenderUpdateRequest;
 import dnd.myOcean.dto.member.request.MemberInfoRequest;
 import dnd.myOcean.dto.member.request.MemberNicknameUpdateRequest;
+import dnd.myOcean.dto.member.request.MemberWorryDeleteRequest;
 import dnd.myOcean.dto.member.request.MemberWorryUpdateRequest;
 import dnd.myOcean.dto.member.response.MemberInfoResponse;
 import dnd.myOcean.exception.member.AlreadyExistNicknameException;
@@ -18,10 +19,12 @@ import dnd.myOcean.exception.member.GenderUpdateLimitExceedException;
 import dnd.myOcean.exception.member.MemberNotFoundException;
 import dnd.myOcean.exception.member.SameNicknameModifyRequestException;
 import dnd.myOcean.exception.member.WorrySelectionRangeLimitException;
+import dnd.myOcean.exception.worry.WorryTypeContainsNotAccepted;
 import dnd.myOcean.repository.jpa.member.MemberRepository;
-import dnd.myOcean.repository.jpa.member.MemberWorryRepository;
+import dnd.myOcean.repository.jpa.role.WorryRepository;
 import java.util.List;
 import java.util.Optional;
+import java.util.stream.Collectors;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -32,7 +35,7 @@ import org.springframework.transaction.annotation.Transactional;
 public class MemberService {
 
     private final MemberRepository memberRepository;
-    private final MemberWorryRepository memberWorryRepository;
+    private final WorryRepository worryRepository;
 
     @Transactional
     public void updateAge(final MemberBirthdayUpdateRequest memberBirthdayUpdateRequest) {
@@ -75,21 +78,29 @@ public class MemberService {
     }
 
     @Transactional
-    public void updateWorry(final MemberWorryUpdateRequest memberWorryUpdateRequest) {
+    public void createWorry(final MemberWorryUpdateRequest memberWorryUpdateRequest) {
         Member member = memberRepository.findByEmail(memberWorryUpdateRequest.getEmail())
                 .orElseThrow(MemberNotFoundException::new);
 
-        List<WorryType> worries = memberWorryUpdateRequest.getWorries();
+        List<WorryType> worryTypes = memberWorryUpdateRequest.getWorries();
 
-        if (worries.size() < 1 || worries.size() > 3) {
+        if (worryTypes.size() < 1 || worryTypes.size() > 3) {
             throw new WorrySelectionRangeLimitException();
         }
 
-        memberWorryRepository.deleteByMember(member);
-        worries.stream()
-                .map(Worry::createWorry)
-                .map(worry -> MemberWorry.builder().member(member).worry(worry).build())
-                .forEach(memberWorryRepository::save);
+        List<Worry> worries = worryTypes.stream()
+                .map(worryType -> worryRepository.findByWorryType(worryType)
+                        .orElseThrow(WorryTypeContainsNotAccepted::new))
+                .collect(Collectors.toList());
+
+        member.updateWorries(worries);
+    }
+
+    @Transactional
+    public void deleteWorry(MemberWorryDeleteRequest memberWorryDeleteRequest) {
+        Member member = memberRepository.findByEmail(memberWorryDeleteRequest.getEmail())
+                .orElseThrow(MemberNotFoundException::new);
+        member.clearWorries();
     }
 
     public boolean isNicknameAvailable(String nickname) {
@@ -101,9 +112,15 @@ public class MemberService {
         Member member = memberRepository.findByEmail(memberInfoRequest.getEmail())
                 .orElseThrow(MemberNotFoundException::new);
 
+        List<MemberWorry> memberWorries = member.getWorries();
+
+        List<WorryType> worryTypes = memberWorries.stream().map(memberWorry -> memberWorry.getWorry().getWorryType())
+                .collect(Collectors.toList());
+
         return new MemberInfoResponse(member.getId(),
                 member.getEmail(),
                 member.getNickName(),
+                worryTypes,
                 member.getGender().name(),
                 member.getAge(),
                 member.getRole().name());

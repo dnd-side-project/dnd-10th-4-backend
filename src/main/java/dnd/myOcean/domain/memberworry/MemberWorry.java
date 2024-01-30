@@ -1,5 +1,8 @@
-package dnd.myOcean.domain.member;
+package dnd.myOcean.domain.memberworry;
 
+import dnd.myOcean.domain.base.BaseEntity;
+import dnd.myOcean.domain.member.Member;
+import dnd.myOcean.domain.worry.Worry;
 import jakarta.persistence.Entity;
 import jakarta.persistence.FetchType;
 import jakarta.persistence.Id;
@@ -9,10 +12,11 @@ import jakarta.persistence.ManyToOne;
 import jakarta.validation.constraints.NotNull;
 import lombok.AccessLevel;
 import lombok.AllArgsConstructor;
-import lombok.Builder;
 import lombok.EqualsAndHashCode;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
+import org.hibernate.annotations.OnDelete;
+import org.hibernate.annotations.OnDeleteAction;
 
 @Entity
 @Getter
@@ -20,18 +24,19 @@ import lombok.NoArgsConstructor;
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 @EqualsAndHashCode
 @IdClass(MemberWorryId.class)
-@Builder
-public class MemberWorry {
+public class MemberWorry extends BaseEntity {
 
     @Id
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "member_id", insertable = false, updatable = false)
+    @OnDelete(action = OnDeleteAction.CASCADE)
     @NotNull
     private Member member;
 
     @Id
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "worry_id", insertable = false, updatable = false)
+    @OnDelete(action = OnDeleteAction.CASCADE)
     @NotNull
     private Worry worry;
 }

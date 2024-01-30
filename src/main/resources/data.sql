@@ -7,8 +7,3 @@ VALUES ('WORK'),
        ('STUDY'),
        ('FAMILY'),
        ('ETC');
-
-
-
-
-

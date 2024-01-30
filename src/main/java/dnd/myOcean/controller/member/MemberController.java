@@ -6,13 +6,16 @@ import dnd.myOcean.dto.member.request.MemberBirthdayUpdateRequest;
 import dnd.myOcean.dto.member.request.MemberGenderUpdateRequest;
 import dnd.myOcean.dto.member.request.MemberInfoRequest;
 import dnd.myOcean.dto.member.request.MemberNicknameUpdateRequest;
+import dnd.myOcean.dto.member.request.MemberWorryDeleteRequest;
 import dnd.myOcean.dto.member.request.MemberWorryUpdateRequest;
 import dnd.myOcean.service.member.MemberService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PatchMapping;
+import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
@@ -45,10 +48,17 @@ public class MemberController {
         return new ResponseEntity<>(HttpStatus.OK);
     }
 
-    @PatchMapping("/worry")
+    @PostMapping("/worry")
     @AssignCurrentEmail
-    public ResponseEntity updateWorry(@RequestBody MemberWorryUpdateRequest memberWorryUpdateRequest) {
-        memberService.updateWorry(memberWorryUpdateRequest);
+    public ResponseEntity createWorry(@RequestBody MemberWorryUpdateRequest memberWorryUpdateRequest) {
+        memberService.createWorry(memberWorryUpdateRequest);
+        return new ResponseEntity<>(HttpStatus.OK);
+    }
+
+    @DeleteMapping("/worry")
+    @AssignCurrentEmail
+    public ResponseEntity deleteWorry(@RequestBody MemberWorryDeleteRequest memberWorryDeleteRequest) {
+        memberService.deleteWorry(memberWorryDeleteRequest);
         return new ResponseEntity<>(HttpStatus.OK);
     }
 

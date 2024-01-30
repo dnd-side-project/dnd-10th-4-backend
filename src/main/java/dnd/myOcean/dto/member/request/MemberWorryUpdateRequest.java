@@ -1,6 +1,6 @@
 package dnd.myOcean.dto.member.request;
 
-import dnd.myOcean.domain.member.WorryType;
+import dnd.myOcean.domain.worry.WorryType;
 import jakarta.validation.constraints.Null;
 import java.util.ArrayList;
 import java.util.List;

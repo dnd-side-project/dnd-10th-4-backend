@@ -1,6 +1,6 @@
-package dnd.myOcean.domain.member;
+package dnd.myOcean.domain.worry;
 
-import dnd.myOcean.exception.member.WorrySelectionRangeLimitException;
+import dnd.myOcean.exception.worry.WorryTypeContainsNotAccepted;
 
 public enum WorryType {
 
@@ -13,6 +13,6 @@ public enum WorryType {
                 return worry;
             }
         }
-        throw new WorrySelectionRangeLimitException();
+        throw new WorryTypeContainsNotAccepted();
     }
 }
