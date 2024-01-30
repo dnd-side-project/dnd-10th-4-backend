@@ -2,7 +2,6 @@ package dnd.myOcean.domain.member;
 
 import dnd.myOcean.domain.base.BaseEntity;
 import jakarta.persistence.Column;
-import jakarta.persistence.ElementCollection;
 import jakarta.persistence.Entity;
 import jakarta.persistence.EnumType;
 import jakarta.persistence.Enumerated;
@@ -11,7 +10,6 @@ import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
 import java.time.LocalDate;
 import java.time.Period;
-import java.util.List;
 import lombok.AccessLevel;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -43,10 +41,6 @@ public class Member extends BaseEntity {
     @Enumerated(EnumType.STRING)
     private Gender gender;
 
-    @ElementCollection(targetClass = Worry.class) // JPA가 해당 필드를 컬렉션으로 관리하기 위한 어노테이션
-    @Enumerated(EnumType.STRING)
-    private List<Worry> worry;
-
     @Column
     private Integer updateAgeCount;
 
@@ -67,10 +61,6 @@ public class Member extends BaseEntity {
 
     public void updateNickname(final String nickname) {
         this.nickName = "낯선 " + nickname;
-    }
-
-    public void updateWorry(final List<Worry> worries) {
-        this.worry = worries;
     }
 
     public boolean isBirthDayChangeLimitExceeded() {

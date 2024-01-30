@@ -1,17 +1,36 @@
 package dnd.myOcean.domain.member;
 
-import dnd.myOcean.exception.member.NoSuchGenderException;
+import jakarta.persistence.Column;
+import jakarta.persistence.Entity;
+import jakarta.persistence.EnumType;
+import jakarta.persistence.Enumerated;
+import jakarta.persistence.GeneratedValue;
+import jakarta.persistence.GenerationType;
+import jakarta.persistence.Id;
+import lombok.AccessLevel;
+import lombok.Getter;
+import lombok.NoArgsConstructor;
 
-public enum Worry {
-    WORK, COURSE, RELATIONSHIP, BREAK_LOVE,
-    LOVE, STUDY, FAMILY, ETC;
+@Entity
+@Getter
+@NoArgsConstructor(access = AccessLevel.PROTECTED)
+public class Worry {
 
-    public static Worry from(String value) {
-        for (Worry worry : Worry.values()) {
-            if (worry.name().equalsIgnoreCase(value)) {
-                return worry;
-            }
-        }
-        throw new NoSuchGenderException();
+    @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @Column(name = "worry_id")
+    private Long id;
+
+    @Enumerated(EnumType.STRING)
+    private WorryType worryType;
+
+    public static Worry createWorry(WorryType worryType) {
+        Worry worry = new Worry();
+        worry.initWorryType(worryType);
+        return worry;
+    }
+
+    private void initWorryType(WorryType worryType) {
+        this.worryType = worryType;
     }
 }
