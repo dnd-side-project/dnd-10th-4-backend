@@ -1,4 +1,4 @@
-package dnd.myOcean.dto.member;
+package dnd.myOcean.dto.member.request;
 
 import dnd.myOcean.domain.member.Worry;
 import jakarta.validation.constraints.Null;
