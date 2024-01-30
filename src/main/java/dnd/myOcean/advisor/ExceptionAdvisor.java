@@ -5,9 +5,10 @@ import dnd.myOcean.exception.auth.AuthenticationEntryPointException;
 import dnd.myOcean.exception.member.AlreadyExistNicknameException;
 import dnd.myOcean.exception.member.BirthdayUpdateLimitExceedException;
 import dnd.myOcean.exception.member.GenderUpdateLimitExceedException;
-import dnd.myOcean.exception.member.MaxWorrySelectionLimitException;
 import dnd.myOcean.exception.member.NoSuchGenderException;
 import dnd.myOcean.exception.member.SameNicknameModifyRequestException;
+import dnd.myOcean.exception.member.WorrySelectionRangeLimitException;
+import dnd.myOcean.exception.worry.WorryTypeContainsNotAccepted;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.ExceptionHandler;
@@ -42,10 +43,16 @@ public class ExceptionAdvisor {
         return new ResponseEntity("성별 수정 가능한 횟수를 초과했습니다.", HttpStatus.FORBIDDEN);
     }
 
-    @ExceptionHandler(MaxWorrySelectionLimitException.class)
+    @ExceptionHandler(WorrySelectionRangeLimitException.class)
     @ResponseStatus(HttpStatus.FORBIDDEN)
-    public ResponseEntity maxWorrySelectionLimitException(MaxWorrySelectionLimitException e) {
-        return new ResponseEntity("고민은 최대 3개까지만 선택할 수 있습니다.", HttpStatus.FORBIDDEN);
+    public ResponseEntity worrySelectionRangeLimitException(WorrySelectionRangeLimitException e) {
+        return new ResponseEntity("고민은 최소 1개, 최대 3개까지만 가능합니다.", HttpStatus.FORBIDDEN);
+    }
+
+    @ExceptionHandler(WorryTypeContainsNotAccepted.class)
+    @ResponseStatus(HttpStatus.NOT_ACCEPTABLE)
+    public ResponseEntity WorryTypeContainsNotAccepted(WorryTypeContainsNotAccepted e) {
+        return new ResponseEntity("올바르지 않은 고민이 포함되어 있습니다.", HttpStatus.NOT_ACCEPTABLE);
     }
 
     @ExceptionHandler(NoSuchGenderException.class)

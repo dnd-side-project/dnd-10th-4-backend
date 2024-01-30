@@ -1,17 +1,23 @@
 package dnd.myOcean.domain.member;
 
 import dnd.myOcean.domain.base.BaseEntity;
+import dnd.myOcean.domain.memberworry.MemberWorry;
+import dnd.myOcean.domain.worry.Worry;
+import jakarta.persistence.CascadeType;
 import jakarta.persistence.Column;
-import jakarta.persistence.ElementCollection;
 import jakarta.persistence.Entity;
 import jakarta.persistence.EnumType;
 import jakarta.persistence.Enumerated;
+import jakarta.persistence.FetchType;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
+import jakarta.persistence.OneToMany;
 import java.time.LocalDate;
 import java.time.Period;
+import java.util.ArrayList;
 import java.util.List;
+import java.util.stream.Collectors;
 import lombok.AccessLevel;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -43,9 +49,8 @@ public class Member extends BaseEntity {
     @Enumerated(EnumType.STRING)
     private Gender gender;
 
-    @ElementCollection(targetClass = Worry.class) // JPA가 해당 필드를 컬렉션으로 관리하기 위한 어노테이션
-    @Enumerated(EnumType.STRING)
-    private List<Worry> worry;
+    @OneToMany(fetch = FetchType.EAGER, mappedBy = "member", cascade = CascadeType.PERSIST, orphanRemoval = true)
+    private List<MemberWorry> worries = new ArrayList<>();
 
     @Column
     private Integer updateAgeCount;
@@ -69,10 +74,6 @@ public class Member extends BaseEntity {
         this.nickName = "낯선 " + nickname;
     }
 
-    public void updateWorry(final List<Worry> worries) {
-        this.worry = worries;
-    }
-
     public boolean isBirthDayChangeLimitExceeded() {
         return updateAgeCount >= 2;
     }
@@ -92,5 +93,19 @@ public class Member extends BaseEntity {
 
     public boolean isNicknameEqualTo(String nickname) {
         return this.nickName.equals(nickname);
+    }
+
+    public void setWorries(List<Worry> worries) {
+        this.worries.clear();
+        
+        List<MemberWorry> memberWorries = worries.stream()
+                .map(worry -> new MemberWorry(this, worry))
+                .collect(Collectors.toList());
+
+        this.worries.addAll(memberWorries);
+    }
+
+    public void clearWorries() {
+        this.worries.clear();
     }
 }
