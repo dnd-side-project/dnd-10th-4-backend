@@ -1,5 +1,4 @@
-package dnd.myOcean.dto.member;
-
+package dnd.myOcean.dto.member.request;
 
 import jakarta.validation.constraints.NotEmpty;
 import jakarta.validation.constraints.Null;
@@ -11,11 +10,11 @@ import lombok.NoArgsConstructor;
 @Data
 @AllArgsConstructor
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
-public class MemberGenderUpdateRequest {
+public class MemberNicknameUpdateRequest {
 
     @Null
     private String email;
 
     @NotEmpty
-    private String gender;
+    private String nickname;
 }

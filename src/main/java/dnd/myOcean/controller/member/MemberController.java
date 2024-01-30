@@ -2,11 +2,11 @@ package dnd.myOcean.controller.member;
 
 
 import dnd.myOcean.aop.AssignCurrentEmail;
-import dnd.myOcean.dto.member.MemberBirthdayUpdateRequest;
-import dnd.myOcean.dto.member.MemberGenderUpdateRequest;
-import dnd.myOcean.dto.member.MemberInfoRequest;
-import dnd.myOcean.dto.member.MemberNicknameUpdateRequest;
-import dnd.myOcean.dto.member.MemberWorryUpdateRequest;
+import dnd.myOcean.dto.member.request.MemberBirthdayUpdateRequest;
+import dnd.myOcean.dto.member.request.MemberGenderUpdateRequest;
+import dnd.myOcean.dto.member.request.MemberInfoRequest;
+import dnd.myOcean.dto.member.request.MemberNicknameUpdateRequest;
+import dnd.myOcean.dto.member.request.MemberWorryUpdateRequest;
 import dnd.myOcean.service.member.MemberService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
