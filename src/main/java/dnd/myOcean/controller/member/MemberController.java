@@ -6,8 +6,8 @@ import dnd.myOcean.dto.member.request.MemberBirthdayUpdateRequest;
 import dnd.myOcean.dto.member.request.MemberGenderUpdateRequest;
 import dnd.myOcean.dto.member.request.MemberInfoRequest;
 import dnd.myOcean.dto.member.request.MemberNicknameUpdateRequest;
+import dnd.myOcean.dto.member.request.MemberWorryCreateRequest;
 import dnd.myOcean.dto.member.request.MemberWorryDeleteRequest;
-import dnd.myOcean.dto.member.request.MemberWorryUpdateRequest;
 import dnd.myOcean.service.member.MemberService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
@@ -50,15 +50,15 @@ public class MemberController {
 
     @PostMapping("/worry")
     @AssignCurrentEmail
-    public ResponseEntity createWorry(@RequestBody MemberWorryUpdateRequest memberWorryUpdateRequest) {
-        memberService.createWorry(memberWorryUpdateRequest);
+    public ResponseEntity createWorry(@RequestBody MemberWorryCreateRequest memberWorryCreateRequest) {
+        memberService.createWorry(memberWorryCreateRequest);
         return new ResponseEntity<>(HttpStatus.OK);
     }
 
     @DeleteMapping("/worry")
     @AssignCurrentEmail
-    public ResponseEntity deleteWorry(@RequestBody MemberWorryDeleteRequest memberWorryDeleteRequest) {
-        memberService.deleteWorry(memberWorryDeleteRequest);
+    public ResponseEntity deleteAllWorry(@RequestBody MemberWorryDeleteRequest memberWorryDeleteRequest) {
+        memberService.deleteAllWorry(memberWorryDeleteRequest);
         return new ResponseEntity<>(HttpStatus.OK);
     }
 

@@ -95,8 +95,9 @@ public class Member extends BaseEntity {
         return this.nickName.equals(nickname);
     }
 
-    public void updateWorries(List<Worry> worries) {
+    public void setWorries(List<Worry> worries) {
         this.worries.clear();
+        
         List<MemberWorry> memberWorries = worries.stream()
                 .map(worry -> new MemberWorry(this, worry))
                 .collect(Collectors.toList());

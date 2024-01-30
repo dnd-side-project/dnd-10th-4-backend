@@ -10,8 +10,8 @@ import dnd.myOcean.dto.member.request.MemberBirthdayUpdateRequest;
 import dnd.myOcean.dto.member.request.MemberGenderUpdateRequest;
 import dnd.myOcean.dto.member.request.MemberInfoRequest;
 import dnd.myOcean.dto.member.request.MemberNicknameUpdateRequest;
+import dnd.myOcean.dto.member.request.MemberWorryCreateRequest;
 import dnd.myOcean.dto.member.request.MemberWorryDeleteRequest;
-import dnd.myOcean.dto.member.request.MemberWorryUpdateRequest;
 import dnd.myOcean.dto.member.response.MemberInfoResponse;
 import dnd.myOcean.exception.member.AlreadyExistNicknameException;
 import dnd.myOcean.exception.member.BirthdayUpdateLimitExceedException;
@@ -21,7 +21,7 @@ import dnd.myOcean.exception.member.SameNicknameModifyRequestException;
 import dnd.myOcean.exception.member.WorrySelectionRangeLimitException;
 import dnd.myOcean.exception.worry.WorryTypeContainsNotAccepted;
 import dnd.myOcean.repository.jpa.member.MemberRepository;
-import dnd.myOcean.repository.jpa.role.WorryRepository;
+import dnd.myOcean.repository.jpa.worry.WorryRepository;
 import java.util.List;
 import java.util.Optional;
 import java.util.stream.Collectors;
@@ -78,11 +78,11 @@ public class MemberService {
     }
 
     @Transactional
-    public void createWorry(final MemberWorryUpdateRequest memberWorryUpdateRequest) {
-        Member member = memberRepository.findByEmail(memberWorryUpdateRequest.getEmail())
+    public void createWorry(final MemberWorryCreateRequest memberWorryCreateRequest) {
+        Member member = memberRepository.findByEmail(memberWorryCreateRequest.getEmail())
                 .orElseThrow(MemberNotFoundException::new);
 
-        List<WorryType> worryTypes = memberWorryUpdateRequest.getWorries();
+        List<WorryType> worryTypes = memberWorryCreateRequest.getWorries();
 
         if (worryTypes.size() < 1 || worryTypes.size() > 3) {
             throw new WorrySelectionRangeLimitException();
@@ -93,11 +93,11 @@ public class MemberService {
                         .orElseThrow(WorryTypeContainsNotAccepted::new))
                 .collect(Collectors.toList());
 
-        member.updateWorries(worries);
+        member.setWorries(worries);
     }
 
     @Transactional
-    public void deleteWorry(MemberWorryDeleteRequest memberWorryDeleteRequest) {
+    public void deleteAllWorry(MemberWorryDeleteRequest memberWorryDeleteRequest) {
         Member member = memberRepository.findByEmail(memberWorryDeleteRequest.getEmail())
                 .orElseThrow(MemberNotFoundException::new);
         member.clearWorries();
@@ -114,7 +114,8 @@ public class MemberService {
 
         List<MemberWorry> memberWorries = member.getWorries();
 
-        List<WorryType> worryTypes = memberWorries.stream().map(memberWorry -> memberWorry.getWorry().getWorryType())
+        List<WorryType> worryTypes = memberWorries.stream()
+                .map(memberWorry -> memberWorry.getWorry().getWorryType())
                 .collect(Collectors.toList());
 
         return new MemberInfoResponse(member.getId(),

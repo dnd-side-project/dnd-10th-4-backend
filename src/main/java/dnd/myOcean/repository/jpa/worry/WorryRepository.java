@@ -1,4 +1,4 @@
-package dnd.myOcean.repository.jpa.role;
+package dnd.myOcean.repository.jpa.worry;
 
 import dnd.myOcean.domain.worry.Worry;
 import dnd.myOcean.domain.worry.WorryType;
