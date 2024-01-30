@@ -1,6 +1,5 @@
 package dnd.myOcean.domain.memberworry;
 
-import dnd.myOcean.domain.base.BaseEntity;
 import dnd.myOcean.domain.member.Member;
 import dnd.myOcean.domain.worry.Worry;
 import jakarta.persistence.Entity;
@@ -24,7 +23,7 @@ import org.hibernate.annotations.OnDeleteAction;
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 @EqualsAndHashCode
 @IdClass(MemberWorryId.class)
-public class MemberWorry extends BaseEntity {
+public class MemberWorry {
 
     @Id
     @ManyToOne(fetch = FetchType.LAZY)

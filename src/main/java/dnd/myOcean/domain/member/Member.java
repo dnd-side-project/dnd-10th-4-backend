@@ -96,6 +96,7 @@ public class Member extends BaseEntity {
     }
 
     public void updateWorries(List<Worry> worries) {
+        this.worries.clear();
         List<MemberWorry> memberWorries = worries.stream()
                 .map(worry -> new MemberWorry(this, worry))
                 .collect(Collectors.toList());

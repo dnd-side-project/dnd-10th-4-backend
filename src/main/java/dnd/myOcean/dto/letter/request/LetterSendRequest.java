@@ -1,6 +1,5 @@
 package dnd.myOcean.dto.letter.request;
 
-import dnd.myOcean.domain.member.Gender;
 import jakarta.validation.constraints.NotEmpty;
 import jakarta.validation.constraints.Null;
 import lombok.AccessLevel;
@@ -19,9 +18,8 @@ public class LetterSendRequest {
     @NotEmpty
     private String content;
 
-    private Gender gender;
-
+    private boolean equalGender;
     private Integer ageRangeStart;
-
     private Integer ageRangeEnd;
+    private String worryType;
 }
