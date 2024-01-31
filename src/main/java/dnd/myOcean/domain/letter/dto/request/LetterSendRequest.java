@@ -17,9 +17,11 @@ public class LetterSendRequest {
 
     @NotEmpty
     private String content;
-
     private boolean equalGender;
     private Integer ageRangeStart;
+
     private Integer ageRangeEnd;
+
+    @NotEmpty
     private String worryType;
 }

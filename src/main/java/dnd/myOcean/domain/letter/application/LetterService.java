@@ -25,7 +25,7 @@ public class LetterService {
     private final LetterRepository letterRepository;
 
     @Transactional
-    public void sendLetter(LetterSendRequest request) {
+    public void send(LetterSendRequest request) {
         Member sender = memberRepository.findByEmail(request.getEmail())
                 .orElseThrow(MemberNotFoundException::new);
 
@@ -54,6 +54,7 @@ public class LetterService {
                     .receiver(receivers.get(i))
                     .isRead(false)
                     .hasReplied(false)
+                    .worryType(WorryType.from(request.getWorryType()))
                     .build();
             letterRepository.save(letter);
         }
@@ -70,6 +71,7 @@ public class LetterService {
                     .receiver(receivers.get(i))
                     .isRead(false)
                     .hasReplied(false)
+                    .worryType(WorryType.from(request.getWorryType()))
                     .build();
             letterRepository.save(letter);
         }
@@ -84,6 +86,7 @@ public class LetterService {
                     .receiver(randomReceivers.get(i))
                     .isRead(false)
                     .hasReplied(false)
+                    .worryType(WorryType.from(request.getWorryType()))
                     .build();
             letterRepository.save(letter);
         }

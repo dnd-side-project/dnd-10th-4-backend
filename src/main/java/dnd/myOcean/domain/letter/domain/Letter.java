@@ -2,9 +2,12 @@ package dnd.myOcean.domain.letter.domain;
 
 
 import dnd.myOcean.domain.member.domain.Member;
+import dnd.myOcean.domain.member.domain.WorryType;
 import dnd.myOcean.global.common.base.BaseEntity;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
+import jakarta.persistence.EnumType;
+import jakarta.persistence.Enumerated;
 import jakarta.persistence.FetchType;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
@@ -40,6 +43,9 @@ public class Letter extends BaseEntity {
     @OnDelete(action = OnDeleteAction.CASCADE)
     @JoinColumn(name = "receiver_id")
     private Member receiver;
+
+    @Enumerated(EnumType.STRING)
+    private WorryType worryType;
 
     private boolean isRead;
 
