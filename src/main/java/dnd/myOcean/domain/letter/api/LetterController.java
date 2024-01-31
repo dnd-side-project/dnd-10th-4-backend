@@ -1,11 +1,14 @@
 package dnd.myOcean.domain.letter.api;
 
 import dnd.myOcean.domain.letter.application.LetterService;
+import dnd.myOcean.domain.letter.dto.request.LetterReadRequest;
 import dnd.myOcean.domain.letter.dto.request.LetterSendRequest;
 import dnd.myOcean.global.auth.aop.AssignCurrentMemberId;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -28,13 +31,15 @@ public class LetterController {
         return new ResponseEntity(HttpStatus.OK);
     }
 
-//    /**
-//     * 보낸 편지 단건 조회
-//     */
-//    @GetMapping("/send/{letterId}")
-//    public ResponseEntity readSendLetter(@RequestBody LetterSendRequest request, @PathVariable String letterId) {
-//        return new ResponseEntity(letterService.readSendLetter(request, letterId), HttpStatus.OK);
-//    }
+    /**
+     * 보낸 편지 단건 조회
+     */
+    @AssignCurrentMemberId
+    @GetMapping("/send/{letterId}")
+    public ResponseEntity readSendLetter(@RequestBody LetterReadRequest request,
+                                         @PathVariable("letterId") Long letterId) {
+        return new ResponseEntity(letterService.readSendLetter(request, letterId), HttpStatus.OK);
+    }
 
 //
 //    /**

@@ -2,11 +2,14 @@ package dnd.myOcean.domain.letter.application;
 
 
 import dnd.myOcean.domain.letter.domain.Letter;
+import dnd.myOcean.domain.letter.dto.request.LetterReadRequest;
 import dnd.myOcean.domain.letter.dto.request.LetterSendRequest;
+import dnd.myOcean.domain.letter.dto.response.LetterResponse;
+import dnd.myOcean.domain.letter.exception.AccessDeniedLetterException;
 import dnd.myOcean.domain.letter.repository.infra.jpa.LetterRepository;
 import dnd.myOcean.domain.member.domain.Member;
 import dnd.myOcean.domain.member.domain.WorryType;
-import dnd.myOcean.domain.member.exception.exceptions.MemberNotFoundException;
+import dnd.myOcean.domain.member.exception.MemberNotFoundException;
 import dnd.myOcean.domain.member.repository.infra.jpa.MemberRepository;
 import java.util.Collections;
 import java.util.List;
@@ -112,5 +115,12 @@ public class LetterService {
 
     private int generateRandomReceiverCount(Integer maxCount) {
         return new Random().nextInt(maxCount) + 1;
+    }
+
+    public LetterResponse readSendLetter(LetterReadRequest request, Long letterId) {
+        Letter letter = letterRepository.findByIdAndSenderId(letterId, request.getMemberId())
+                .orElseThrow(AccessDeniedLetterException::new);
+
+        return LetterResponse.toDto(letter);
     }
 }

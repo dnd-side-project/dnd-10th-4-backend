@@ -1,7 +1,7 @@
 package dnd.myOcean.global.auth.oAuth.handler;
 
 import dnd.myOcean.domain.member.domain.Member;
-import dnd.myOcean.domain.member.exception.exceptions.MemberNotFoundException;
+import dnd.myOcean.domain.member.exception.MemberNotFoundException;
 import dnd.myOcean.domain.member.repository.infra.jpa.MemberRepository;
 import dnd.myOcean.global.auth.jwt.token.TokenProvider;
 import dnd.myOcean.global.auth.jwt.token.TokenResponse;
