@@ -12,7 +12,7 @@ import lombok.NoArgsConstructor;
 @Data
 @AllArgsConstructor
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
-public class MemberBirthdayUpdateRequest {
+public class BirthdayUpdateRequest {
 
     @Null
     private String email;

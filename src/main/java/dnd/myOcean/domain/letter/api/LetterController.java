@@ -17,10 +17,7 @@ import org.springframework.web.bind.annotation.RestController;
 public class LetterController {
 
     private final LetterService letterService;
-
-    /**
-     * TODO : 편지 전송 기능
-     */
+    
     @AssignCurrentEmail
     @PostMapping
     public ResponseEntity sendLetter(@RequestBody LetterSendRequest request) {

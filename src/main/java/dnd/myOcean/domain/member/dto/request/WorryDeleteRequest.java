@@ -1,14 +1,16 @@
 package dnd.myOcean.domain.member.dto.request;
 
-
+import jakarta.validation.constraints.Null;
+import lombok.AccessLevel;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
 @Data
-@NoArgsConstructor
 @AllArgsConstructor
-public class LoginKakaoRequestDto {
+@NoArgsConstructor(access = AccessLevel.PROTECTED)
+public class WorryDeleteRequest {
 
+    @Null
     private String email;
 }

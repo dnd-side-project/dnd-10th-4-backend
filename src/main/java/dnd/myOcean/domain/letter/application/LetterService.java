@@ -37,7 +37,7 @@ public class LetterService {
         }
 
         if (!receivers.isEmpty() && receivers.size() < MAX_LETTER) {
-            sendLetterByFilteredUpToReceiversCount(request, receivers, sender);
+            sendLetterUpToReceiversCount(request, receivers, sender);
             return;
         }
 
@@ -59,8 +59,8 @@ public class LetterService {
         }
     }
 
-    private void sendLetterByFilteredUpToReceiversCount(LetterSendRequest request, List<Member> receivers,
-                                                        Member sender) {
+    private void sendLetterUpToReceiversCount(LetterSendRequest request, List<Member> receivers,
+                                              Member sender) {
         int n = generateRandomReceiverCount(receivers.size());
         Collections.shuffle(receivers);
         for (int i = 0; i < n; i++) {

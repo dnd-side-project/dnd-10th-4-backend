@@ -6,13 +6,12 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import dnd.myOcean.domain.member.domain.Gender;
 import dnd.myOcean.domain.member.domain.Member;
 import dnd.myOcean.domain.member.domain.Role;
-import dnd.myOcean.domain.member.dto.request.LoginKakaoRequestDto;
+import dnd.myOcean.domain.member.dto.request.KakaoLoginRequest;
 import dnd.myOcean.domain.member.repository.infra.jpa.MemberRepository;
 import dnd.myOcean.global.auth.jwt.token.TokenProvider;
 import dnd.myOcean.global.auth.jwt.token.TokenResponse;
 import dnd.myOcean.global.auth.jwt.token.repository.redis.RefreshTokenRedisRepository;
 import dnd.myOcean.global.common.auth.RefreshToken;
-import jakarta.servlet.http.HttpServletRequest;
 import java.util.ArrayList;
 import java.util.List;
 import lombok.RequiredArgsConstructor;
@@ -44,18 +43,18 @@ public class AuthService {
     @Value("${kakao.redirect-url}")
     private String redirect_uri;
 
-    public TokenResponse kakaoLogin(HttpServletRequest request, String code) throws JsonProcessingException {
+    public TokenResponse kakaoLogin(String code) throws JsonProcessingException {
         /**
          * 1. code로 사용자 정보 받기 (원래는 받은 code를 가지고 토큰 발급 -> 토큰으로 사용자 정보 요청 Flow인데,
          *    포스트맨 내부적으로 code로 token 요청하고, token으로 사용자정보를 받아오는 거 같음.
          * // 포스트맨이 아닌 실제 배포 시에는 getKakaoUserInfo(code) -> getKakaoUserInfo(getToken(code)) 으로 변경해주어야 할 듯.
          */
-        LoginKakaoRequestDto loginKakaoRequestDto = getKakaoUserInfo(code);
+        KakaoLoginRequest request = getKakaoUserInfo(code);
 
         /**
          * 2. 받아온 사용자 정보가 데이터베이스에 없다면 가입 후 리턴, 있으면 리턴
          */
-        Member member = saveIfNonExist(loginKakaoRequestDto);
+        Member member = saveIfNonExist(request);
 
         /**
          * 3. JWT 생성
@@ -73,22 +72,22 @@ public class AuthService {
         return tokenResponse;
     }
 
-    private void saveRefreshTokenOnRedis(Member member, TokenResponse tokenResponse) {
+    private void saveRefreshTokenOnRedis(Member member, TokenResponse response) {
         List<SimpleGrantedAuthority> simpleGrantedAuthorities = new ArrayList<>();
         simpleGrantedAuthorities.add(new SimpleGrantedAuthority(member.getRole().name()));
         refreshTokenRedisRepository.save(RefreshToken.builder()
                 .id(member.getEmail())
                 .authorities(simpleGrantedAuthorities)
-                .refreshToken(tokenResponse.getRefreshToken())
+                .refreshToken(response.getRefreshToken())
                 .build());
     }
 
-    private Member saveIfNonExist(LoginKakaoRequestDto loginKakaoRequestDto) {
-        return memberRepository.findByEmail(loginKakaoRequestDto.getEmail())
+    private Member saveIfNonExist(KakaoLoginRequest request) {
+        return memberRepository.findByEmail(request.getEmail())
                 .orElseGet(() ->
                         memberRepository.save(
                                 Member.builder()
-                                        .email(loginKakaoRequestDto.getEmail())
+                                        .email(request.getEmail())
                                         .role(Role.USER)
                                         .nickName(PREFIX)
                                         .gender(Gender.NONE)
@@ -128,7 +127,7 @@ public class AuthService {
         return jsonNode.get("access_token").asText();
     }
 
-    private LoginKakaoRequestDto getKakaoUserInfo(String token) throws JsonProcessingException {
+    private KakaoLoginRequest getKakaoUserInfo(String token) throws JsonProcessingException {
         HttpHeaders headers = new HttpHeaders();
 
         // HTTP 헤더 생성
@@ -152,6 +151,6 @@ public class AuthService {
 
         String email = jsonNode.get("kakao_account").get("email").asText();
 
-        return new LoginKakaoRequestDto(email);
+        return new KakaoLoginRequest(email);
     }
 }

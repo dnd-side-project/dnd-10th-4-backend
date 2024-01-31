@@ -35,9 +35,8 @@ public class AuthController {
      * 포스트맨으로 테스트하기 위한 로그인 API
      */
     @PostMapping("/login/kakao/postman")
-    public ResponseEntity loginKakao(HttpServletRequest request, @RequestParam(name = "code") String code)
-            throws JsonProcessingException {
-        return new ResponseEntity(authService.kakaoLogin(request, code), HttpStatus.OK);
+    public ResponseEntity loginKakao(@RequestParam(name = "code") String code) throws JsonProcessingException {
+        return new ResponseEntity(authService.kakaoLogin(code), HttpStatus.OK);
     }
 
     /**

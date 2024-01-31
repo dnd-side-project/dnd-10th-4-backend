@@ -2,12 +2,12 @@ package dnd.myOcean.domain.member.api;
 
 
 import dnd.myOcean.domain.member.application.MemberService;
-import dnd.myOcean.domain.member.dto.request.MemberBirthdayUpdateRequest;
-import dnd.myOcean.domain.member.dto.request.MemberGenderUpdateRequest;
+import dnd.myOcean.domain.member.dto.request.BirthdayUpdateRequest;
+import dnd.myOcean.domain.member.dto.request.GenderUpdateRequest;
 import dnd.myOcean.domain.member.dto.request.MemberInfoRequest;
-import dnd.myOcean.domain.member.dto.request.MemberNicknameUpdateRequest;
-import dnd.myOcean.domain.member.dto.request.MemberWorryCreateRequest;
-import dnd.myOcean.domain.member.dto.request.MemberWorryDeleteRequest;
+import dnd.myOcean.domain.member.dto.request.NicknameUpdateRequest;
+import dnd.myOcean.domain.member.dto.request.WorryCreateRequest;
+import dnd.myOcean.domain.member.dto.request.WorryDeleteRequest;
 import dnd.myOcean.global.auth.aop.AssignCurrentEmail;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
@@ -29,42 +29,42 @@ public class MemberController {
 
     @PatchMapping("/birthday")
     @AssignCurrentEmail
-    public ResponseEntity updateBirthday(@RequestBody MemberBirthdayUpdateRequest memberBirthdayUpdateRequest) {
-        memberService.updateAge(memberBirthdayUpdateRequest);
+    public ResponseEntity updateBirthday(@RequestBody BirthdayUpdateRequest request) {
+        memberService.updateAge(request);
         return new ResponseEntity<>(HttpStatus.OK);
     }
 
     @PatchMapping("/gender")
     @AssignCurrentEmail
-    public ResponseEntity updateGender(@RequestBody MemberGenderUpdateRequest memberGenderUpdateRequest) {
-        memberService.updateGender(memberGenderUpdateRequest);
+    public ResponseEntity updateGender(@RequestBody GenderUpdateRequest request) {
+        memberService.updateGender(request);
         return new ResponseEntity<>(HttpStatus.OK);
     }
 
     @PatchMapping("/nickname")
     @AssignCurrentEmail
-    public ResponseEntity updateNickname(@RequestBody MemberNicknameUpdateRequest memberNicknameUpdateRequest) {
-        memberService.updateNickname(memberNicknameUpdateRequest);
+    public ResponseEntity updateNickname(@RequestBody NicknameUpdateRequest request) {
+        memberService.updateNickname(request);
         return new ResponseEntity<>(HttpStatus.OK);
     }
 
     @PostMapping("/worry")
     @AssignCurrentEmail
-    public ResponseEntity createWorry(@RequestBody MemberWorryCreateRequest memberWorryCreateRequest) {
-        memberService.createWorry(memberWorryCreateRequest);
+    public ResponseEntity createWorry(@RequestBody WorryCreateRequest request) {
+        memberService.createWorry(request);
         return new ResponseEntity<>(HttpStatus.OK);
     }
 
     @DeleteMapping("/worry")
     @AssignCurrentEmail
-    public ResponseEntity deleteAllWorry(@RequestBody MemberWorryDeleteRequest memberWorryDeleteRequest) {
-        memberService.deleteAllWorry(memberWorryDeleteRequest);
+    public ResponseEntity deleteAllWorry(@RequestBody WorryDeleteRequest request) {
+        memberService.deleteAllWorry(request);
         return new ResponseEntity<>(HttpStatus.OK);
     }
 
     @GetMapping
     @AssignCurrentEmail
-    public ResponseEntity getMyInfo(@RequestBody MemberInfoRequest memberInfoRequest) {
-        return new ResponseEntity(memberService.getMyInfo(memberInfoRequest), HttpStatus.OK);
+    public ResponseEntity getMyInfo(@RequestBody MemberInfoRequest request) {
+        return new ResponseEntity(memberService.getMyInfo(request), HttpStatus.OK);
     }
 }
