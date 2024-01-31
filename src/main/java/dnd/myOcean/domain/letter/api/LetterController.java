@@ -2,7 +2,7 @@ package dnd.myOcean.domain.letter.api;
 
 import dnd.myOcean.domain.letter.application.LetterService;
 import dnd.myOcean.domain.letter.dto.request.LetterSendRequest;
-import dnd.myOcean.global.auth.aop.AssignCurrentEmail;
+import dnd.myOcean.global.auth.aop.AssignCurrentMemberId;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -21,7 +21,7 @@ public class LetterController {
     /**
      * 편지 전송
      */
-    @AssignCurrentEmail
+    @AssignCurrentMemberId
     @PostMapping("/send")
     public ResponseEntity send(@RequestBody LetterSendRequest request) {
         letterService.send(request);
@@ -32,6 +32,10 @@ public class LetterController {
 //     * 보낸 편지 단건 조회
 //     */
 //    @GetMapping("/send/{letterId}")
+//    public ResponseEntity readSendLetter(@RequestBody LetterSendRequest request, @PathVariable String letterId) {
+//        return new ResponseEntity(letterService.readSendLetter(request, letterId), HttpStatus.OK);
+//    }
+
 //
 //    /**
 //     * 보낸 편지 페이징 조회

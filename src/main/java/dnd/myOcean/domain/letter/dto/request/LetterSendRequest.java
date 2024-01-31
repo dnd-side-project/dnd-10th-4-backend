@@ -13,13 +13,13 @@ import lombok.NoArgsConstructor;
 public class LetterSendRequest {
 
     @Null
-    private String email;
+    private Long memberId;
 
     @NotEmpty
     private String content;
+
     private boolean equalGender;
     private Integer ageRangeStart;
-
     private Integer ageRangeEnd;
 
     @NotEmpty

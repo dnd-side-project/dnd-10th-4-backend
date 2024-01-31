@@ -39,7 +39,7 @@ public class MemberService {
 
     @Transactional
     public void updateAge(final BirthdayUpdateRequest request) {
-        Member member = memberRepository.findByEmail(request.getEmail())
+        Member member = memberRepository.findById(request.getMemberId())
                 .orElseThrow(MemberNotFoundException::new);
 
         if (member.isBirthDayChangeLimitExceeded()) {
@@ -51,7 +51,7 @@ public class MemberService {
 
     @Transactional
     public void updateGender(final GenderUpdateRequest request) {
-        Member member = memberRepository.findByEmail(request.getEmail())
+        Member member = memberRepository.findById(request.getMemberId())
                 .orElseThrow(MemberNotFoundException::new);
 
         if (member.isGenderChangeLimitExceeded()) {
@@ -63,7 +63,7 @@ public class MemberService {
 
     @Transactional
     public void updateNickname(final NicknameUpdateRequest request) {
-        Member member = memberRepository.findByEmail(request.getEmail())
+        Member member = memberRepository.findById(request.getMemberId())
                 .orElseThrow(MemberNotFoundException::new);
 
         if (member.isNicknameEqualTo(request.getNickname())) {
@@ -79,7 +79,7 @@ public class MemberService {
 
     @Transactional
     public void createWorry(final WorryCreateRequest request) {
-        Member member = memberRepository.findByEmail(request.getEmail())
+        Member member = memberRepository.findById(request.getMemberId())
                 .orElseThrow(MemberNotFoundException::new);
 
         List<WorryType> worryTypes = request.getWorries();
@@ -98,7 +98,7 @@ public class MemberService {
 
     @Transactional
     public void deleteAllWorry(WorryDeleteRequest request) {
-        Member member = memberRepository.findByEmail(request.getEmail())
+        Member member = memberRepository.findById(request.getMemberId())
                 .orElseThrow(MemberNotFoundException::new);
         member.clearWorries();
     }
@@ -109,7 +109,7 @@ public class MemberService {
     }
 
     public MemberInfoResponse getMyInfo(MemberInfoRequest request) {
-        Member member = memberRepository.findByEmail(request.getEmail())
+        Member member = memberRepository.findById(request.getMemberId())
                 .orElseThrow(MemberNotFoundException::new);
 
         List<MemberWorry> memberWorries = member.getWorries();

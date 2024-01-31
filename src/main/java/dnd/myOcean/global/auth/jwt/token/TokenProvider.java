@@ -30,6 +30,7 @@ import org.springframework.transaction.annotation.Transactional;
 @Component
 public class TokenProvider {
 
+    private static final String AUTH_ID = "ID";
     private static final String AUTH_KEY = "AUTHORITY";
     private static final String AUTH_EMAIL = "EMAIL";
 
@@ -55,13 +56,14 @@ public class TokenProvider {
         this.secretkey = Keys.hmacShaKeyFor(keyBytes);
     }
 
-    public TokenResponse createToken(String email, String role) {
+    public TokenResponse createToken(String memberId, String email, String role) {
         long now = (new Date()).getTime();
 
         Date accessValidity = new Date(now + this.accessTokenValidityMilliSeconds);
         Date refreshValidity = new Date(now + this.refreshTokenValidityMilliSeconds);
 
         String accessToken = Jwts.builder()
+                .addClaims(Map.of(AUTH_ID, memberId))
                 .addClaims(Map.of(AUTH_EMAIL, email))
                 .addClaims(Map.of(AUTH_KEY, role))
                 .signWith(secretkey, SignatureAlgorithm.HS256)
@@ -69,6 +71,7 @@ public class TokenProvider {
                 .compact();
 
         String refreshToken = Jwts.builder()
+                .addClaims(Map.of(AUTH_ID, memberId))
                 .addClaims(Map.of(AUTH_EMAIL, email))
                 .addClaims(Map.of(AUTH_KEY, role))
                 .signWith(secretkey, SignatureAlgorithm.HS256)
@@ -93,7 +96,7 @@ public class TokenProvider {
                 .map(auth -> new SimpleGrantedAuthority(auth))
                 .collect(Collectors.toList());
 
-        KakaoMemberDetails principal = new KakaoMemberDetails(
+        KakaoMemberDetails principal = new KakaoMemberDetails(Long.parseLong((String) claims.get(AUTH_ID)),
                 (String) claims.get(AUTH_EMAIL),
                 simpleGrantedAuthorities, Map.of());
 
@@ -134,7 +137,8 @@ public class TokenProvider {
     public TokenResponse reIssueAccessToken(String refreshToken) {
         RefreshToken findToken = refreshTokenRedisRepository.findByRefreshToken(refreshToken);
 
-        TokenResponse tokenResponse = createToken(findToken.getId(), findToken.getAuthority());
+        TokenResponse tokenResponse = createToken(String.valueOf(findToken.getId()), findToken.getEmail(),
+                findToken.getAuthority());
         refreshTokenRedisRepository.save(RefreshToken.builder()
                 .id(findToken.getId())
                 .authorities(findToken.getAuthorities())

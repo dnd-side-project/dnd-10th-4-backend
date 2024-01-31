@@ -41,7 +41,9 @@ public class KakaoAuthSuccessHandler extends SimpleUrlAuthenticationSuccessHandl
         Member member = memberRepository.findByEmail(kakaoUserInfo.getEmail())
                 .orElseThrow(MemberNotFoundException::new);
 
-        TokenResponse tokenResponse = tokenProvider.createToken(member.getEmail(), member.getRole().name());
+        TokenResponse tokenResponse = tokenProvider.createToken(String.valueOf(member.getId()),
+                member.getEmail(),
+                member.getRole().name());
 
         saveRefreshTokenOnRedis(member, tokenResponse);
         String redirectURI = String.format(REDIRECT_URI, tokenResponse.getAccessToken(),
@@ -49,13 +51,14 @@ public class KakaoAuthSuccessHandler extends SimpleUrlAuthenticationSuccessHandl
         getRedirectStrategy().sendRedirect(request, response, redirectURI);
     }
 
-    private void saveRefreshTokenOnRedis(Member member, TokenResponse tokenResponse) {
+    private void saveRefreshTokenOnRedis(Member member, TokenResponse response) {
         List<SimpleGrantedAuthority> simpleGrantedAuthorities = new ArrayList<>();
         simpleGrantedAuthorities.add(new SimpleGrantedAuthority(member.getRole().name()));
         refreshTokenRedisRepository.save(RefreshToken.builder()
-                .id(member.getEmail())
+                .id(member.getId())
+                .email(member.getEmail())
                 .authorities(simpleGrantedAuthorities)
-                .refreshToken(tokenResponse.getRefreshToken())
+                .refreshToken(response.getRefreshToken())
                 .build());
     }
 }

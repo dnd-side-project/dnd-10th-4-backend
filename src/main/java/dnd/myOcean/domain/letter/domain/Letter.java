@@ -29,6 +29,7 @@ public class Letter extends BaseEntity {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @Column(name = "letter_id")
     private Long id;
 
     @Column(updatable = false)

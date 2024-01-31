@@ -44,7 +44,8 @@ public class KakaoMemberDetailsService extends DefaultOAuth2UserService {
 
         SimpleGrantedAuthority authority = new SimpleGrantedAuthority(member.getRole().name());
 
-        return new KakaoMemberDetails(String.valueOf(member.getEmail()),
+        return new KakaoMemberDetails(member.getId(),
+                String.valueOf(member.getEmail()),
                 Collections.singletonList(authority),
                 oAuth2User.getAttributes());
     }

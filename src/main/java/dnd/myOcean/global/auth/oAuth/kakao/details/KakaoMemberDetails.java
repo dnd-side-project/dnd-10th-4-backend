@@ -10,9 +10,14 @@ import org.springframework.security.oauth2.core.user.OAuth2User;
 @RequiredArgsConstructor
 public class KakaoMemberDetails implements OAuth2User {
 
+    private final Long id;
     private final String email;
     private final List<? extends GrantedAuthority> authorities;
     private final Map<String, Object> attributes;
+
+    public Long getId() {
+        return id;
+    }
 
     @Override
     public String getName() {

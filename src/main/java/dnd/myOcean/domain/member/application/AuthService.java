@@ -59,7 +59,9 @@ public class AuthService {
         /**
          * 3. JWT 생성
          */
-        TokenResponse tokenResponse = tokenProvider.createToken(member.getEmail(), member.getRole().name());
+        TokenResponse tokenResponse = tokenProvider.createToken(String.valueOf(member.getId()),
+                member.getEmail(),
+                member.getRole().name());
 
         /**
          * 4. Redis에 RefreshToken 저장
@@ -76,7 +78,8 @@ public class AuthService {
         List<SimpleGrantedAuthority> simpleGrantedAuthorities = new ArrayList<>();
         simpleGrantedAuthorities.add(new SimpleGrantedAuthority(member.getRole().name()));
         refreshTokenRedisRepository.save(RefreshToken.builder()
-                .id(member.getEmail())
+                .id(member.getId())
+                .email(member.getEmail())
                 .authorities(simpleGrantedAuthorities)
                 .refreshToken(response.getRefreshToken())
                 .build());

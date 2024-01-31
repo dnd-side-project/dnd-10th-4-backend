@@ -15,8 +15,8 @@ import lombok.NoArgsConstructor;
 public class WorryCreateRequest {
 
     @Null
-    private String email;
-
+    private Long memberId;
+    
     private List<String> worries;
 
     public List<WorryType> getWorries() {

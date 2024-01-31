@@ -12,5 +12,5 @@ import lombok.NoArgsConstructor;
 public class WorryDeleteRequest {
 
     @Null
-    private String email;
+    private Long memberId;
 }

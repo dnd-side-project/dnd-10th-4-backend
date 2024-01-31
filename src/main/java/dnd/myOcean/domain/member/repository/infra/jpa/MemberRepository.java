@@ -21,9 +21,9 @@ public interface MemberRepository extends JpaRepository<Member, Long> {
             + "WHERE worry.worryType = :worryType "
             + "AND m.age BETWEEN :minAge AND :maxAge "
             + "AND m.gender = :gender "
-            + "AND m.email != :email")
+            + "AND m.id != :id")
     List<Member> findFilteredAndSameGenderMember(@Param("minAge") int minAge, @Param("maxAge") int maxAge,
-                                                 @Param("gender") Gender gender, @Param("email") String email,
+                                                 @Param("gender") Gender gender, @Param("id") long id,
                                                  @Param("worryType") WorryType worryType);
 
     @Query("SELECT DISTINCT m FROM Member m "
@@ -31,10 +31,10 @@ public interface MemberRepository extends JpaRepository<Member, Long> {
             + "JOIN FETCH memberworry.worry worry "
             + "WHERE worry.worryType = :worryType "
             + "AND m.age BETWEEN :minAge AND :maxAge "
-            + "AND m.email != :email")
+            + "AND m.id != :id")
     List<Member> findFilteredMember(@Param("minAge") int minAge,
                                     @Param("maxAge") int maxAge,
-                                    @Param("email") String email,
+                                    @Param("id") long id,
                                     @Param("worryType") WorryType worryType);
 
     @Query(value = "SELECT m FROM Member m WHERE m.email != :email ORDER BY RAND() LIMIT :n", nativeQuery = false)

@@ -26,7 +26,7 @@ public class LetterService {
 
     @Transactional
     public void send(LetterSendRequest request) {
-        Member sender = memberRepository.findByEmail(request.getEmail())
+        Member sender = memberRepository.findById(request.getMemberId())
                 .orElseThrow(MemberNotFoundException::new);
 
         List<Member> receivers = filterReceiver(request, memberRepository, sender);
@@ -98,13 +98,16 @@ public class LetterService {
                     request.getAgeRangeStart(),
                     request.getAgeRangeEnd(),
                     sender.getGender(),
-                    sender.getEmail(),
+                    sender.getId(),
                     WorryType.from(request.getWorryType())
             );
         }
 
-        return memberRepository.findFilteredMember(request.getAgeRangeStart(), request.getAgeRangeEnd(),
-                request.getEmail(), WorryType.from(request.getWorryType()));
+        return memberRepository.findFilteredMember(
+                request.getAgeRangeStart(),
+                request.getAgeRangeEnd(),
+                request.getMemberId(),
+                WorryType.from(request.getWorryType()));
     }
 
     private int generateRandomReceiverCount(Integer maxCount) {

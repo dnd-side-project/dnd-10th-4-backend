@@ -17,19 +17,19 @@ import org.springframework.stereotype.Component;
 
 @Aspect
 @Component
-public class AssignCurrentEmailAspect {
+public class AssignCurrentMemberIdAspect {
 
-    @Before("@annotation(dnd.myOcean.global.auth.aop.AssignCurrentEmail)")
+    @Before("@annotation(dnd.myOcean.global.auth.aop.AssignCurrentMemberId)")
     public void assignMemberId(JoinPoint joinPoint) {
         Arrays.stream(joinPoint.getArgs())
-                .forEach(arg -> getMethod(arg.getClass(), "setEmail")
+                .forEach(arg -> getMethod(arg.getClass(), "setMemberId")
                         .ifPresent(
-                                setMemberId -> invokeMethod(arg, setMemberId, getCurrentEmail())));
+                                setMemberId -> invokeMethod(arg, setMemberId, getCurrentMemberId())));
     }
 
-    private void invokeMethod(Object arg, Method method, String currentEmail) {
+    private void invokeMethod(Object arg, Method method, Long currentMemberId) {
         try {
-            method.invoke(arg, currentEmail);
+            method.invoke(arg, currentMemberId);
         } catch (ReflectiveOperationException e) {
             throw new RuntimeException(e);
         }
@@ -37,18 +37,18 @@ public class AssignCurrentEmailAspect {
 
     private Optional<Method> getMethod(Class<?> clazz, String methodName) {
         try {
-            return Optional.of(clazz.getMethod(methodName, String.class));
+            return Optional.of(clazz.getMethod(methodName, Long.class));
         } catch (NoSuchMethodException e) {
             return Optional.empty();
         }
     }
 
-    private String getCurrentEmail() {
-        return getCurrentEmailCheck()
+    private Long getCurrentMemberId() {
+        return getCurrentMemberIdCheck()
                 .orElseThrow(AccessDeniedException::new);
     }
 
-    private Optional<String> getCurrentEmailCheck() {
+    private Optional<Long> getCurrentMemberIdCheck() {
         final Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
 
         Object principal = authentication.getPrincipal();
@@ -59,7 +59,7 @@ public class AssignCurrentEmailAspect {
 
         if (principal instanceof KakaoMemberDetails) {
             KakaoMemberDetails kakaoMemberDetails = (KakaoMemberDetails) authentication.getPrincipal();
-            return Optional.ofNullable(kakaoMemberDetails.getName());
+            return Optional.ofNullable(kakaoMemberDetails.getId());
         }
 
         if (principal instanceof String) {

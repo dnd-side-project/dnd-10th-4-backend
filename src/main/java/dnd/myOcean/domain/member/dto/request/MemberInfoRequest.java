@@ -12,5 +12,5 @@ import lombok.NoArgsConstructor;
 public class MemberInfoRequest {
 
     @Null
-    private String email;
+    private Long memberId;
 }

@@ -15,8 +15,8 @@ import lombok.NoArgsConstructor;
 public class BirthdayUpdateRequest {
 
     @Null
-    private String email;
-
+    private Long memberId;
+    
     @NotEmpty
     private String birthday;
 }

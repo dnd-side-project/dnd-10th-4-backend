@@ -13,8 +13,8 @@ import lombok.NoArgsConstructor;
 public class NicknameUpdateRequest {
 
     @Null
-    private String email;
-
+    private Long memberId;
+    
     @NotEmpty
     private String nickname;
 }

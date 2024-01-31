@@ -14,8 +14,8 @@ import lombok.NoArgsConstructor;
 public class GenderUpdateRequest {
 
     @Null
-    private String email;
-
+    private Long memberId;
+    
     @NotEmpty
     private String gender;
 }
