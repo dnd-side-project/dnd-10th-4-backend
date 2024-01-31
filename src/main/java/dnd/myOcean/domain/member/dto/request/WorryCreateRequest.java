@@ -20,11 +20,11 @@ public class WorryCreateRequest {
     private List<String> worries;
 
     public List<WorryType> getWorries() {
-        List<WorryType> store = new ArrayList<>();
+        List<WorryType> worryTypes = new ArrayList<>();
         for (String worry : worries) {
             WorryType findWorry = WorryType.from(worry);
-            store.add(findWorry);
+            worryTypes.add(findWorry);
         }
-        return store;
+        return worryTypes;
     }
 }
