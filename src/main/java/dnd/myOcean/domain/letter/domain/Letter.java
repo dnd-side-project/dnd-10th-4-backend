@@ -53,4 +53,14 @@ public class Letter extends BaseEntity {
     private boolean isRead;
 
     private boolean hasReplied;
+
+    private String replyContent;
+
+    public void read() {
+        this.isRead = true;
+    }
+
+    public void replied() {
+        this.hasReplied = true;
+    }
 }
