@@ -33,7 +33,7 @@ public class LetterController {
     // TODO : 0, 2-4, 2-5에 대한 이메일 알림 기능 추가
 
     // 0. 편지 전송
-    @PostMapping("/send")
+    @PostMapping
     @AssignCurrentMemberId
     public ResponseEntity<Void> send(@RequestBody LetterSendRequest request) {
         letterService.send(request);
@@ -101,12 +101,12 @@ public class LetterController {
 
     // TODO 2-5. 받은 편지 다른 사람에게 토스
 
-    // 보관한 편지
+    // 3. 보관한 편지
     // TODO 3-1. 단건 조회
     // TODO 3-2. 전체 페이징 조회
     // TODO 3-3. 보관한 편지 삭제
 
-    // 답장 받은 편지
+    // 4. 답장 받은 편지
     // TODO 4-1. 전체 조회
     // TODO 4-2. 단건 조회
 }
