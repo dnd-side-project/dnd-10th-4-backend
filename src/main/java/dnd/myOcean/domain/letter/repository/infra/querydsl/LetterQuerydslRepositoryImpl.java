@@ -30,8 +30,35 @@ public class LetterQuerydslRepositoryImpl extends QuerydslRepositorySupport impl
     @Override
     public Page<LetterResponse> findAllSendLetter(LetterReadCondition cond) {
         Pageable pageable = PageRequest.of(cond.getPage(), cond.getSize());
-        Predicate predicate = createPredicateByCurrentMemberId(cond);
+        Predicate predicate = createPredicateByCurrentMemberSend(cond);
         return new PageImpl<>(fetchAll(predicate, pageable), pageable, fetchCount(predicate));
+    }
+
+    @Override
+    public Page<LetterResponse> findAllReceiveLetter(LetterReadCondition cond) {
+        Pageable pageable = PageRequest.of(cond.getPage(), cond.getSize());
+        Predicate predicate = createPredicateByCurrentMemberReceive(cond);
+        return new PageImpl<>(fetchAll(predicate, pageable), pageable, fetchCount(predicate));
+    }
+
+    private Predicate createPredicateByCurrentMemberSend(LetterReadCondition cond) {
+        BooleanBuilder builder = new BooleanBuilder();
+        if (!String.valueOf(cond.getMemberId()).isEmpty()) {
+            builder.and(letter.sender.id.eq(cond.getMemberId()));
+            builder.and(letter.isDeleteBySender.isFalse());
+            return builder;
+        }
+        return builder;
+    }
+
+    private Predicate createPredicateByCurrentMemberReceive(LetterReadCondition cond) {
+        BooleanBuilder builder = new BooleanBuilder();
+        if (!String.valueOf(cond.getMemberId()).isEmpty()) {
+            builder.and(letter.receiver.id.eq(cond.getMemberId()));
+            builder.and(letter.isDeleteByReceiver.isFalse());
+            return builder;
+        }
+        return builder;
     }
 
     private List<LetterResponse> fetchAll(Predicate predicate, Pageable pageable) {
@@ -48,16 +75,6 @@ public class LetterQuerydslRepositoryImpl extends QuerydslRepositorySupport impl
                         .where(predicate)
                         .orderBy(letter.createDate.asc())
         ).fetch();
-    }
-
-    private Predicate createPredicateByCurrentMemberId(LetterReadCondition cond) {
-        BooleanBuilder builder = new BooleanBuilder();
-        if (!String.valueOf(cond.getMemberId()).isEmpty()) {
-            builder.and(letter.sender.id.eq(cond.getMemberId()));
-            builder.and(letter.isDeleteBySender.isFalse());
-            return builder;
-        }
-        return builder;
     }
 
     private Long fetchCount(Predicate predicate) {

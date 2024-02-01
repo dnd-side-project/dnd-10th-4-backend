@@ -6,10 +6,12 @@ import dnd.myOcean.domain.letter.dto.request.LetterReadRequest;
 import dnd.myOcean.domain.letter.dto.request.LetterReplyRequest;
 import dnd.myOcean.domain.letter.dto.request.LetterSendRequest;
 import dnd.myOcean.domain.letter.dto.request.LetterStoreRequest;
+import dnd.myOcean.domain.letter.dto.request.LettersReadRequest;
 import dnd.myOcean.domain.letter.dto.response.LetterResponse;
 import dnd.myOcean.domain.letter.repository.infra.querydsl.dto.LetterReadCondition;
 import dnd.myOcean.domain.letter.repository.infra.querydsl.dto.PagedLettersResponse;
 import dnd.myOcean.global.auth.aop.AssignCurrentMemberId;
+import java.util.List;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -55,7 +57,8 @@ public class LetterController {
         letterService.deleteSendLetter(request, letterId);
         return new ResponseEntity(HttpStatus.OK);
     }
-    
+
+    // 1-3. 삭제하지 않은 편지 전체 조회 (페이징)
     @GetMapping("/send")
     @AssignCurrentMemberId
     public ResponseEntity<PagedLettersResponse> readSentLetter(@RequestBody LetterReadCondition cond) {
@@ -63,7 +66,7 @@ public class LetterController {
     }
 
     // 2. 받은 편지
-    // 2-1. 단건 조회(프로퍼티 값 변경)
+    // 2-1. 받은 편지 단건 조회(프로퍼티 값 변경)
     @GetMapping("/reception/{letterId}")
     @AssignCurrentMemberId
     public ResponseEntity<LetterResponse> readReceivedLetter(@RequestBody LetterReadRequest request,
@@ -71,7 +74,12 @@ public class LetterController {
         return new ResponseEntity<>(letterService.readReceivedLetter(request, letterId), HttpStatus.OK);
     }
 
-    // TODO 2-2. 전체 조회
+    // 2-2. 받은 편지 전체 조회
+    @GetMapping("/reception")
+    @AssignCurrentMemberId
+    public ResponseEntity<List<LetterResponse>> readReceivedLetters(@RequestBody LettersReadRequest request) {
+        return new ResponseEntity(letterService.readReceivedLetters(request), HttpStatus.OK);
+    }
 
     // 2-3. 받은 편지 보관 (프로퍼티 값 변경)
     @PatchMapping("/reception/storage/{letterId}")

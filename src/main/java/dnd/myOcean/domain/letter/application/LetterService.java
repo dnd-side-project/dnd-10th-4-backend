@@ -7,6 +7,7 @@ import dnd.myOcean.domain.letter.dto.request.LetterReadRequest;
 import dnd.myOcean.domain.letter.dto.request.LetterReplyRequest;
 import dnd.myOcean.domain.letter.dto.request.LetterSendRequest;
 import dnd.myOcean.domain.letter.dto.request.LetterStoreRequest;
+import dnd.myOcean.domain.letter.dto.request.LettersReadRequest;
 import dnd.myOcean.domain.letter.dto.response.LetterResponse;
 import dnd.myOcean.domain.letter.exception.AccessDeniedLetterException;
 import dnd.myOcean.domain.letter.exception.AlreadyReplyExistException;
@@ -27,6 +28,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 @Service
+@Transactional(readOnly = true)
 @RequiredArgsConstructor
 public class LetterService {
 
@@ -169,6 +171,14 @@ public class LetterService {
 
     public PagedLettersResponse readSendLetters(LetterReadCondition cond) {
         return PagedLettersResponse.of(letterRepository.findAllSendLetter(cond));
+    }
+
+    public List<LetterResponse> readReceivedLetters(LettersReadRequest request) {
+        List<Letter> letters = letterRepository.findAllByReceiverIdAndIsDeleteByReceiverFalse(request.getMemberId());
+
+        return letters.stream()
+                .map(letter -> LetterResponse.toDto(letter))
+                .collect(Collectors.toList());
     }
 
     // 보관한 편지

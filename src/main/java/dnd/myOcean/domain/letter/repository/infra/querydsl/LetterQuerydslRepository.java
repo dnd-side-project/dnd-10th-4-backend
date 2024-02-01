@@ -7,4 +7,6 @@ import org.springframework.data.domain.Page;
 public interface LetterQuerydslRepository {
 
     Page<LetterResponse> findAllSendLetter(LetterReadCondition cond);
+
+    Page<LetterResponse> findAllReceiveLetter(LetterReadCondition cond);
 }
