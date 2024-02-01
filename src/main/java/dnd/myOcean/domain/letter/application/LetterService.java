@@ -132,12 +132,16 @@ public class LetterService {
         letter.deleteBySender();
     }
 
+    public PagedLettersResponse readSendLetters(LetterReadCondition cond) {
+        return PagedLettersResponse.of(letterRepository.findAllSendLetter(cond));
+    }
+
     // 받은 편지
     // 1. 단건 조회(프로퍼티 값 변경) O
     // 2. 전체 조회
     // 3. 받은 편지 보관 (프로퍼티 값 변경)
     // 4. 받은 편지에 대한 답장 설정
-    // 5. 받은 편지 다른 사람에게 토스
+    // 5. 받은 편지 다른 사람에게 전달
     @Transactional
     public LetterResponse readReceivedLetter(LetterReadRequest request, Long letterId) {
         Letter letter = letterRepository.findByIdAndReceiverIdAndIsDeleteByReceiverFalse(letterId,
@@ -146,6 +150,14 @@ public class LetterService {
         letter.read();
 
         return LetterResponse.toDto(letter);
+    }
+
+    public List<LetterResponse> readReceivedLetters(LettersReadRequest request) {
+        List<Letter> letters = letterRepository.findAllByReceiverIdAndIsDeleteByReceiverFalse(request.getMemberId());
+
+        return letters.stream()
+                .map(letter -> LetterResponse.toDto(letter))
+                .collect(Collectors.toList());
     }
 
     @Transactional
@@ -167,18 +179,6 @@ public class LetterService {
         }
 
         letter.reply(request.getReplyContent());
-    }
-
-    public PagedLettersResponse readSendLetters(LetterReadCondition cond) {
-        return PagedLettersResponse.of(letterRepository.findAllSendLetter(cond));
-    }
-
-    public List<LetterResponse> readReceivedLetters(LettersReadRequest request) {
-        List<Letter> letters = letterRepository.findAllByReceiverIdAndIsDeleteByReceiverFalse(request.getMemberId());
-
-        return letters.stream()
-                .map(letter -> LetterResponse.toDto(letter))
-                .collect(Collectors.toList());
     }
 
     // 보관한 편지
