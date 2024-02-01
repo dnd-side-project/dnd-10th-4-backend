@@ -1,4 +1,4 @@
-package dnd.myOcean.global.auth.oAuth.kakao.details;
+package dnd.myOcean.global.auth.oauth.kakao.details;
 
 import dnd.myOcean.domain.member.domain.Gender;
 import dnd.myOcean.domain.member.domain.Member;

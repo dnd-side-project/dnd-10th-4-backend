@@ -1,4 +1,4 @@
-package dnd.myOcean.global.auth.oAuth.kakao.details;
+package dnd.myOcean.global.auth.oauth.kakao.details;
 
 import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.ObjectMapper;

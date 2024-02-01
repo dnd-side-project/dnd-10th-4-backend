@@ -1,7 +1,7 @@
 package dnd.myOcean.global.auth.jwt.token;
 
 import dnd.myOcean.global.auth.jwt.token.repository.redis.RefreshTokenRedisRepository;
-import dnd.myOcean.global.auth.oAuth.kakao.details.KakaoMemberDetails;
+import dnd.myOcean.global.auth.oauth.kakao.details.KakaoMemberDetails;
 import dnd.myOcean.global.common.auth.RefreshToken;
 import io.jsonwebtoken.Claims;
 import io.jsonwebtoken.ExpiredJwtException;

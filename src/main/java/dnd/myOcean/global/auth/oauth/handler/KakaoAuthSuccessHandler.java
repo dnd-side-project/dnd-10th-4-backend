@@ -1,4 +1,4 @@
-package dnd.myOcean.global.auth.oAuth.handler;
+package dnd.myOcean.global.auth.oauth.handler;
 
 import dnd.myOcean.domain.member.domain.Member;
 import dnd.myOcean.domain.member.exception.MemberNotFoundException;
@@ -6,7 +6,7 @@ import dnd.myOcean.domain.member.repository.infra.jpa.MemberRepository;
 import dnd.myOcean.global.auth.jwt.token.TokenProvider;
 import dnd.myOcean.global.auth.jwt.token.TokenResponse;
 import dnd.myOcean.global.auth.jwt.token.repository.redis.RefreshTokenRedisRepository;
-import dnd.myOcean.global.auth.oAuth.kakao.details.KakaoUserInfo;
+import dnd.myOcean.global.auth.oauth.kakao.details.KakaoUserInfo;
 import dnd.myOcean.global.common.auth.RefreshToken;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
