@@ -23,7 +23,6 @@ import dnd.myOcean.domain.member.exception.WorryTypeContainsNotAccepted;
 import dnd.myOcean.domain.member.repository.infra.jpa.MemberRepository;
 import dnd.myOcean.domain.member.repository.infra.jpa.WorryRepository;
 import java.util.List;
-import java.util.Optional;
 import java.util.stream.Collectors;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
@@ -104,8 +103,7 @@ public class MemberService {
     }
 
     public boolean isNicknameAvailable(String nickname) {
-        Optional<Member> existingMember = memberRepository.findByNickName(nickname);
-        return existingMember.isEmpty();
+        return !memberRepository.existByNickName(nickname);
     }
 
     public MemberInfoResponse getMyInfo(MemberInfoRequest request) {
