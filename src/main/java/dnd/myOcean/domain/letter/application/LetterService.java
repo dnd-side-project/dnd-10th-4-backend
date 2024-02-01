@@ -9,6 +9,7 @@ import dnd.myOcean.domain.letter.dto.request.LetterSendRequest;
 import dnd.myOcean.domain.letter.dto.request.LetterStoreRequest;
 import dnd.myOcean.domain.letter.dto.response.LetterResponse;
 import dnd.myOcean.domain.letter.exception.AccessDeniedLetterException;
+import dnd.myOcean.domain.letter.exception.AlreadyReplyExistException;
 import dnd.myOcean.domain.letter.repository.infra.jpa.LetterRepository;
 import dnd.myOcean.domain.member.domain.Member;
 import dnd.myOcean.domain.member.domain.WorryType;
@@ -131,8 +132,8 @@ public class LetterService {
     // 1. 단건 조회(프로퍼티 값 변경) O
     // 2. 전체 조회
     // 3. 받은 편지 보관 (프로퍼티 값 변경)
-    // 4. 받은 편지에 대한 답장 설정 -> 보낸 사람에게 이메일 알림
-    // 5. 받은 편지 다른 사람에게 토스 -> 받은 사람들에게 이메일 알림
+    // 4. 받은 편지에 대한 답장 설정
+    // 5. 받은 편지 다른 사람에게 토스
     @Transactional
     public LetterResponse readReceivedLetter(LetterReadRequest request, Long letterId) {
         Letter letter = letterRepository.findByIdAndReceiverIdAndIsDeleteByReceiverFalse(letterId,
@@ -156,6 +157,11 @@ public class LetterService {
         Letter letter = letterRepository.findByIdAndReceiverIdAndIsDeleteByReceiverFalse(letterId,
                         request.getMemberId())
                 .orElseThrow(AccessDeniedLetterException::new);
+
+        if (!letter.getReplyContent().isEmpty()) {
+            throw new AlreadyReplyExistException();
+        }
+
         letter.reply(request.getReplyContent());
     }
 

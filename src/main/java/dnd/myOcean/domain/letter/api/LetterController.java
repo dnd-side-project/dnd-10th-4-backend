@@ -26,9 +26,9 @@ public class LetterController {
 
     private final LetterService letterService;
 
-    /**
-     * 편지 전송
-     */
+    // TODO : 0, 2-4, 2-5에 대한 이메일 알림 기능
+
+    // 0. 편지 전송
     @PostMapping("/send")
     @AssignCurrentMemberId
     public ResponseEntity<Void> send(@RequestBody LetterSendRequest request) {
@@ -37,11 +37,9 @@ public class LetterController {
     }
 
     // 1. 보낸 편지
-    // 1-1. 단건 조회 O
-    // 1-2. 삭제 (실제 삭제 X, 프로퍼티 값 변경) O
     // TODO : 1-3. 전체 페이징 조회(삭제하지 않은 메시지만 페이징)
 
-    // 1-1. 단건 조회 O
+    // 1-1. 단건 조회
     @GetMapping("/send/{letterId}")
     @AssignCurrentMemberId
     public ResponseEntity<LetterResponse> readSentLetter(@RequestBody LetterReadRequest request,
@@ -49,7 +47,7 @@ public class LetterController {
         return new ResponseEntity(letterService.readSendLetter(request, letterId), HttpStatus.OK);
     }
 
-    // 1-2. 삭제 (실제 삭제 X, 프로퍼티 값 변경) O
+    // 1-2. 삭제 (실제 삭제 X, 프로퍼티 값 변경)
     @PatchMapping("/send/{letterId}")
     @AssignCurrentMemberId
     public ResponseEntity<Void> deleteSentLetter(@RequestBody LetterDeleteRequest request,
@@ -58,14 +56,17 @@ public class LetterController {
         return new ResponseEntity(HttpStatus.OK);
     }
 
-    // 2. 받은 편지
-    // 2-1. 단건 조회(프로퍼티 값 변경) O
-    // 2-2. 전체 조회
-    // 2-3. 받은 편지 보관 (프로퍼티 값 변경) O
-    // 2-4. 받은 편지에 대한 답장 설정 O -> 보낸 사람에게 이메일 알림
-    // 2-5. 받은 편지 다른 사람에게 토스 -> 받은 사람들에게 이메일 알림
+//    @GetMapping("/send")
+//    @AssignCurrentMemberId
+//    public ResponseEntity<LettersResponse> readSentLetter(@RequestBody LetterReadRequest request) {
+//        return new ResponseEntity(letterService.readSendLetters(request), HttpStatus.OK);
+//    }
 
-    // 2-1. 단건 조회(프로퍼티 값 변경) O
+    // 2. 받은 편지
+    // TODO 2-2. 전체 조회
+    // TODO 2-5. 받은 편지 다른 사람에게 토스
+
+    // 2-1. 단건 조회(프로퍼티 값 변경)
     @GetMapping("/reception/{letterId}")
     @AssignCurrentMemberId
     public ResponseEntity<LetterResponse> readReceivedLetter(@RequestBody LetterReadRequest request,
