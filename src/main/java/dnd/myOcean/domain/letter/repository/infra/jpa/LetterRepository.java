@@ -1,11 +1,12 @@
 package dnd.myOcean.domain.letter.repository.infra.jpa;
 
 import dnd.myOcean.domain.letter.domain.Letter;
+import dnd.myOcean.domain.letter.repository.infra.querydsl.LetterQuerydslRepository;
 import java.util.Optional;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.repository.query.Param;
 
-public interface LetterRepository extends JpaRepository<Letter, Long> {
+public interface LetterRepository extends JpaRepository<Letter, Long>, LetterQuerydslRepository {
 
     Optional<Letter> findByIdAndSenderId(@Param("id") Long id,
                                          @Param("senderId") Long senderId);

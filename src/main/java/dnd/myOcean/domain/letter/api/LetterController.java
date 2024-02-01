@@ -7,6 +7,8 @@ import dnd.myOcean.domain.letter.dto.request.LetterReplyRequest;
 import dnd.myOcean.domain.letter.dto.request.LetterSendRequest;
 import dnd.myOcean.domain.letter.dto.request.LetterStoreRequest;
 import dnd.myOcean.domain.letter.dto.response.LetterResponse;
+import dnd.myOcean.domain.letter.repository.infra.querydsl.dto.LetterReadCondition;
+import dnd.myOcean.domain.letter.repository.infra.querydsl.dto.PagedLettersResponse;
 import dnd.myOcean.global.auth.aop.AssignCurrentMemberId;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
@@ -26,7 +28,7 @@ public class LetterController {
 
     private final LetterService letterService;
 
-    // TODO : 0, 2-4, 2-5에 대한 이메일 알림 기능
+    // TODO : 0, 2-4, 2-5에 대한 이메일 알림 기능 추가
 
     // 0. 편지 전송
     @PostMapping("/send")
@@ -37,8 +39,6 @@ public class LetterController {
     }
 
     // 1. 보낸 편지
-    // TODO : 1-3. 전체 페이징 조회(삭제하지 않은 메시지만 페이징)
-
     // 1-1. 단건 조회
     @GetMapping("/send/{letterId}")
     @AssignCurrentMemberId
@@ -55,17 +55,14 @@ public class LetterController {
         letterService.deleteSendLetter(request, letterId);
         return new ResponseEntity(HttpStatus.OK);
     }
-
-//    @GetMapping("/send")
-//    @AssignCurrentMemberId
-//    public ResponseEntity<LettersResponse> readSentLetter(@RequestBody LetterReadRequest request) {
-//        return new ResponseEntity(letterService.readSendLetters(request), HttpStatus.OK);
-//    }
+    
+    @GetMapping("/send")
+    @AssignCurrentMemberId
+    public ResponseEntity<PagedLettersResponse> readSentLetter(@RequestBody LetterReadCondition cond) {
+        return new ResponseEntity(letterService.readSendLetters(cond), HttpStatus.OK);
+    }
 
     // 2. 받은 편지
-    // TODO 2-2. 전체 조회
-    // TODO 2-5. 받은 편지 다른 사람에게 토스
-
     // 2-1. 단건 조회(프로퍼티 값 변경)
     @GetMapping("/reception/{letterId}")
     @AssignCurrentMemberId
@@ -74,7 +71,9 @@ public class LetterController {
         return new ResponseEntity<>(letterService.readReceivedLetter(request, letterId), HttpStatus.OK);
     }
 
-    // 2-3. 받은 편지 보관 (프로퍼티 값 변경) O
+    // TODO 2-2. 전체 조회
+
+    // 2-3. 받은 편지 보관 (프로퍼티 값 변경)
     @PatchMapping("/reception/storage/{letterId}")
     @AssignCurrentMemberId
     public ResponseEntity<Void> storeReceivedLetter(@RequestBody LetterStoreRequest request,
@@ -83,7 +82,7 @@ public class LetterController {
         return new ResponseEntity<>(HttpStatus.OK);
     }
 
-    // 2-4. 받은 편지에 대한 답장 설정 -> 보낸 사람에게 이메일 알림
+    // 2-4. 받은 편지에 대한 답장 설정
     @PatchMapping("/reception/reply/{letterId}")
     @AssignCurrentMemberId
     public ResponseEntity<Void> replyReceivedLetter(@RequestBody LetterReplyRequest request,
@@ -92,12 +91,14 @@ public class LetterController {
         return new ResponseEntity<>(HttpStatus.OK);
     }
 
+    // TODO 2-5. 받은 편지 다른 사람에게 토스
+
     // 보관한 편지
-    // 1. 단건 조회
-    // 2. 전체 페이징 조회
-    // 3. 보관한 편지 삭제
+    // TODO 3-1. 단건 조회
+    // TODO 3-2. 전체 페이징 조회
+    // TODO 3-3. 보관한 편지 삭제
 
     // 답장 받은 편지
-    // 1. 전체 조회
-    // 2. 단건 조회
+    // TODO 4-1. 전체 조회
+    // TODO 4-2. 단건 조회
 }

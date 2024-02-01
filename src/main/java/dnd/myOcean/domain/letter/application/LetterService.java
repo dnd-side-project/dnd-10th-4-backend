@@ -11,6 +11,8 @@ import dnd.myOcean.domain.letter.dto.response.LetterResponse;
 import dnd.myOcean.domain.letter.exception.AccessDeniedLetterException;
 import dnd.myOcean.domain.letter.exception.AlreadyReplyExistException;
 import dnd.myOcean.domain.letter.repository.infra.jpa.LetterRepository;
+import dnd.myOcean.domain.letter.repository.infra.querydsl.dto.LetterReadCondition;
+import dnd.myOcean.domain.letter.repository.infra.querydsl.dto.PagedLettersResponse;
 import dnd.myOcean.domain.member.domain.Member;
 import dnd.myOcean.domain.member.domain.WorryType;
 import dnd.myOcean.domain.member.exception.MemberNotFoundException;
@@ -163,6 +165,10 @@ public class LetterService {
         }
 
         letter.reply(request.getReplyContent());
+    }
+
+    public PagedLettersResponse readSendLetters(LetterReadCondition cond) {
+        return PagedLettersResponse.of(letterRepository.findAllSendLetter(cond));
     }
 
     // 보관한 편지
