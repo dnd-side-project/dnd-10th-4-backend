@@ -113,7 +113,7 @@ public class LetterService {
     // 3. 전체 페이징 조회(삭제하지 않은 메시지만 페이징)
     @Transactional
     public LetterResponse readSendLetter(LetterReadRequest request, Long letterId) {
-        Letter letter = letterRepository.findByIdAndSenderId(letterId, request.getMemberId())
+        Letter letter = letterRepository.findByIdAndSenderIdAndIsDeleteBySenderFalse(letterId, request.getMemberId())
                 .orElseThrow(AccessDeniedLetterException::new);
         return LetterResponse.toDto(letter);
     }
@@ -131,7 +131,7 @@ public class LetterService {
     // 3. 받은 편지 보관 (프로퍼티 값 변경)
     @Transactional
     public LetterResponse readReceivedLetter(LetterReadRequest request, Long letterId) {
-        Letter letter = letterRepository.findByIdAndReceiverIdAndDeleteByReceiverIsFalse(letterId,
+        Letter letter = letterRepository.findByIdAndReceiverIdAndIsDeleteByReceiverFalse(letterId,
                         request.getMemberId())
                 .orElseThrow(AccessDeniedLetterException::new);
         letter.read();

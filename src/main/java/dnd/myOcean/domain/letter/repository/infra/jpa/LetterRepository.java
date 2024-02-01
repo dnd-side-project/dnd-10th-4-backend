@@ -7,8 +7,12 @@ import org.springframework.data.repository.query.Param;
 
 public interface LetterRepository extends JpaRepository<Letter, Long> {
 
-    Optional<Letter> findByIdAndSenderId(@Param("id") Long id, @Param("senderId") Long senderId);
+    Optional<Letter> findByIdAndSenderId(@Param("id") Long id,
+                                         @Param("senderId") Long senderId);
 
-    Optional<Letter> findByIdAndReceiverIdAndDeleteByReceiverIsFalse(@Param("id") Long id,
-                                                                     @Param("senderId") Long receiverId);
+    Optional<Letter> findByIdAndSenderIdAndIsDeleteBySenderFalse(@Param("id") Long id,
+                                                                 @Param("senderId") Long senderId);
+
+    Optional<Letter> findByIdAndReceiverIdAndIsDeleteByReceiverFalse(@Param("id") Long id,
+                                                                     @Param("receiverId") Long receiverId);
 }

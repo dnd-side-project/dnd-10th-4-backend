@@ -43,12 +43,12 @@ INSERT INTO LETTER(sender_id, receiver_id, content, create_date, worry_type,
                    has_replied, is_read, is_delete_by_sender, is_delete_by_receiver,
                    reply_content)
 VALUES (2, 1, '안녕', now(), 'WORK', false, false, false, false, ' '),
-       (3, 1, '안녕', now(), 'LOVE', false, false, false, false, ' '),
+       (3, 1, '안녕', now(), 'LOVE', false, false, false, true, ' '),
        (4, 1, '안녕', now(), 'ETC', false, false, false, false, ' '),
        (5, 1, '안녕', now(), 'BREAK_LOVE', false, false, false, false, ' '),
        (6, 1, '안녕', now(), 'FAMILY', false, false, false, false, ' '),
        (1, 2, '안녕', now(), 'LOVE', false, false, false, false, ' '),
-       (1, 3, '안녕', now(), 'WORK', false, false, false, false, ' '),
+       (1, 3, '안녕', now(), 'WORK', false, false, true, false, ' '),
        (1, 4, '안녕', now(), 'FAMILY', false, false, false, false, ' '),
        (1, 5, '안녕', now(), 'ETC', false, false, false, false, ' ');
 

@@ -49,10 +49,13 @@ public class Letter extends BaseEntity {
 
     @Enumerated(EnumType.STRING)
     private WorryType worryType;
-
+    
     private boolean isRead;
+
     private boolean isDeleteBySender;
+
     private boolean isDeleteByReceiver;
+
     private boolean hasReplied;
     private String replyContent;
 

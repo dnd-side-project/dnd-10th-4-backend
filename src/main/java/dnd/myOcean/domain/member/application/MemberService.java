@@ -103,7 +103,7 @@ public class MemberService {
     }
 
     public boolean isNicknameAvailable(String nickname) {
-        return !memberRepository.existByNickName(nickname);
+        return !memberRepository.existsByNickName(nickname);
     }
 
     public MemberInfoResponse getMyInfo(MemberInfoRequest request) {
