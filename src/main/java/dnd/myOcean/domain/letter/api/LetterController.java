@@ -27,35 +27,26 @@ public class LetterController {
     /**
      * 편지 전송
      */
-    @AssignCurrentMemberId
     @PostMapping("/send")
-    public ResponseEntity send(@RequestBody LetterSendRequest request) {
+    @AssignCurrentMemberId
+    public ResponseEntity<Void> send(@RequestBody LetterSendRequest request) {
         letterService.send(request);
         return new ResponseEntity(HttpStatus.OK);
     }
 
-    /**
-     * 보낸 편지 단건 조회
-     */
-    @AssignCurrentMemberId
+    // 보낸 편지
+    // 1. 단건 조회
+    // 2. 삭제 (실제 삭제 X, 프로퍼티 값 변경)
+    // 3. 전체 페이징 조회(삭제하지 않은 메시지만 페이징)
     @GetMapping("/send/{letterId}")
+    @AssignCurrentMemberId
     public ResponseEntity<LetterResponse> readSentLetter(@RequestBody LetterReadRequest request,
                                                          @PathVariable("letterId") Long letterId) {
         return new ResponseEntity(letterService.readSendLetter(request, letterId), HttpStatus.OK);
     }
 
-//
-//    /**
-//     * 보낸 편지 페이징 조회
-//     */
-//    @GetMapping("/send")
-//
-
-    /**
-     * 보낸 편지 삭제
-     */
-    @AssignCurrentMemberId
     @PatchMapping("/send/{letterId}")
+    @AssignCurrentMemberId
     public ResponseEntity<Void> deleteSentLetter(@RequestBody LetterDeleteRequest request,
                                                  @PathVariable("letterId") Long letterId) {
         letterService.deleteSendLetter(request, letterId);
@@ -63,25 +54,27 @@ public class LetterController {
     }
 
 
-    /**
-     * 받은 편지 단건 조회
-     */
-    @AssignCurrentMemberId
+    // 받은 편지
+    // 1. 단건 조회(프로퍼티 값 변경)
+    // 2. 전체 조회
+    // 3. 받은 편지 보관 (프로퍼티 값 변경)
     @GetMapping("/reception/{letterId}")
+    @AssignCurrentMemberId
     public ResponseEntity<LetterResponse> readReceivedLetter(@RequestBody LetterReadRequest request,
                                                              @PathVariable("letterId") Long letterId) {
         return new ResponseEntity<>(letterService.readReceivedLetter(request, letterId), HttpStatus.OK);
     }
 
-//
-//    /**
-//     * 받은 편지 다른 사람에게 토스
-//     */
-//    @PatchMapping("/toss/{letterId}")
-//
-//
-//    /**
-//     * 편지에 대한 답장 단건 조회
-//     */
-//    @GetMapping("/reply/{letterId}")
+    // 받은 편지에 대한 답장 설정 -> 보낸 사람에게 이메일 알림
+
+    // 받은 편지 다른 사람에게 토스 -> 받은 사람들에게 이메일 알림
+
+    // 보관한 편지
+    // 1. 단건 조회
+    // 2. 전체 페이징 조회
+    // 3. 보관한 편지 삭제
+
+    // 답장 받은 편지
+    // 1. 전체 조회
+    // 2. 단건 조회
 }

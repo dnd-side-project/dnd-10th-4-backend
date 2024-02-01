@@ -8,6 +8,7 @@ import dnd.myOcean.domain.member.dto.request.MemberInfoRequest;
 import dnd.myOcean.domain.member.dto.request.NicknameUpdateRequest;
 import dnd.myOcean.domain.member.dto.request.WorryCreateRequest;
 import dnd.myOcean.domain.member.dto.request.WorryDeleteRequest;
+import dnd.myOcean.domain.member.dto.response.MemberInfoResponse;
 import dnd.myOcean.global.auth.aop.AssignCurrentMemberId;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
@@ -29,42 +30,42 @@ public class MemberController {
 
     @PatchMapping("/birthday")
     @AssignCurrentMemberId
-    public ResponseEntity updateBirthday(@RequestBody BirthdayUpdateRequest request) {
+    public ResponseEntity<Void> updateBirthday(@RequestBody BirthdayUpdateRequest request) {
         memberService.updateAge(request);
         return new ResponseEntity<>(HttpStatus.OK);
     }
 
     @PatchMapping("/gender")
     @AssignCurrentMemberId
-    public ResponseEntity updateGender(@RequestBody GenderUpdateRequest request) {
+    public ResponseEntity<Void> updateGender(@RequestBody GenderUpdateRequest request) {
         memberService.updateGender(request);
         return new ResponseEntity<>(HttpStatus.OK);
     }
 
     @PatchMapping("/nickname")
     @AssignCurrentMemberId
-    public ResponseEntity updateNickname(@RequestBody NicknameUpdateRequest request) {
+    public ResponseEntity<Void> updateNickname(@RequestBody NicknameUpdateRequest request) {
         memberService.updateNickname(request);
         return new ResponseEntity<>(HttpStatus.OK);
     }
 
     @PostMapping("/worry")
     @AssignCurrentMemberId
-    public ResponseEntity createWorry(@RequestBody WorryCreateRequest request) {
+    public ResponseEntity<Void> createWorry(@RequestBody WorryCreateRequest request) {
         memberService.createWorry(request);
         return new ResponseEntity<>(HttpStatus.OK);
     }
 
     @DeleteMapping("/worry")
     @AssignCurrentMemberId
-    public ResponseEntity deleteAllWorry(@RequestBody WorryDeleteRequest request) {
+    public ResponseEntity<Void> deleteAllWorry(@RequestBody WorryDeleteRequest request) {
         memberService.deleteAllWorry(request);
         return new ResponseEntity<>(HttpStatus.OK);
     }
 
     @GetMapping
     @AssignCurrentMemberId
-    public ResponseEntity getMyInfo(@RequestBody MemberInfoRequest request) {
+    public ResponseEntity<MemberInfoResponse> getMyInfo(@RequestBody MemberInfoRequest request) {
         return new ResponseEntity(memberService.getMyInfo(request), HttpStatus.OK);
     }
 }

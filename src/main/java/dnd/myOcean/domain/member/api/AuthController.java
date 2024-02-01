@@ -26,8 +26,8 @@ public class AuthController {
      * 실제 배포에서 사용하는 로그인 API
      */
     @GetMapping("/login/kakao")
-    public ResponseEntity loginKakao(@RequestParam(name = "accessToken") String accessToken,
-                                     @RequestParam(name = "refreshToken") String refreshToken) {
+    public ResponseEntity<TokenResponse> loginKakao(@RequestParam(name = "accessToken") String accessToken,
+                                                    @RequestParam(name = "refreshToken") String refreshToken) {
         return new ResponseEntity(TokenResponse.of(accessToken, refreshToken), HttpStatus.OK);
     }
 
@@ -35,7 +35,8 @@ public class AuthController {
      * 포스트맨으로 테스트하기 위한 로그인 API
      */
     @PostMapping("/login/kakao/postman")
-    public ResponseEntity loginKakao(@RequestParam(name = "code") String code) throws JsonProcessingException {
+    public ResponseEntity<TokenResponse> loginKakao(@RequestParam(name = "code") String code)
+            throws JsonProcessingException {
         return new ResponseEntity(authService.kakaoLogin(code), HttpStatus.OK);
     }
 
@@ -43,7 +44,7 @@ public class AuthController {
      * 액세스 토큰 재발급 API
      */
     @GetMapping("/reissue")
-    public ResponseEntity reissueToken(HttpServletRequest request) {
+    public ResponseEntity<TokenResponse> reissueToken(HttpServletRequest request) {
         HttpSession session = request.getSession();
         String accessToken = (String) session.getAttribute("accessToken");
         String refreshToken = (String) session.getAttribute("refreshToken");
