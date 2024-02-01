@@ -15,6 +15,8 @@ import dnd.myOcean.domain.member.repository.infra.jpa.MemberRepository;
 import java.util.Collections;
 import java.util.List;
 import java.util.Random;
+import java.util.stream.Collectors;
+import java.util.stream.IntStream;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -49,52 +51,9 @@ public class LetterService {
         sendLetterUptoMaxCount(receivers, request, sender);
     }
 
-    private void sendLetterUptoMaxCount(List<Member> receivers, LetterSendRequest request,
-                                        Member sender) {
-        Collections.shuffle(receivers);
-        for (int i = 0; i < MAX_LETTER; i++) {
-            Letter letter = Letter.createLetter(
-                    sender,
-                    request.getContent(),
-                    receivers.get(i),
-                    WorryType.from(request.getWorryType())
-            );
-            letterRepository.save(letter);
-        }
-    }
-
-    private void sendLetterUpToReceiversCount(LetterSendRequest request, List<Member> receivers,
-                                              Member sender) {
-        int n = generateRandomReceiverCount(receivers.size());
-        Collections.shuffle(receivers);
-        for (int i = 0; i < n; i++) {
-            Letter letter = Letter.createLetter(
-                    sender,
-                    request.getContent(),
-                    receivers.get(i),
-                    WorryType.from(request.getWorryType())
-            );
-            letterRepository.save(letter);
-        }
-    }
-
-    private void sendLetterWithoutFilterUpToMaxLetter(LetterSendRequest request, Member sender) {
-        List<Member> randomReceivers = memberRepository.findRandomMembers(sender.getEmail(), MAX_LETTER);
-        for (int i = 0; i < randomReceivers.size(); i++) {
-            Letter letter = Letter.createLetter(
-                    sender,
-                    request.getContent(),
-                    randomReceivers.get(i),
-                    WorryType.from(request.getWorryType())
-            );
-            letterRepository.save(letter);
-        }
-    }
-
     private List<Member> filterReceiver(LetterSendRequest request, MemberRepository memberRepository, Member sender) {
         if (request.isEqualGender()) {
-            return memberRepository.findFilteredAndSameGenderMember(
-                    request.getAgeRangeStart(),
+            return memberRepository.findFilteredAndSameGenderMember(request.getAgeRangeStart(),
                     request.getAgeRangeEnd(),
                     sender.getGender(),
                     sender.getId(),
@@ -107,6 +66,41 @@ public class LetterService {
                 request.getAgeRangeEnd(),
                 request.getMemberId(),
                 WorryType.from(request.getWorryType()));
+    }
+
+    private void sendLetterWithoutFilterUpToMaxLetter(LetterSendRequest request, Member sender) {
+        List<Member> randomReceivers = memberRepository.findRandomMembers(sender.getEmail(), MAX_LETTER);
+        List<Letter> letters = createLetters(request, randomReceivers, sender, randomReceivers.size());
+        letterRepository.saveAll(letters);
+    }
+
+    private void sendLetterUpToReceiversCount(LetterSendRequest request, List<Member> receivers,
+                                              Member sender) {
+        int letterMaxCount = generateRandomReceiverCount(receivers.size());
+        Collections.shuffle(receivers);
+        List<Letter> letters = createLetters(request, receivers, sender, letterMaxCount);
+
+        letterRepository.saveAll(letters);
+    }
+
+    private void sendLetterUptoMaxCount(List<Member> receivers, LetterSendRequest request,
+                                        Member sender) {
+        Collections.shuffle(receivers);
+        List<Letter> letters = createLetters(request, receivers, sender, MAX_LETTER);
+
+        letterRepository.saveAll(letters);
+    }
+
+    private static List<Letter> createLetters(LetterSendRequest request, List<Member> receivers, Member sender,
+                                              int letterMaxCount) {
+        return IntStream.range(0, letterMaxCount)
+                .mapToObj(i -> Letter.createLetter(
+                        sender,
+                        request.getContent(),
+                        receivers.get(i),
+                        WorryType.from(request.getWorryType())
+                ))
+                .collect(Collectors.toList());
     }
 
     private int generateRandomReceiverCount(Integer maxCount) {
