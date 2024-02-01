@@ -117,8 +117,14 @@ public class LetterService {
         return new Random().nextInt(maxCount) + 1;
     }
 
-    public LetterResponse readSendLetter(LetterReadRequest request, Long letterId) {
-        Letter letter = letterRepository.findByIdAndSenderId(letterId, request.getMemberId())
+    public LetterResponse readLetter(LetterReadRequest request, Long letterId, boolean isReadSentLetter) {
+        if (isReadSentLetter) {
+            Letter letter = letterRepository.findByIdAndSenderId(letterId, request.getMemberId())
+                    .orElseThrow(AccessDeniedLetterException::new);
+            return LetterResponse.toDto(letter);
+        }
+
+        Letter letter = letterRepository.findByIdAndReceiverId(letterId, request.getMemberId())
                 .orElseThrow(AccessDeniedLetterException::new);
 
         return LetterResponse.toDto(letter);
