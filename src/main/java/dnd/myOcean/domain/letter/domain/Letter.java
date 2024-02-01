@@ -49,14 +49,12 @@ public class Letter extends BaseEntity {
 
     @Enumerated(EnumType.STRING)
     private WorryType worryType;
-    
+
     private boolean isRead;
-
     private boolean isDeleteBySender;
-
     private boolean isDeleteByReceiver;
-
     private boolean hasReplied;
+    private boolean isStored;
     private String replyContent;
 
     public void read() {
@@ -68,12 +66,17 @@ public class Letter extends BaseEntity {
     }
 
     public void deleteByReceiver() {
+        this.isStored = false;
         this.isDeleteByReceiver = true;
     }
 
-    public void replied(String replyContent) {
+    public void reply(String replyContent) {
         this.replyContent = replyContent;
         this.hasReplied = true;
+    }
+
+    public void store() {
+        this.isStored = true;
     }
 
     public static Letter createLetter(Member sender, String content, Member receiver, WorryType worryType) {
@@ -86,6 +89,7 @@ public class Letter extends BaseEntity {
                 .isDeleteBySender(false)
                 .isDeleteByReceiver(false)
                 .hasReplied(false)
+                .isStored(false)
                 .build();
     }
 }

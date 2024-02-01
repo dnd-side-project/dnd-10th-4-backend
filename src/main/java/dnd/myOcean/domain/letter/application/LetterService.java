@@ -4,7 +4,9 @@ package dnd.myOcean.domain.letter.application;
 import dnd.myOcean.domain.letter.domain.Letter;
 import dnd.myOcean.domain.letter.dto.request.LetterDeleteRequest;
 import dnd.myOcean.domain.letter.dto.request.LetterReadRequest;
+import dnd.myOcean.domain.letter.dto.request.LetterReplyRequest;
 import dnd.myOcean.domain.letter.dto.request.LetterSendRequest;
+import dnd.myOcean.domain.letter.dto.request.LetterStoreRequest;
 import dnd.myOcean.domain.letter.dto.response.LetterResponse;
 import dnd.myOcean.domain.letter.exception.AccessDeniedLetterException;
 import dnd.myOcean.domain.letter.repository.infra.jpa.LetterRepository;
@@ -108,8 +110,8 @@ public class LetterService {
     }
 
     // 보낸 편지
-    // 1. 단건 조회
-    // 2. 삭제 (실제 삭제 X, 프로퍼티 값 변경)
+    // 1. 단건 조회 O
+    // 2. 삭제 (실제 삭제 X, 프로퍼티 값 변경) O
     // 3. 전체 페이징 조회(삭제하지 않은 메시지만 페이징)
     @Transactional
     public LetterResponse readSendLetter(LetterReadRequest request, Long letterId) {
@@ -126,9 +128,11 @@ public class LetterService {
     }
 
     // 받은 편지
-    // 1. 단건 조회(프로퍼티 값 변경)
+    // 1. 단건 조회(프로퍼티 값 변경) O
     // 2. 전체 조회
     // 3. 받은 편지 보관 (프로퍼티 값 변경)
+    // 4. 받은 편지에 대한 답장 설정 -> 보낸 사람에게 이메일 알림
+    // 5. 받은 편지 다른 사람에게 토스 -> 받은 사람들에게 이메일 알림
     @Transactional
     public LetterResponse readReceivedLetter(LetterReadRequest request, Long letterId) {
         Letter letter = letterRepository.findByIdAndReceiverIdAndIsDeleteByReceiverFalse(letterId,
@@ -139,9 +143,21 @@ public class LetterService {
         return LetterResponse.toDto(letter);
     }
 
-    // 받은 편지에 대한 답장 설정 -> 보낸 사람에게 이메일 알림
+    @Transactional
+    public void storeReceivedLetter(LetterStoreRequest request, Long letterId) {
+        Letter letter = letterRepository.findByIdAndReceiverIdAndIsDeleteByReceiverFalse(letterId,
+                        request.getMemberId())
+                .orElseThrow(AccessDeniedLetterException::new);
+        letter.store();
+    }
 
-    // 받은 편지 다른 사람에게 토스 -> 받은 사람들에게 이메일 알림
+    @Transactional
+    public void replyReceivedLetter(LetterReplyRequest request, Long letterId) {
+        Letter letter = letterRepository.findByIdAndReceiverIdAndIsDeleteByReceiverFalse(letterId,
+                        request.getMemberId())
+                .orElseThrow(AccessDeniedLetterException::new);
+        letter.reply(request.getReplyContent());
+    }
 
     // 보관한 편지
     // 1. 단건 조회

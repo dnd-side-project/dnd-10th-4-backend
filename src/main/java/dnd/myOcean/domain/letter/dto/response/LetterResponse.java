@@ -14,6 +14,7 @@ import lombok.NoArgsConstructor;
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 public class LetterResponse {
 
+    private Long letterId;
     private String senderNickname;
     private String receiverNickname;
     private String content;
@@ -22,6 +23,7 @@ public class LetterResponse {
 
     public static LetterResponse toDto(Letter letter) {
         return LetterResponse.builder()
+                .letterId(letter.getId())
                 .senderNickname(letter.getSender().getNickName())
                 .receiverNickname(letter.getReceiver().getNickName())
                 .content(letter.getContent())
