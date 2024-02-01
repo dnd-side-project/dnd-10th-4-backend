@@ -1,6 +1,7 @@
 package dnd.myOcean.domain.letter.api;
 
 import dnd.myOcean.domain.letter.application.LetterService;
+import dnd.myOcean.domain.letter.dto.request.LetterDeleteRequest;
 import dnd.myOcean.domain.letter.dto.request.LetterReadRequest;
 import dnd.myOcean.domain.letter.dto.request.LetterSendRequest;
 import dnd.myOcean.domain.letter.dto.response.LetterResponse;
@@ -9,6 +10,7 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PatchMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
@@ -36,10 +38,10 @@ public class LetterController {
      * 보낸 편지 단건 조회
      */
     @AssignCurrentMemberId
-    @GetMapping("/sent/{letterId}")
+    @GetMapping("/send/{letterId}")
     public ResponseEntity<LetterResponse> readSentLetter(@RequestBody LetterReadRequest request,
                                                          @PathVariable("letterId") Long letterId) {
-        return new ResponseEntity(letterService.readLetter(request, letterId, true), HttpStatus.OK);
+        return new ResponseEntity(letterService.readSendLetter(request, letterId), HttpStatus.OK);
     }
 
 //
@@ -48,58 +50,29 @@ public class LetterController {
 //     */
 //    @GetMapping("/send")
 //
-//    /**
-//     * 보낸 편지 삭제
-//     */
-//    @PatchMapping("/send/{letterId}")
-//
-//
-//
-//
 
     /**
-     * 흘러온 편지 단건 조회
+     * 보낸 편지 삭제
      */
     @AssignCurrentMemberId
-    @GetMapping("/received/{letterId}")
+    @PatchMapping("/send/{letterId}")
+    public ResponseEntity<Void> deleteSentLetter(@RequestBody LetterDeleteRequest request,
+                                                 @PathVariable("letterId") Long letterId) {
+        letterService.deleteSendLetter(request, letterId);
+        return new ResponseEntity(HttpStatus.OK);
+    }
+
+
+    /**
+     * 받은 편지 단건 조회
+     */
+    @AssignCurrentMemberId
+    @GetMapping("/reception/{letterId}")
     public ResponseEntity<LetterResponse> readReceivedLetter(@RequestBody LetterReadRequest request,
                                                              @PathVariable("letterId") Long letterId) {
-        return new ResponseEntity<>(letterService.readLetter(request, letterId, false), HttpStatus.OK);
+        return new ResponseEntity<>(letterService.readReceivedLetter(request, letterId), HttpStatus.OK);
     }
-//
-//    /**
-//     * 흘러온 편지 전체 조회
-//     */
-//    @GetMapping("/received")
-//
-//    /**
-//     * 흘러온 편지 답장
-//     */
-//    @PatchMapping("/received/reply/{letterId}")
-//
-//    /**
-//     * 흘러온 편지 보관하기
-//     */
-//    @PatchMapping("/received/store/{letterId}")
-//
-//
-//
-//
-//    /**
-//     * 보관한 편지 단건 조회
-//     */
-//    @GetMapping("/store/{letterId}")
-//
-//    /**
-//     * 보관한 편지 페이징 조회
-//     */
-//    @GetMapping("/store")
-//
-//    /**
-//     * 보관한 편지 삭제
-//     */
-//    @PatchMapping("/store/{letterId}")
-//
+
 //
 //    /**
 //     * 받은 편지 다른 사람에게 토스

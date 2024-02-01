@@ -51,16 +51,38 @@ public class Letter extends BaseEntity {
     private WorryType worryType;
 
     private boolean isRead;
-
+    private boolean isDeleteBySender;
+    private boolean isDeleteByReceiver;
     private boolean hasReplied;
-
     private String replyContent;
 
     public void read() {
         this.isRead = true;
     }
 
-    public void replied() {
+    public void deleteBySender() {
+        this.isDeleteBySender = true;
+    }
+
+    public void deleteByReceiver() {
+        this.isDeleteByReceiver = true;
+    }
+
+    public void replied(String replyContent) {
+        this.replyContent = replyContent;
         this.hasReplied = true;
+    }
+
+    public static Letter createLetter(Member sender, String content, Member receiver, WorryType worryType) {
+        return Letter.builder()
+                .sender(sender)
+                .content(content)
+                .receiver(receiver)
+                .worryType(worryType)
+                .isRead(false)
+                .isDeleteBySender(false)
+                .isDeleteByReceiver(false)
+                .hasReplied(false)
+                .build();
     }
 }

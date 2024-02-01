@@ -2,6 +2,7 @@ package dnd.myOcean.domain.letter.application;
 
 
 import dnd.myOcean.domain.letter.domain.Letter;
+import dnd.myOcean.domain.letter.dto.request.LetterDeleteRequest;
 import dnd.myOcean.domain.letter.dto.request.LetterReadRequest;
 import dnd.myOcean.domain.letter.dto.request.LetterSendRequest;
 import dnd.myOcean.domain.letter.dto.response.LetterResponse;
@@ -27,6 +28,7 @@ public class LetterService {
     private final MemberRepository memberRepository;
     private final LetterRepository letterRepository;
 
+    // 편지 전송 -> 받은 사람들에게 이메일 알림
     @Transactional
     public void send(LetterSendRequest request) {
         Member sender = memberRepository.findById(request.getMemberId())
@@ -51,14 +53,12 @@ public class LetterService {
                                         Member sender) {
         Collections.shuffle(receivers);
         for (int i = 0; i < MAX_LETTER; i++) {
-            Letter letter = Letter.builder()
-                    .content(request.getContent())
-                    .sender(sender)
-                    .receiver(receivers.get(i))
-                    .isRead(false)
-                    .hasReplied(false)
-                    .worryType(WorryType.from(request.getWorryType()))
-                    .build();
+            Letter letter = Letter.createLetter(
+                    sender,
+                    request.getContent(),
+                    receivers.get(i),
+                    WorryType.from(request.getWorryType())
+            );
             letterRepository.save(letter);
         }
     }
@@ -68,14 +68,12 @@ public class LetterService {
         int n = generateRandomReceiverCount(receivers.size());
         Collections.shuffle(receivers);
         for (int i = 0; i < n; i++) {
-            Letter letter = Letter.builder()
-                    .content(request.getContent())
-                    .sender(sender)
-                    .receiver(receivers.get(i))
-                    .isRead(false)
-                    .hasReplied(false)
-                    .worryType(WorryType.from(request.getWorryType()))
-                    .build();
+            Letter letter = Letter.createLetter(
+                    sender,
+                    request.getContent(),
+                    receivers.get(i),
+                    WorryType.from(request.getWorryType())
+            );
             letterRepository.save(letter);
         }
     }
@@ -83,14 +81,12 @@ public class LetterService {
     private void sendLetterWithoutFilterUpToMaxLetter(LetterSendRequest request, Member sender) {
         List<Member> randomReceivers = memberRepository.findRandomMembers(sender.getEmail(), MAX_LETTER);
         for (int i = 0; i < randomReceivers.size(); i++) {
-            Letter letter = Letter.builder()
-                    .content(request.getContent())
-                    .sender(sender)
-                    .receiver(randomReceivers.get(i))
-                    .isRead(false)
-                    .hasReplied(false)
-                    .worryType(WorryType.from(request.getWorryType()))
-                    .build();
+            Letter letter = Letter.createLetter(
+                    sender,
+                    request.getContent(),
+                    randomReceivers.get(i),
+                    WorryType.from(request.getWorryType())
+            );
             letterRepository.save(letter);
         }
     }
@@ -117,16 +113,48 @@ public class LetterService {
         return new Random().nextInt(maxCount) + 1;
     }
 
-    public LetterResponse readLetter(LetterReadRequest request, Long letterId, boolean isReadSentLetter) {
-        if (isReadSentLetter) {
-            Letter letter = letterRepository.findByIdAndSenderId(letterId, request.getMemberId())
-                    .orElseThrow(AccessDeniedLetterException::new);
-            return LetterResponse.toDto(letter);
-        }
-
-        Letter letter = letterRepository.findByIdAndReceiverId(letterId, request.getMemberId())
+    // 보낸 편지
+    // 1. 단건 조회
+    // 2. 삭제 (실제 삭제 X, 프로퍼티 값 변경)
+    // 3. 전체 페이징 조회(삭제하지 않은 메시지만 페이징)
+    @Transactional
+    public LetterResponse readSendLetter(LetterReadRequest request, Long letterId) {
+        Letter letter = letterRepository.findByIdAndSenderId(letterId, request.getMemberId())
                 .orElseThrow(AccessDeniedLetterException::new);
+        return LetterResponse.toDto(letter);
+    }
+
+    @Transactional
+    public void deleteSendLetter(LetterDeleteRequest request, Long letterId) {
+        Letter letter = letterRepository.findByIdAndSenderId(letterId, request.getMemberId())
+                .orElseThrow(AccessDeniedLetterException::new);
+        letter.deleteBySender();
+    }
+
+    // 받은 편지
+    // 1. 단건 조회(프로퍼티 값 변경)
+    // 2. 전체 조회
+    // 3. 받은 편지 보관 (프로퍼티 값 변경)
+    @Transactional
+    public LetterResponse readReceivedLetter(LetterReadRequest request, Long letterId) {
+        Letter letter = letterRepository.findByIdAndReceiverIdAndDeleteByReceiverIsFalse(letterId,
+                        request.getMemberId())
+                .orElseThrow(AccessDeniedLetterException::new);
+        letter.read();
 
         return LetterResponse.toDto(letter);
     }
+
+    // 받은 편지에 대한 답장 설정 -> 보낸 사람에게 이메일 알림
+
+    // 받은 편지 다른 사람에게 토스 -> 받은 사람들에게 이메일 알림
+
+    // 보관한 편지
+    // 1. 단건 조회
+    // 2. 전체 페이징 조회
+    // 3. 보관한 편지 삭제
+
+    // 답장 받은 편지
+    // 1. 전체 조회
+    // 2. 단건 조회
 }

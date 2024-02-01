@@ -9,5 +9,6 @@ public interface LetterRepository extends JpaRepository<Letter, Long> {
 
     Optional<Letter> findByIdAndSenderId(@Param("id") Long id, @Param("senderId") Long senderId);
 
-    Optional<Letter> findByIdAndReceiverId(@Param("id") Long id, @Param("senderId") Long receiverId);
+    Optional<Letter> findByIdAndReceiverIdAndDeleteByReceiverIsFalse(@Param("id") Long id,
+                                                                     @Param("senderId") Long receiverId);
 }
