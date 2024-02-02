@@ -50,35 +50,11 @@ public class Letter extends BaseEntity {
     @Enumerated(EnumType.STRING)
     private WorryType worryType;
 
-    private boolean isRead;
     private boolean isDeleteBySender;
-    private boolean isDeleteByReceiver;
     private boolean hasReplied;
     private boolean isStored;
     private String replyContent;
     private String uuid;
-
-    public void read() {
-        this.isRead = true;
-    }
-
-    public void deleteBySender() {
-        this.isDeleteBySender = true;
-    }
-
-    public void deleteByReceiver() {
-        this.isStored = false;
-        this.isDeleteByReceiver = true;
-    }
-
-    public void reply(String replyContent) {
-        this.replyContent = replyContent;
-        this.hasReplied = true;
-    }
-
-    public void store() {
-        this.isStored = true;
-    }
 
     public static Letter createLetter(Member sender, String content, Member receiver, WorryType worryType,
                                       String uuid) {
@@ -88,12 +64,23 @@ public class Letter extends BaseEntity {
                 .receiver(receiver)
                 .worryType(worryType)
                 .uuid(uuid)
-                .isRead(false)
                 .isDeleteBySender(false)
-                .isDeleteByReceiver(false)
                 .hasReplied(false)
                 .isStored(false)
                 .build();
+    }
+
+    public void deleteBySender() {
+        this.isDeleteBySender = true;
+    }
+
+    public void reply(String replyContent) {
+        this.replyContent = replyContent;
+        this.hasReplied = true;
+    }
+
+    public void store(boolean isStored) {
+        this.isStored = isStored;
     }
 
     public void updateReceiver(Member receiver) {

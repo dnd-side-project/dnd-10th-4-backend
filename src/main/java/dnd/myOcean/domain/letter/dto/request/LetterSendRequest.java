@@ -15,11 +15,16 @@ public class LetterSendRequest {
     @Null
     private Long memberId;
 
-    @NotEmpty
+    @NotEmpty(message = "편지 내용을 입력해주세요.")
     private String content;
 
+
     private boolean equalGender;
+
+    @NotEmpty(message = "수신자의 최소 나이를 지정해주세요.")
     private Integer ageRangeStart;
+
+    @NotEmpty(message = "수신자의 최소 나이를 지정해주세요.")
     private Integer ageRangeEnd;
 
     @NotEmpty

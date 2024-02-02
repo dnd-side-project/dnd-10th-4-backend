@@ -8,6 +8,7 @@ import dnd.myOcean.domain.letter.dto.response.LetterResponse;
 import dnd.myOcean.domain.letter.exception.AccessDeniedLetterException;
 import dnd.myOcean.domain.letter.exception.AlreadyReplyExistException;
 import dnd.myOcean.domain.letter.exception.RepliedLetterPassException;
+import dnd.myOcean.domain.letter.exception.UnAnsweredLetterStoreException;
 import dnd.myOcean.domain.letter.repository.infra.jpa.LetterRepository;
 import dnd.myOcean.domain.letter.repository.infra.querydsl.dto.LetterReadCondition;
 import dnd.myOcean.domain.letter.repository.infra.querydsl.dto.PagedLettersResponse;
@@ -27,6 +28,7 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+
 @Service
 @Transactional(readOnly = true)
 @RequiredArgsConstructor
@@ -37,7 +39,7 @@ public class LetterService {
     private final MemberRepository memberRepository;
     private final LetterRepository letterRepository;
 
-    // 편지 전송 -> 받은 사람들에게 이메일 알림
+    // 0. 편지 전송
     @Transactional
     public void send(LetterSendRequest request) {
         Member sender = memberRepository.findById(request.getMemberId())
@@ -114,10 +116,7 @@ public class LetterService {
         return new Random().nextInt(maxCount) + 1;
     }
 
-    // 보낸 편지
-    // 1. 단건 조회 O
-    // 2. 삭제 (실제 삭제 X, 프로퍼티 값 변경) O
-    // 3. 전체 페이징 조회(삭제하지 않은 메시지만 페이징)
+    // 1-1. 보낸 편지 단건 조회
     @Transactional
     public LetterResponse readSendLetter(CurrentMemberIdRequest request, Long letterId) {
         Letter letter = letterRepository.findByIdAndSenderIdAndIsDeleteBySenderFalse(letterId, request.getMemberId())
@@ -125,6 +124,7 @@ public class LetterService {
         return LetterResponse.toDto(letter);
     }
 
+    // 1-2. 보낸 편지 삭제 (실제 삭제 X, 프로퍼티 값 변경)
     @Transactional
     public void deleteSendLetter(CurrentMemberIdRequest request, Long letterId) {
         Letter letter = letterRepository.findByIdAndSenderId(letterId, request.getMemberId())
@@ -132,45 +132,33 @@ public class LetterService {
         letter.deleteBySender();
     }
 
+    // 1-3. 보낸 편지 페이징 조회 (삭제하지 않은 메시지만 페이징)
     public PagedLettersResponse readSendLetters(LetterReadCondition cond) {
         return PagedLettersResponse.of(letterRepository.findAllSendLetter(cond));
     }
 
-    // 받은 편지
-    // 1. 단건 조회(프로퍼티 값 변경) O
-    // 2. 전체 조회
-    // 3. 받은 편지 보관 (프로퍼티 값 변경)
-    // 4. 받은 편지에 대한 답장 설정
-    // 5. 받은 편지 다른 사람에게 전달
+    // 2-1. 받은 편지 단건 조회(프로퍼티 값 변경) O
     @Transactional
     public LetterResponse readReceivedLetter(CurrentMemberIdRequest request, Long letterId) {
-        Letter letter = letterRepository.findByIdAndReceiverIdAndIsDeleteByReceiverFalse(letterId,
-                        request.getMemberId())
+        Letter letter = letterRepository.findByIdAndReceiverId(letterId, request.getMemberId())
                 .orElseThrow(AccessDeniedLetterException::new);
-        letter.read();
 
         return LetterResponse.toDto(letter);
     }
 
+    // 2-2. 받은 편지 전체 조회
     public List<LetterResponse> readReceivedLetters(CurrentMemberIdRequest request) {
-        List<Letter> letters = letterRepository.findAllByReceiverIdAndIsDeleteByReceiverFalse(request.getMemberId());
+        List<Letter> letters = letterRepository.findAllByReceiverIdAndHasRepliedFalse(request.getMemberId());
 
         return letters.stream()
                 .map(letter -> LetterResponse.toDto(letter))
                 .collect(Collectors.toList());
     }
 
-    @Transactional
-    public void storeReceivedLetter(CurrentMemberIdRequest request, Long letterId) {
-        Letter letter = letterRepository.findByIdAndReceiverIdAndIsDeleteByReceiverFalse(letterId,
-                        request.getMemberId())
-                .orElseThrow(AccessDeniedLetterException::new);
-        letter.store();
-    }
-
+    // 2-3. 받은 편지에 대한 답장 설정
     @Transactional
     public void replyReceivedLetter(LetterReplyRequest request, Long letterId) {
-        Letter letter = letterRepository.findByIdAndReceiverIdAndIsDeleteByReceiverFalse(letterId,
+        Letter letter = letterRepository.findByIdAndReceiverId(letterId,
                         request.getMemberId())
                 .orElseThrow(AccessDeniedLetterException::new);
 
@@ -181,18 +169,30 @@ public class LetterService {
         letter.reply(request.getReplyContent());
     }
 
+    // 2-4. 받은 편지 보관 (프로퍼티 값 변경) - 답장을 하지 않은 경우 해당 편지는 보관할 수 없음
+    @Transactional
+    public void storeReceivedLetter(CurrentMemberIdRequest request, Long letterId) {
+        Letter letter = letterRepository.findByIdAndReceiverId(letterId, request.getMemberId())
+                .orElseThrow(AccessDeniedLetterException::new);
+
+        if (!letter.isHasReplied()) {
+            throw new UnAnsweredLetterStoreException();
+        }
+
+        letter.store(true);
+    }
+
+    // 2-5. 받은 편지 답장하지 않고 다른 사람에게 전달
     @Transactional
     public void passReceivedLetter(CurrentMemberIdRequest request, Long letterId) {
-        Letter letter = letterRepository.findByIdAndReceiverIdAndIsDeleteByReceiverFalse(
-                        letterId,
-                        request.getMemberId())
+        Letter letter = letterRepository.findByIdAndReceiverId(letterId, request.getMemberId())
                 .orElseThrow(AccessDeniedLetterException::new);
 
         if (letter.isHasReplied()) {
             throw new RepliedLetterPassException();
         }
 
-        // 전체 회원 id를 가져온다.
+        // 전체 회원 id를 가져옴
         List<Long> memberIds = getAllMemberIds();
 
         // 해당 편지를 받은 사람의 id를 가져온다.
@@ -206,7 +206,6 @@ public class LetterService {
         memberIds.remove(letter.getReceiver().getId());
 
         Collections.shuffle(memberIds);
-
         Member newReceiver = memberRepository.findById(memberIds.get(0))
                 .orElseThrow(UnknownException::new);
 
@@ -221,12 +220,30 @@ public class LetterService {
         return memberIds;
     }
 
-    // 보관한 편지
-    // 1. 단건 조회
-    // 2. 전체 페이징 조회
-    // 3. 보관한 편지 삭제
+    // 3-1. 보관한 편지 전체 페이징 조회
+    public PagedLettersResponse readStoredLetters(LetterReadCondition cond) {
+        return PagedLettersResponse.of(letterRepository.findAllStoredLetter(cond));
+    }
 
-    // 답장 받은 편지
-    // 1. 전체 조회
-    // 2. 단건 조회
+    // 3-2. 보관한 편지 보관 해제
+    public void deleteStoredLetter(CurrentMemberIdRequest request, Long letterId) {
+        Letter letter = letterRepository.findByIdAndReceiverId(letterId, request.getMemberId())
+                .orElseThrow(AccessDeniedLetterException::new);
+
+        letter.store(false);
+    }
+
+    // 4-1. 답장 받은 편지 전체 조회
+    public PagedLettersResponse readRepliedLetters(LetterReadCondition cond) {
+        return PagedLettersResponse.of(letterRepository.findAllReliedLetter(cond));
+    }
+
+    // 4-2. 단건 조회
+    @Transactional
+    public LetterResponse readRepliedLetter(CurrentMemberIdRequest request, Long letterId) {
+        Letter letter = letterRepository.findByIdAndReceiverIdAndHasRepliedTrue(letterId, request.getMemberId())
+                .orElseThrow(AccessDeniedLetterException::new);
+
+        return LetterResponse.toDto(letter);
+    }
 }

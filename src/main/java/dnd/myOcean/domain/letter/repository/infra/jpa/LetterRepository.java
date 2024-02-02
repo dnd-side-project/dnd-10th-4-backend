@@ -9,7 +9,7 @@ import org.springframework.data.repository.query.Param;
 
 public interface LetterRepository extends JpaRepository<Letter, Long>, LetterQuerydslRepository {
 
-    List<Letter> findAllByReceiverIdAndIsDeleteByReceiverFalse(@Param("receiverId") Long receiverId);
+    List<Letter> findAllByReceiverIdAndHasRepliedFalse(@Param("receiverId") Long receiverId);
 
     Optional<Letter> findByIdAndSenderId(@Param("id") Long id,
                                          @Param("senderId") Long senderId);
@@ -17,8 +17,11 @@ public interface LetterRepository extends JpaRepository<Letter, Long>, LetterQue
     Optional<Letter> findByIdAndSenderIdAndIsDeleteBySenderFalse(@Param("id") Long id,
                                                                  @Param("senderId") Long senderId);
 
-    Optional<Letter> findByIdAndReceiverIdAndIsDeleteByReceiverFalse(@Param("id") Long id,
-                                                                     @Param("receiverId") Long receiverId);
+    Optional<Letter> findByIdAndReceiverId(@Param("id") Long id,
+                                           @Param("receiverId") Long receiverId);
+
+    Optional<Letter> findByIdAndReceiverIdAndHasRepliedTrue(@Param("id") Long id,
+                                                            @Param("receiverId") Long receiverId);
 
     List<Letter> findAllByUuid(@Param("uuid") String uuid);
 }

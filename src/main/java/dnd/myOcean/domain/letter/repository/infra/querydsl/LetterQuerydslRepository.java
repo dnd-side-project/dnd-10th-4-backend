@@ -8,5 +8,7 @@ public interface LetterQuerydslRepository {
 
     Page<LetterResponse> findAllSendLetter(LetterReadCondition cond);
 
-    Page<LetterResponse> findAllReceiveLetter(LetterReadCondition cond);
+    Page<LetterResponse> findAllStoredLetter(LetterReadCondition cond);
+
+    Page<LetterResponse> findAllReliedLetter(LetterReadCondition cond);
 }

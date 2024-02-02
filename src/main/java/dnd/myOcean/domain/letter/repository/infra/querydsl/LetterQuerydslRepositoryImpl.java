@@ -35,10 +35,27 @@ public class LetterQuerydslRepositoryImpl extends QuerydslRepositorySupport impl
     }
 
     @Override
-    public Page<LetterResponse> findAllReceiveLetter(LetterReadCondition cond) {
+    public Page<LetterResponse> findAllStoredLetter(LetterReadCondition cond) {
         Pageable pageable = PageRequest.of(cond.getPage(), cond.getSize());
-        Predicate predicate = createPredicateByCurrentMemberReceive(cond);
+        Predicate predicate = createPredicateByCurrentMemberStored(cond);
         return new PageImpl<>(fetchAll(predicate, pageable), pageable, fetchCount(predicate));
+    }
+
+    @Override
+    public Page<LetterResponse> findAllReliedLetter(LetterReadCondition cond) {
+        Pageable pageable = PageRequest.of(cond.getPage(), cond.getSize());
+        Predicate predicate = createPredicateByCurrentMemberGetReplied(cond);
+        return new PageImpl<>(fetchAll(predicate, pageable), pageable, fetchCount(predicate));
+    }
+
+    private Predicate createPredicateByCurrentMemberGetReplied(LetterReadCondition cond) {
+        BooleanBuilder builder = new BooleanBuilder();
+        if (!String.valueOf(cond.getMemberId()).isEmpty()) {
+            builder.and(letter.receiver.id.eq(cond.getMemberId()));
+            builder.and(letter.hasReplied.isTrue());
+            return builder;
+        }
+        return builder;
     }
 
     private Predicate createPredicateByCurrentMemberSend(LetterReadCondition cond) {
@@ -51,11 +68,11 @@ public class LetterQuerydslRepositoryImpl extends QuerydslRepositorySupport impl
         return builder;
     }
 
-    private Predicate createPredicateByCurrentMemberReceive(LetterReadCondition cond) {
+    private Predicate createPredicateByCurrentMemberStored(LetterReadCondition cond) {
         BooleanBuilder builder = new BooleanBuilder();
         if (!String.valueOf(cond.getMemberId()).isEmpty()) {
             builder.and(letter.receiver.id.eq(cond.getMemberId()));
-            builder.and(letter.isDeleteByReceiver.isFalse());
+            builder.and(letter.isStored.isTrue());
             return builder;
         }
         return builder;
@@ -69,8 +86,7 @@ public class LetterQuerydslRepositoryImpl extends QuerydslRepositorySupport impl
                                 letter.sender.nickName,
                                 letter.receiver.nickName,
                                 letter.content,
-                                letter.worryType,
-                                letter.isRead))
+                                letter.worryType))
                         .from(letter)
                         .where(predicate)
                         .orderBy(letter.createDate.asc())

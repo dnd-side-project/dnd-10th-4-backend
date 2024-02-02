@@ -10,7 +10,7 @@ import lombok.NoArgsConstructor;
 
 @Data
 @Builder
-@AllArgsConstructor(access = AccessLevel.PRIVATE)
+@AllArgsConstructor
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 public class LetterResponse {
 
@@ -19,7 +19,6 @@ public class LetterResponse {
     private String receiverNickname;
     private String content;
     private WorryType worryType;
-    private boolean isRead;
 
     public static LetterResponse toDto(Letter letter) {
         return LetterResponse.builder()
@@ -28,7 +27,6 @@ public class LetterResponse {
                 .receiverNickname(letter.getReceiver().getNickName())
                 .content(letter.getContent())
                 .worryType(letter.getWorryType())
-                .isRead(letter.isRead())
                 .build();
     }
 }
