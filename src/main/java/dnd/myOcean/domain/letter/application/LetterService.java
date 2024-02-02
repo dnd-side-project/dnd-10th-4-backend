@@ -12,6 +12,7 @@ import dnd.myOcean.domain.letter.dto.request.LettersReadRequest;
 import dnd.myOcean.domain.letter.dto.response.LetterResponse;
 import dnd.myOcean.domain.letter.exception.AccessDeniedLetterException;
 import dnd.myOcean.domain.letter.exception.AlreadyReplyExistException;
+import dnd.myOcean.domain.letter.exception.RepliedLetterPassException;
 import dnd.myOcean.domain.letter.repository.infra.jpa.LetterRepository;
 import dnd.myOcean.domain.letter.repository.infra.querydsl.dto.LetterReadCondition;
 import dnd.myOcean.domain.letter.repository.infra.querydsl.dto.PagedLettersResponse;
@@ -186,9 +187,14 @@ public class LetterService {
 
     @Transactional
     public void passReceivedLetter(LetterPassRequest request, Long letterId) {
-        Letter letter = letterRepository.findByIdAndReceiverIdAndIsDeleteByReceiverFalse(letterId,
+        Letter letter = letterRepository.findByIdAndReceiverIdAndIsDeleteByReceiverFalse(
+                        letterId,
                         request.getMemberId())
                 .orElseThrow(AccessDeniedLetterException::new);
+
+        if (letter.isHasReplied()) {
+            throw new RepliedLetterPassException();
+        }
 
         // 전체 회원 id를 가져온다.
         List<Long> memberIds = getAllMemberIds();
