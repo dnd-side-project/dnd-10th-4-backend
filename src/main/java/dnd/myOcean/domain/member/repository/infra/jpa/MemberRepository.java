@@ -41,4 +41,6 @@ public interface MemberRepository extends JpaRepository<Member, Long> {
     List<Member> findRandomMembers(@Param("email") String email, @Param("n") int n);
 
     boolean existsByNickName(String nickname);
+
+    List<Member> findAllByIdNot(@Param("id") Long id);
 }

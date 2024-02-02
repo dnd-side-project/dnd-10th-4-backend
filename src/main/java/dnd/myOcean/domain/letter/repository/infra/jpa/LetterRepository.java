@@ -19,4 +19,6 @@ public interface LetterRepository extends JpaRepository<Letter, Long>, LetterQue
 
     Optional<Letter> findByIdAndReceiverIdAndIsDeleteByReceiverFalse(@Param("id") Long id,
                                                                      @Param("receiverId") Long receiverId);
+
+    List<Letter> findAllByUuid(@Param("uuid") String uuid);
 }

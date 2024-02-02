@@ -2,6 +2,7 @@ package dnd.myOcean.domain.letter.api;
 
 import dnd.myOcean.domain.letter.application.LetterService;
 import dnd.myOcean.domain.letter.dto.request.LetterDeleteRequest;
+import dnd.myOcean.domain.letter.dto.request.LetterPassRequest;
 import dnd.myOcean.domain.letter.dto.request.LetterReadRequest;
 import dnd.myOcean.domain.letter.dto.request.LetterReplyRequest;
 import dnd.myOcean.domain.letter.dto.request.LetterSendRequest;
@@ -99,7 +100,14 @@ public class LetterController {
         return new ResponseEntity<>(HttpStatus.OK);
     }
 
-    // TODO 2-5. 받은 편지 다른 사람에게 토스
+    // TODO 2-5. 받은 편지를 답장하지 않고 다른 사람에게 패스
+    @PatchMapping("/reception/pass/{letterId}")
+    @AssignCurrentMemberId
+    public ResponseEntity<Void> passReceivedLetter(@RequestBody LetterPassRequest request,
+                                                   @PathVariable("letterId") Long letterId) {
+        letterService.passReceivedLetter(request, letterId);
+        return new ResponseEntity<>(HttpStatus.OK);
+    }
 
     // 3. 보관한 편지
     // TODO 3-1. 단건 조회

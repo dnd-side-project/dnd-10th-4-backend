@@ -3,6 +3,7 @@ package dnd.myOcean.domain.letter.application;
 
 import dnd.myOcean.domain.letter.domain.Letter;
 import dnd.myOcean.domain.letter.dto.request.LetterDeleteRequest;
+import dnd.myOcean.domain.letter.dto.request.LetterPassRequest;
 import dnd.myOcean.domain.letter.dto.request.LetterReadRequest;
 import dnd.myOcean.domain.letter.dto.request.LetterReplyRequest;
 import dnd.myOcean.domain.letter.dto.request.LetterSendRequest;
@@ -18,9 +19,11 @@ import dnd.myOcean.domain.member.domain.Member;
 import dnd.myOcean.domain.member.domain.WorryType;
 import dnd.myOcean.domain.member.exception.MemberNotFoundException;
 import dnd.myOcean.domain.member.repository.infra.jpa.MemberRepository;
+import dnd.myOcean.global.exception.UnknownException;
 import java.util.Collections;
 import java.util.List;
 import java.util.Random;
+import java.util.UUID;
 import java.util.stream.Collectors;
 import java.util.stream.IntStream;
 import lombok.RequiredArgsConstructor;
@@ -105,8 +108,8 @@ public class LetterService {
                         sender,
                         request.getContent(),
                         receivers.get(i),
-                        WorryType.from(request.getWorryType())
-                ))
+                        WorryType.from(request.getWorryType()),
+                        String.valueOf(UUID.randomUUID())))
                 .collect(Collectors.toList());
     }
 
@@ -179,6 +182,41 @@ public class LetterService {
         }
 
         letter.reply(request.getReplyContent());
+    }
+
+    @Transactional
+    public void passReceivedLetter(LetterPassRequest request, Long letterId) {
+        Letter letter = letterRepository.findByIdAndReceiverIdAndIsDeleteByReceiverFalse(letterId,
+                        request.getMemberId())
+                .orElseThrow(AccessDeniedLetterException::new);
+
+        // 전체 회원 id를 가져온다.
+        List<Long> memberIds = getAllMemberIds();
+
+        // 해당 편지를 받은 사람의 id를 가져온다.
+        List<Long> receiverIds = letterRepository.findAllByUuid(letter.getUuid())
+                .stream()
+                .map(l -> l.getReceiver().getId())
+                .collect(Collectors.toList());
+
+        // 전체 회원 id에서 해당 편지를 받은 사람과 해당 편지를 보낸 사람 제거
+        memberIds.removeAll(receiverIds);
+        memberIds.remove(letter.getReceiver().getId());
+
+        Collections.shuffle(memberIds);
+
+        Member newReceiver = memberRepository.findById(memberIds.get(0))
+                .orElseThrow(UnknownException::new);
+
+        letter.updateReceiver(newReceiver);
+    }
+
+    private List<Long> getAllMemberIds() {
+        List<Long> memberIds = memberRepository.findAll()
+                .stream()
+                .map(Member::getId)
+                .collect(Collectors.toList());
+        return memberIds;
     }
 
     // 보관한 편지

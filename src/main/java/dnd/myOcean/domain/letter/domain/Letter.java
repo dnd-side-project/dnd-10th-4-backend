@@ -56,6 +56,7 @@ public class Letter extends BaseEntity {
     private boolean hasReplied;
     private boolean isStored;
     private String replyContent;
+    private String uuid;
 
     public void read() {
         this.isRead = true;
@@ -79,17 +80,23 @@ public class Letter extends BaseEntity {
         this.isStored = true;
     }
 
-    public static Letter createLetter(Member sender, String content, Member receiver, WorryType worryType) {
+    public static Letter createLetter(Member sender, String content, Member receiver, WorryType worryType,
+                                      String uuid) {
         return Letter.builder()
                 .sender(sender)
                 .content(content)
                 .receiver(receiver)
                 .worryType(worryType)
+                .uuid(uuid)
                 .isRead(false)
                 .isDeleteBySender(false)
                 .isDeleteByReceiver(false)
                 .hasReplied(false)
                 .isStored(false)
                 .build();
+    }
+
+    public void updateReceiver(Member receiver) {
+        this.receiver = receiver;
     }
 }
