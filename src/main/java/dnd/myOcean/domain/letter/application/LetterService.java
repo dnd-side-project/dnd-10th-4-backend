@@ -2,13 +2,8 @@ package dnd.myOcean.domain.letter.application;
 
 
 import dnd.myOcean.domain.letter.domain.Letter;
-import dnd.myOcean.domain.letter.dto.request.LetterDeleteRequest;
-import dnd.myOcean.domain.letter.dto.request.LetterPassRequest;
-import dnd.myOcean.domain.letter.dto.request.LetterReadRequest;
 import dnd.myOcean.domain.letter.dto.request.LetterReplyRequest;
 import dnd.myOcean.domain.letter.dto.request.LetterSendRequest;
-import dnd.myOcean.domain.letter.dto.request.LetterStoreRequest;
-import dnd.myOcean.domain.letter.dto.request.LettersReadRequest;
 import dnd.myOcean.domain.letter.dto.response.LetterResponse;
 import dnd.myOcean.domain.letter.exception.AccessDeniedLetterException;
 import dnd.myOcean.domain.letter.exception.AlreadyReplyExistException;
@@ -20,6 +15,7 @@ import dnd.myOcean.domain.member.domain.Member;
 import dnd.myOcean.domain.member.domain.WorryType;
 import dnd.myOcean.domain.member.exception.MemberNotFoundException;
 import dnd.myOcean.domain.member.repository.infra.jpa.MemberRepository;
+import dnd.myOcean.global.auth.aop.dto.CurrentMemberIdRequest;
 import dnd.myOcean.global.exception.UnknownException;
 import java.util.Collections;
 import java.util.List;
@@ -123,14 +119,14 @@ public class LetterService {
     // 2. 삭제 (실제 삭제 X, 프로퍼티 값 변경) O
     // 3. 전체 페이징 조회(삭제하지 않은 메시지만 페이징)
     @Transactional
-    public LetterResponse readSendLetter(LetterReadRequest request, Long letterId) {
+    public LetterResponse readSendLetter(CurrentMemberIdRequest request, Long letterId) {
         Letter letter = letterRepository.findByIdAndSenderIdAndIsDeleteBySenderFalse(letterId, request.getMemberId())
                 .orElseThrow(AccessDeniedLetterException::new);
         return LetterResponse.toDto(letter);
     }
 
     @Transactional
-    public void deleteSendLetter(LetterDeleteRequest request, Long letterId) {
+    public void deleteSendLetter(CurrentMemberIdRequest request, Long letterId) {
         Letter letter = letterRepository.findByIdAndSenderId(letterId, request.getMemberId())
                 .orElseThrow(AccessDeniedLetterException::new);
         letter.deleteBySender();
@@ -147,7 +143,7 @@ public class LetterService {
     // 4. 받은 편지에 대한 답장 설정
     // 5. 받은 편지 다른 사람에게 전달
     @Transactional
-    public LetterResponse readReceivedLetter(LetterReadRequest request, Long letterId) {
+    public LetterResponse readReceivedLetter(CurrentMemberIdRequest request, Long letterId) {
         Letter letter = letterRepository.findByIdAndReceiverIdAndIsDeleteByReceiverFalse(letterId,
                         request.getMemberId())
                 .orElseThrow(AccessDeniedLetterException::new);
@@ -156,7 +152,7 @@ public class LetterService {
         return LetterResponse.toDto(letter);
     }
 
-    public List<LetterResponse> readReceivedLetters(LettersReadRequest request) {
+    public List<LetterResponse> readReceivedLetters(CurrentMemberIdRequest request) {
         List<Letter> letters = letterRepository.findAllByReceiverIdAndIsDeleteByReceiverFalse(request.getMemberId());
 
         return letters.stream()
@@ -165,7 +161,7 @@ public class LetterService {
     }
 
     @Transactional
-    public void storeReceivedLetter(LetterStoreRequest request, Long letterId) {
+    public void storeReceivedLetter(CurrentMemberIdRequest request, Long letterId) {
         Letter letter = letterRepository.findByIdAndReceiverIdAndIsDeleteByReceiverFalse(letterId,
                         request.getMemberId())
                 .orElseThrow(AccessDeniedLetterException::new);
@@ -186,7 +182,7 @@ public class LetterService {
     }
 
     @Transactional
-    public void passReceivedLetter(LetterPassRequest request, Long letterId) {
+    public void passReceivedLetter(CurrentMemberIdRequest request, Long letterId) {
         Letter letter = letterRepository.findByIdAndReceiverIdAndIsDeleteByReceiverFalse(
                         letterId,
                         request.getMemberId())

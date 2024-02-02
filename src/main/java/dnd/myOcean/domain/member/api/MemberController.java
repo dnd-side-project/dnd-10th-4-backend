@@ -4,12 +4,11 @@ package dnd.myOcean.domain.member.api;
 import dnd.myOcean.domain.member.application.MemberService;
 import dnd.myOcean.domain.member.dto.request.BirthdayUpdateRequest;
 import dnd.myOcean.domain.member.dto.request.GenderUpdateRequest;
-import dnd.myOcean.domain.member.dto.request.MemberInfoRequest;
 import dnd.myOcean.domain.member.dto.request.NicknameUpdateRequest;
 import dnd.myOcean.domain.member.dto.request.WorryCreateRequest;
-import dnd.myOcean.domain.member.dto.request.WorryDeleteRequest;
 import dnd.myOcean.domain.member.dto.response.MemberInfoResponse;
 import dnd.myOcean.global.auth.aop.AssignCurrentMemberId;
+import dnd.myOcean.global.auth.aop.dto.CurrentMemberIdRequest;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -58,14 +57,14 @@ public class MemberController {
 
     @DeleteMapping("/worry")
     @AssignCurrentMemberId
-    public ResponseEntity<Void> deleteAllWorry(@RequestBody WorryDeleteRequest request) {
+    public ResponseEntity<Void> deleteAllWorry(@RequestBody CurrentMemberIdRequest request) {
         memberService.deleteAllWorry(request);
         return new ResponseEntity<>(HttpStatus.OK);
     }
 
     @GetMapping
     @AssignCurrentMemberId
-    public ResponseEntity<MemberInfoResponse> getMyInfo(@RequestBody MemberInfoRequest request) {
+    public ResponseEntity<MemberInfoResponse> getMyInfo(@RequestBody CurrentMemberIdRequest request) {
         return new ResponseEntity(memberService.getMyInfo(request), HttpStatus.OK);
     }
 }

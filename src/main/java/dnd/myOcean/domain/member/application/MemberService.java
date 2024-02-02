@@ -8,10 +8,8 @@ import dnd.myOcean.domain.member.domain.Worry;
 import dnd.myOcean.domain.member.domain.WorryType;
 import dnd.myOcean.domain.member.dto.request.BirthdayUpdateRequest;
 import dnd.myOcean.domain.member.dto.request.GenderUpdateRequest;
-import dnd.myOcean.domain.member.dto.request.MemberInfoRequest;
 import dnd.myOcean.domain.member.dto.request.NicknameUpdateRequest;
 import dnd.myOcean.domain.member.dto.request.WorryCreateRequest;
-import dnd.myOcean.domain.member.dto.request.WorryDeleteRequest;
 import dnd.myOcean.domain.member.dto.response.MemberInfoResponse;
 import dnd.myOcean.domain.member.exception.AlreadyExistNicknameException;
 import dnd.myOcean.domain.member.exception.BirthdayUpdateLimitExceedException;
@@ -22,6 +20,7 @@ import dnd.myOcean.domain.member.exception.WorrySelectionRangeLimitException;
 import dnd.myOcean.domain.member.exception.WorryTypeContainsNotAccepted;
 import dnd.myOcean.domain.member.repository.infra.jpa.MemberRepository;
 import dnd.myOcean.domain.member.repository.infra.jpa.WorryRepository;
+import dnd.myOcean.global.auth.aop.dto.CurrentMemberIdRequest;
 import java.util.List;
 import java.util.stream.Collectors;
 import lombok.RequiredArgsConstructor;
@@ -96,7 +95,7 @@ public class MemberService {
     }
 
     @Transactional
-    public void deleteAllWorry(WorryDeleteRequest request) {
+    public void deleteAllWorry(CurrentMemberIdRequest request) {
         Member member = memberRepository.findById(request.getMemberId())
                 .orElseThrow(MemberNotFoundException::new);
         member.clearWorries();
@@ -106,7 +105,7 @@ public class MemberService {
         return !memberRepository.existsByNickName(nickname);
     }
 
-    public MemberInfoResponse getMyInfo(MemberInfoRequest request) {
+    public MemberInfoResponse getMyInfo(CurrentMemberIdRequest request) {
         Member member = memberRepository.findById(request.getMemberId())
                 .orElseThrow(MemberNotFoundException::new);
 
