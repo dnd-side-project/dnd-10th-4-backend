@@ -141,10 +141,10 @@ public class LetterService {
         return PagedSendLettersResponse.of(letterRepository.findAllSendLetter(cond));
     }
 
-    // 2-1. 받은 편지 단건 조회(프로퍼티 값 변경) O
+    // 2-1. 받은 편지 단건 조회
     @Transactional
     public ReceivedLetterResponse readReceivedLetter(CurrentMemberIdRequest request, Long letterId) {
-        Letter letter = letterRepository.findByIdAndReceiverId(letterId, request.getMemberId())
+        Letter letter = letterRepository.findByIdAndReceiverIdAndHasRepliedIsFalse(letterId, request.getMemberId())
                 .orElseThrow(AccessDeniedLetterException::new);
 
         return ReceivedLetterResponse.toDto(letter);
@@ -230,6 +230,7 @@ public class LetterService {
     }
 
     // 3-2. 보관한 편지 보관 해제
+    @Transactional
     public void deleteStoredLetter(CurrentMemberIdRequest request, Long letterId) {
         Letter letter = letterRepository.findByIdAndReceiverId(letterId, request.getMemberId())
                 .orElseThrow(AccessDeniedLetterException::new);

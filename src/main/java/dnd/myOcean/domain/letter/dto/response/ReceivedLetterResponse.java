@@ -17,6 +17,7 @@ public class ReceivedLetterResponse {
 
     private LocalDateTime createdAt;
     private Long letterId;
+    private String senderNickname;
     private String receiverNickname;
     private String content;
     private WorryType worryType;
@@ -26,6 +27,7 @@ public class ReceivedLetterResponse {
                 .createdAt(letter.getCreateDate())
                 .letterId(letter.getId())
                 .receiverNickname(letter.getReceiver().getNickName())
+                .senderNickname(letter.getSender().getNickName())
                 .content(letter.getContent())
                 .worryType(letter.getWorryType())
                 .build();

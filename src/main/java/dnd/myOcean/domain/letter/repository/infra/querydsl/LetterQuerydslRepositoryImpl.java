@@ -84,6 +84,7 @@ public class LetterQuerydslRepositoryImpl extends QuerydslRepositorySupport impl
                 query.select(constructor(ReceivedLetterResponse.class,
                                 letter.createDate,
                                 letter.id,
+                                letter.sender.nickName,
                                 letter.receiver.nickName,
                                 letter.content,
                                 letter.worryType))
