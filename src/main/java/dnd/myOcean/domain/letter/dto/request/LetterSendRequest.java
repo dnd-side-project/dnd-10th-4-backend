@@ -18,7 +18,6 @@ public class LetterSendRequest {
     @NotEmpty(message = "편지 내용을 입력해주세요.")
     private String content;
 
-
     private boolean equalGender;
 
     @NotEmpty(message = "수신자의 최소 나이를 지정해주세요.")
