@@ -1,6 +1,6 @@
 package dnd.myOcean.domain.letter.repository.infra.querydsl.dto;
 
-import dnd.myOcean.domain.letter.dto.response.LetterResponse;
+import dnd.myOcean.domain.letter.dto.response.RepliedLetterResponse;
 import java.util.List;
 import lombok.AccessLevel;
 import lombok.AllArgsConstructor;
@@ -11,15 +11,15 @@ import org.springframework.data.domain.Page;
 @Data
 @AllArgsConstructor(access = AccessLevel.PRIVATE)
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
-public class PagedLettersResponse {
+public class PagedRepliedLettersResponse {
 
     private Long totalElements;
     private Integer totalPage;
     private boolean hasNextPage;
-    private List<LetterResponse> postList;
+    private List<RepliedLetterResponse> postList;
 
-    public static PagedLettersResponse of(Page<LetterResponse> page) {
-        return new PagedLettersResponse(
+    public static PagedRepliedLettersResponse of(Page<RepliedLetterResponse> page) {
+        return new PagedRepliedLettersResponse(
                 page.getTotalElements(),
                 page.getTotalPages(),
                 page.hasNext(),

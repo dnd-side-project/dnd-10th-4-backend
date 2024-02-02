@@ -4,14 +4,18 @@ package dnd.myOcean.domain.letter.application;
 import dnd.myOcean.domain.letter.domain.Letter;
 import dnd.myOcean.domain.letter.dto.request.LetterReplyRequest;
 import dnd.myOcean.domain.letter.dto.request.LetterSendRequest;
-import dnd.myOcean.domain.letter.dto.response.LetterResponse;
+import dnd.myOcean.domain.letter.dto.response.ReceivedLetterResponse;
+import dnd.myOcean.domain.letter.dto.response.RepliedLetterResponse;
+import dnd.myOcean.domain.letter.dto.response.SendLetterResponse;
 import dnd.myOcean.domain.letter.exception.AccessDeniedLetterException;
 import dnd.myOcean.domain.letter.exception.AlreadyReplyExistException;
 import dnd.myOcean.domain.letter.exception.RepliedLetterPassException;
 import dnd.myOcean.domain.letter.exception.UnAnsweredLetterStoreException;
 import dnd.myOcean.domain.letter.repository.infra.jpa.LetterRepository;
 import dnd.myOcean.domain.letter.repository.infra.querydsl.dto.LetterReadCondition;
-import dnd.myOcean.domain.letter.repository.infra.querydsl.dto.PagedLettersResponse;
+import dnd.myOcean.domain.letter.repository.infra.querydsl.dto.PagedReceivedLettersResponse;
+import dnd.myOcean.domain.letter.repository.infra.querydsl.dto.PagedRepliedLettersResponse;
+import dnd.myOcean.domain.letter.repository.infra.querydsl.dto.PagedSendLettersResponse;
 import dnd.myOcean.domain.member.domain.Member;
 import dnd.myOcean.domain.member.domain.WorryType;
 import dnd.myOcean.domain.member.exception.MemberNotFoundException;
@@ -118,10 +122,10 @@ public class LetterService {
 
     // 1-1. 보낸 편지 단건 조회
     @Transactional
-    public LetterResponse readSendLetter(CurrentMemberIdRequest request, Long letterId) {
+    public SendLetterResponse readSendLetter(CurrentMemberIdRequest request, Long letterId) {
         Letter letter = letterRepository.findByIdAndSenderIdAndIsDeleteBySenderFalse(letterId, request.getMemberId())
                 .orElseThrow(AccessDeniedLetterException::new);
-        return LetterResponse.toDto(letter);
+        return SendLetterResponse.toDto(letter);
     }
 
     // 1-2. 보낸 편지 삭제 (실제 삭제 X, 프로퍼티 값 변경)
@@ -133,25 +137,25 @@ public class LetterService {
     }
 
     // 1-3. 보낸 편지 페이징 조회 (삭제하지 않은 메시지만 페이징)
-    public PagedLettersResponse readSendLetters(LetterReadCondition cond) {
-        return PagedLettersResponse.of(letterRepository.findAllSendLetter(cond));
+    public PagedSendLettersResponse readSendLetters(LetterReadCondition cond) {
+        return PagedSendLettersResponse.of(letterRepository.findAllSendLetter(cond));
     }
 
     // 2-1. 받은 편지 단건 조회(프로퍼티 값 변경) O
     @Transactional
-    public LetterResponse readReceivedLetter(CurrentMemberIdRequest request, Long letterId) {
+    public ReceivedLetterResponse readReceivedLetter(CurrentMemberIdRequest request, Long letterId) {
         Letter letter = letterRepository.findByIdAndReceiverId(letterId, request.getMemberId())
                 .orElseThrow(AccessDeniedLetterException::new);
 
-        return LetterResponse.toDto(letter);
+        return ReceivedLetterResponse.toDto(letter);
     }
 
     // 2-2. 받은 편지 전체 조회
-    public List<LetterResponse> readReceivedLetters(CurrentMemberIdRequest request) {
+    public List<ReceivedLetterResponse> readReceivedLetters(CurrentMemberIdRequest request) {
         List<Letter> letters = letterRepository.findAllByReceiverIdAndHasRepliedFalse(request.getMemberId());
 
         return letters.stream()
-                .map(letter -> LetterResponse.toDto(letter))
+                .map(letter -> ReceivedLetterResponse.toDto(letter))
                 .collect(Collectors.toList());
     }
 
@@ -221,8 +225,8 @@ public class LetterService {
     }
 
     // 3-1. 보관한 편지 전체 페이징 조회
-    public PagedLettersResponse readStoredLetters(LetterReadCondition cond) {
-        return PagedLettersResponse.of(letterRepository.findAllStoredLetter(cond));
+    public PagedReceivedLettersResponse readStoredLetters(LetterReadCondition cond) {
+        return PagedReceivedLettersResponse.of(letterRepository.findAllStoredLetter(cond));
     }
 
     // 3-2. 보관한 편지 보관 해제
@@ -234,16 +238,16 @@ public class LetterService {
     }
 
     // 4-1. 답장 받은 편지 전체 조회
-    public PagedLettersResponse readRepliedLetters(LetterReadCondition cond) {
-        return PagedLettersResponse.of(letterRepository.findAllReliedLetter(cond));
+    public PagedRepliedLettersResponse readRepliedLetters(LetterReadCondition cond) {
+        return PagedRepliedLettersResponse.of(letterRepository.findAllReliedLetter(cond));
     }
 
     // 4-2. 단건 조회
     @Transactional
-    public LetterResponse readRepliedLetter(CurrentMemberIdRequest request, Long letterId) {
+    public RepliedLetterResponse readRepliedLetter(CurrentMemberIdRequest request, Long letterId) {
         Letter letter = letterRepository.findByIdAndReceiverIdAndHasRepliedTrue(letterId, request.getMemberId())
                 .orElseThrow(AccessDeniedLetterException::new);
 
-        return LetterResponse.toDto(letter);
+        return RepliedLetterResponse.toDto(letter);
     }
 }

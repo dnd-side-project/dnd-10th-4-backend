@@ -3,9 +3,13 @@ package dnd.myOcean.domain.letter.api;
 import dnd.myOcean.domain.letter.application.LetterService;
 import dnd.myOcean.domain.letter.dto.request.LetterReplyRequest;
 import dnd.myOcean.domain.letter.dto.request.LetterSendRequest;
-import dnd.myOcean.domain.letter.dto.response.LetterResponse;
+import dnd.myOcean.domain.letter.dto.response.ReceivedLetterResponse;
+import dnd.myOcean.domain.letter.dto.response.RepliedLetterResponse;
+import dnd.myOcean.domain.letter.dto.response.SendLetterResponse;
 import dnd.myOcean.domain.letter.repository.infra.querydsl.dto.LetterReadCondition;
-import dnd.myOcean.domain.letter.repository.infra.querydsl.dto.PagedLettersResponse;
+import dnd.myOcean.domain.letter.repository.infra.querydsl.dto.PagedReceivedLettersResponse;
+import dnd.myOcean.domain.letter.repository.infra.querydsl.dto.PagedRepliedLettersResponse;
+import dnd.myOcean.domain.letter.repository.infra.querydsl.dto.PagedSendLettersResponse;
 import dnd.myOcean.global.auth.aop.AssignCurrentMemberId;
 import dnd.myOcean.global.auth.aop.dto.CurrentMemberIdRequest;
 import java.util.List;
@@ -41,8 +45,8 @@ public class LetterController {
     // 1-1. 보낸 편지 단건 조회
     @GetMapping("/send/{letterId}")
     @AssignCurrentMemberId
-    public ResponseEntity<LetterResponse> readSentLetter(@RequestBody CurrentMemberIdRequest request,
-                                                         @PathVariable("letterId") Long letterId) {
+    public ResponseEntity<SendLetterResponse> readSentLetter(@RequestBody CurrentMemberIdRequest request,
+                                                             @PathVariable("letterId") Long letterId) {
         return new ResponseEntity(letterService.readSendLetter(request, letterId), HttpStatus.OK);
     }
 
@@ -58,22 +62,23 @@ public class LetterController {
     // 1-3. 보낸 편지 중 삭제하지 않은 편지 전체 조회 (페이징)
     @GetMapping("/send")
     @AssignCurrentMemberId
-    public ResponseEntity<PagedLettersResponse> readSentLetter(@RequestBody LetterReadCondition cond) {
+    public ResponseEntity<PagedSendLettersResponse> readSentLetter(@RequestBody LetterReadCondition cond) {
         return new ResponseEntity(letterService.readSendLetters(cond), HttpStatus.OK);
     }
 
     // 2-1. 받은 편지 단건 조회 (프로퍼티 값 변경)
     @GetMapping("/reception/{letterId}")
     @AssignCurrentMemberId
-    public ResponseEntity<LetterResponse> readReceivedLetter(@RequestBody CurrentMemberIdRequest request,
-                                                             @PathVariable("letterId") Long letterId) {
+    public ResponseEntity<ReceivedLetterResponse> readReceivedLetter(@RequestBody CurrentMemberIdRequest request,
+                                                                     @PathVariable("letterId") Long letterId) {
         return new ResponseEntity<>(letterService.readReceivedLetter(request, letterId), HttpStatus.OK);
     }
 
     // 2-2. 받은 편지 전체 조회
     @GetMapping("/reception")
     @AssignCurrentMemberId
-    public ResponseEntity<List<LetterResponse>> readReceivedLetters(@RequestBody CurrentMemberIdRequest request) {
+    public ResponseEntity<List<ReceivedLetterResponse>> readReceivedLetters(
+            @RequestBody CurrentMemberIdRequest request) {
         return new ResponseEntity(letterService.readReceivedLetters(request), HttpStatus.OK);
     }
 
@@ -107,7 +112,7 @@ public class LetterController {
     // 3-1. 보관한 편지 전체 페이징 조회
     @GetMapping("/storage")
     @AssignCurrentMemberId
-    public ResponseEntity<PagedLettersResponse> readStoredLetters(@RequestBody LetterReadCondition cond) {
+    public ResponseEntity<PagedReceivedLettersResponse> readStoredLetters(@RequestBody LetterReadCondition cond) {
         return new ResponseEntity<>(letterService.readStoredLetters(cond), HttpStatus.OK);
     }
 
@@ -123,15 +128,15 @@ public class LetterController {
     // 4-1. 답장 받은 편지 전체 조회
     @GetMapping("/reply")
     @AssignCurrentMemberId
-    public ResponseEntity<PagedLettersResponse> readRepliedLetters(@RequestBody LetterReadCondition cond) {
+    public ResponseEntity<PagedRepliedLettersResponse> readRepliedLetters(@RequestBody LetterReadCondition cond) {
         return new ResponseEntity<>(letterService.readRepliedLetters(cond), HttpStatus.OK);
     }
 
     // 4-2. 답장 받은 편지 전체 조회
     @GetMapping("/reply/{letterId}")
     @AssignCurrentMemberId
-    public ResponseEntity<LetterResponse> readRepliedLetter(@RequestBody CurrentMemberIdRequest request,
-                                                            @PathVariable("letterId") Long letterId) {
+    public ResponseEntity<RepliedLetterResponse> readRepliedLetter(@RequestBody CurrentMemberIdRequest request,
+                                                                   @PathVariable("letterId") Long letterId) {
         return new ResponseEntity<>(letterService.readRepliedLetter(request, letterId), HttpStatus.OK);
     }
 }

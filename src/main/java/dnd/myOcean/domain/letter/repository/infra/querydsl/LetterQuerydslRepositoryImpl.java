@@ -7,7 +7,9 @@ import com.querydsl.core.BooleanBuilder;
 import com.querydsl.core.types.Predicate;
 import com.querydsl.jpa.impl.JPAQueryFactory;
 import dnd.myOcean.domain.letter.domain.Letter;
-import dnd.myOcean.domain.letter.dto.response.LetterResponse;
+import dnd.myOcean.domain.letter.dto.response.ReceivedLetterResponse;
+import dnd.myOcean.domain.letter.dto.response.RepliedLetterResponse;
+import dnd.myOcean.domain.letter.dto.response.SendLetterResponse;
 import dnd.myOcean.domain.letter.repository.infra.querydsl.dto.LetterReadCondition;
 import java.util.List;
 import org.springframework.data.domain.Page;
@@ -28,34 +30,10 @@ public class LetterQuerydslRepositoryImpl extends QuerydslRepositorySupport impl
     }
 
     @Override
-    public Page<LetterResponse> findAllSendLetter(LetterReadCondition cond) {
+    public Page<SendLetterResponse> findAllSendLetter(LetterReadCondition cond) {
         Pageable pageable = PageRequest.of(cond.getPage(), cond.getSize());
         Predicate predicate = createPredicateByCurrentMemberSend(cond);
-        return new PageImpl<>(fetchAll(predicate, pageable), pageable, fetchCount(predicate));
-    }
-
-    @Override
-    public Page<LetterResponse> findAllStoredLetter(LetterReadCondition cond) {
-        Pageable pageable = PageRequest.of(cond.getPage(), cond.getSize());
-        Predicate predicate = createPredicateByCurrentMemberStored(cond);
-        return new PageImpl<>(fetchAll(predicate, pageable), pageable, fetchCount(predicate));
-    }
-
-    @Override
-    public Page<LetterResponse> findAllReliedLetter(LetterReadCondition cond) {
-        Pageable pageable = PageRequest.of(cond.getPage(), cond.getSize());
-        Predicate predicate = createPredicateByCurrentMemberGetReplied(cond);
-        return new PageImpl<>(fetchAll(predicate, pageable), pageable, fetchCount(predicate));
-    }
-
-    private Predicate createPredicateByCurrentMemberGetReplied(LetterReadCondition cond) {
-        BooleanBuilder builder = new BooleanBuilder();
-        if (!String.valueOf(cond.getMemberId()).isEmpty()) {
-            builder.and(letter.receiver.id.eq(cond.getMemberId()));
-            builder.and(letter.hasReplied.isTrue());
-            return builder;
-        }
-        return builder;
+        return new PageImpl<>(fetchAllSendLetter(predicate, pageable), pageable, fetchCount(predicate));
     }
 
     private Predicate createPredicateByCurrentMemberSend(LetterReadCondition cond) {
@@ -68,6 +46,28 @@ public class LetterQuerydslRepositoryImpl extends QuerydslRepositorySupport impl
         return builder;
     }
 
+    private List<SendLetterResponse> fetchAllSendLetter(Predicate predicate, Pageable pageable) {
+        return getQuerydsl().applyPagination(
+                pageable,
+                query.select(constructor(SendLetterResponse.class,
+                                letter.createDate,
+                                letter.id,
+                                letter.sender.nickName,
+                                letter.content,
+                                letter.worryType))
+                        .from(letter)
+                        .where(predicate)
+                        .orderBy(letter.createDate.asc())
+        ).fetch();
+    }
+
+    @Override
+    public Page<ReceivedLetterResponse> findAllStoredLetter(LetterReadCondition cond) {
+        Pageable pageable = PageRequest.of(cond.getPage(), cond.getSize());
+        Predicate predicate = createPredicateByCurrentMemberStored(cond);
+        return new PageImpl<>(fetchAllStoredLetter(predicate, pageable), pageable, fetchCount(predicate));
+    }
+
     private Predicate createPredicateByCurrentMemberStored(LetterReadCondition cond) {
         BooleanBuilder builder = new BooleanBuilder();
         if (!String.valueOf(cond.getMemberId()).isEmpty()) {
@@ -78,14 +78,48 @@ public class LetterQuerydslRepositoryImpl extends QuerydslRepositorySupport impl
         return builder;
     }
 
-    private List<LetterResponse> fetchAll(Predicate predicate, Pageable pageable) {
+    private List<ReceivedLetterResponse> fetchAllStoredLetter(Predicate predicate, Pageable pageable) {
         return getQuerydsl().applyPagination(
                 pageable,
-                query.select(constructor(LetterResponse.class,
+                query.select(constructor(ReceivedLetterResponse.class,
+                                letter.createDate,
+                                letter.id,
+                                letter.receiver.nickName,
+                                letter.content,
+                                letter.worryType))
+                        .from(letter)
+                        .where(predicate)
+                        .orderBy(letter.createDate.asc())
+        ).fetch();
+    }
+
+    @Override
+    public Page<RepliedLetterResponse> findAllReliedLetter(LetterReadCondition cond) {
+        Pageable pageable = PageRequest.of(cond.getPage(), cond.getSize());
+        Predicate predicate = createPredicateByCurrentMemberGetReplied(cond);
+        return new PageImpl<>(fetchAllRepliedLetter(predicate, pageable), pageable, fetchCount(predicate));
+    }
+
+    private Predicate createPredicateByCurrentMemberGetReplied(LetterReadCondition cond) {
+        BooleanBuilder builder = new BooleanBuilder();
+        if (!String.valueOf(cond.getMemberId()).isEmpty()) {
+            builder.and(letter.receiver.id.eq(cond.getMemberId()));
+            builder.and(letter.hasReplied.isTrue());
+            return builder;
+        }
+        return builder;
+    }
+
+    private List<RepliedLetterResponse> fetchAllRepliedLetter(Predicate predicate, Pageable pageable) {
+        return getQuerydsl().applyPagination(
+                pageable,
+                query.select(constructor(RepliedLetterResponse.class,
+                                letter.createDate,
                                 letter.id,
                                 letter.sender.nickName,
                                 letter.receiver.nickName,
                                 letter.content,
+                                letter.replyContent,
                                 letter.worryType))
                         .from(letter)
                         .where(predicate)
