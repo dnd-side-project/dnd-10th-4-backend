@@ -121,7 +121,6 @@ public class LetterService {
     }
 
     // 1-1. 보낸 편지 단건 조회
-    @Transactional
     public SendLetterResponse readSendLetter(CurrentMemberIdRequest request, Long letterId) {
         Letter letter = letterRepository.findByIdAndSenderIdAndIsDeleteBySenderFalse(letterId, request.getMemberId())
                 .orElseThrow(AccessDeniedLetterException::new);
@@ -142,11 +141,9 @@ public class LetterService {
     }
 
     // 2-1. 받은 편지 단건 조회
-    @Transactional
     public ReceivedLetterResponse readReceivedLetter(CurrentMemberIdRequest request, Long letterId) {
         Letter letter = letterRepository.findByIdAndReceiverIdAndHasRepliedIsFalse(letterId, request.getMemberId())
                 .orElseThrow(AccessDeniedLetterException::new);
-
         return ReceivedLetterResponse.toDto(letter);
     }
 
@@ -248,7 +245,6 @@ public class LetterService {
     public RepliedLetterResponse readRepliedLetter(CurrentMemberIdRequest request, Long letterId) {
         Letter letter = letterRepository.findByIdAndReceiverIdAndHasRepliedTrue(letterId, request.getMemberId())
                 .orElseThrow(AccessDeniedLetterException::new);
-
         return RepliedLetterResponse.toDto(letter);
     }
 }
