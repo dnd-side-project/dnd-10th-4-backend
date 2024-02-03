@@ -18,7 +18,8 @@ import org.springframework.security.core.authority.SimpleGrantedAuthority;
 @RedisHash(value = "refresh", timeToLive = 604800)
 public class RefreshToken {
 
-    private String id;
+    private Long id;
+    private String email;
     private Collection<? extends GrantedAuthority> authorities;
 
     @Indexed

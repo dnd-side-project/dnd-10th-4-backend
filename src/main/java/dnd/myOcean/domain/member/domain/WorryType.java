@@ -1,6 +1,6 @@
 package dnd.myOcean.domain.member.domain;
 
-import dnd.myOcean.domain.member.exception.exceptions.WorryTypeContainsNotAccepted;
+import dnd.myOcean.domain.member.exception.WorryTypeContainsNotAccepted;
 
 public enum WorryType {
 

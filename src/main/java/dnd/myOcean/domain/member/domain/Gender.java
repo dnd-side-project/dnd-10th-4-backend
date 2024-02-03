@@ -1,6 +1,6 @@
 package dnd.myOcean.domain.member.domain;
 
-import dnd.myOcean.domain.member.exception.exceptions.NoSuchGenderException;
+import dnd.myOcean.domain.member.exception.NoSuchGenderException;
 import lombok.Getter;
 
 @Getter

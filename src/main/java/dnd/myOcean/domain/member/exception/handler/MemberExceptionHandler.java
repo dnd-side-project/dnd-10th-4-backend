@@ -1,13 +1,13 @@
 package dnd.myOcean.domain.member.exception.handler;
 
-import dnd.myOcean.domain.member.exception.exceptions.AlreadyExistNicknameException;
-import dnd.myOcean.domain.member.exception.exceptions.BirthdayUpdateLimitExceedException;
-import dnd.myOcean.domain.member.exception.exceptions.GenderUpdateLimitExceedException;
-import dnd.myOcean.domain.member.exception.exceptions.MemberNotFoundException;
-import dnd.myOcean.domain.member.exception.exceptions.NoSuchGenderException;
-import dnd.myOcean.domain.member.exception.exceptions.SameNicknameModifyRequestException;
-import dnd.myOcean.domain.member.exception.exceptions.WorrySelectionRangeLimitException;
-import dnd.myOcean.domain.member.exception.exceptions.WorryTypeContainsNotAccepted;
+import dnd.myOcean.domain.member.exception.AlreadyExistNicknameException;
+import dnd.myOcean.domain.member.exception.BirthdayUpdateLimitExceedException;
+import dnd.myOcean.domain.member.exception.GenderUpdateLimitExceedException;
+import dnd.myOcean.domain.member.exception.MemberNotFoundException;
+import dnd.myOcean.domain.member.exception.NoSuchGenderException;
+import dnd.myOcean.domain.member.exception.SameNicknameModifyRequestException;
+import dnd.myOcean.domain.member.exception.WorrySelectionRangeLimitException;
+import dnd.myOcean.domain.member.exception.WorryTypeContainsNotAccepted;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.ExceptionHandler;
