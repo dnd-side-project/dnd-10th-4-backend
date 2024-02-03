@@ -104,8 +104,8 @@ public class LetterService {
         letterRepository.saveAll(letters);
     }
 
-    private static List<Letter> createLetters(LetterSendRequest request, List<Member> receivers, Member sender,
-                                              int letterMaxCount) {
+    private List<Letter> createLetters(LetterSendRequest request, List<Member> receivers, Member sender,
+                                       int letterMaxCount) {
         return IntStream.range(0, letterMaxCount)
                 .mapToObj(i -> Letter.createLetter(
                         sender,
