@@ -1,4 +1,4 @@
-package dnd.myOcean.global.alarm;
+package dnd.myOcean.domain.letter.alarm;
 
 import java.util.concurrent.Executor;
 import org.springframework.context.annotation.Bean;
@@ -10,7 +10,7 @@ import org.springframework.scheduling.concurrent.ThreadPoolTaskExecutor;
 @Configuration
 @EnableAsync
 public class AlarmAsyncConfig implements AsyncConfigurer {
-    
+
     @Override
     @Bean(name = "alarmSender")
     public Executor getAsyncExecutor() {

@@ -1,4 +1,4 @@
-package dnd.myOcean.global.alarm;
+package dnd.myOcean.domain.letter.alarm;
 
 import java.util.List;
 import lombok.RequiredArgsConstructor;

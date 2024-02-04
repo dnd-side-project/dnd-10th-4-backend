@@ -1,6 +1,7 @@
 package dnd.myOcean.domain.letter.application;
 
 
+import dnd.myOcean.domain.letter.alarm.event.LetterSendEvent;
 import dnd.myOcean.domain.letter.domain.Letter;
 import dnd.myOcean.domain.letter.domain.dto.request.LetterReplyRequest;
 import dnd.myOcean.domain.letter.domain.dto.request.LetterSendRequest;
@@ -20,7 +21,6 @@ import dnd.myOcean.domain.member.domain.Member;
 import dnd.myOcean.domain.member.domain.WorryType;
 import dnd.myOcean.domain.member.exception.MemberNotFoundException;
 import dnd.myOcean.domain.member.repository.infra.jpa.MemberRepository;
-import dnd.myOcean.global.alarm.event.LetterSendEvent;
 import dnd.myOcean.global.auth.aop.dto.CurrentMemberIdRequest;
 import dnd.myOcean.global.exception.UnknownException;
 import java.util.Collections;

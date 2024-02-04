@@ -48,7 +48,6 @@ spring:
     init:
       mode: always
 
-
   mail:
     host: smtp.gmail.com
     port: 587

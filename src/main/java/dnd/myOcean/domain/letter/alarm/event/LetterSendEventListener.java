@@ -1,6 +1,6 @@
-package dnd.myOcean.global.alarm.event;
+package dnd.myOcean.domain.letter.alarm.event;
 
-import dnd.myOcean.global.alarm.AlarmService;
+import dnd.myOcean.domain.letter.alarm.AlarmService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.scheduling.annotation.Async;
 import org.springframework.stereotype.Component;
@@ -13,7 +13,7 @@ public class LetterSendEventListener {
 
     private final AlarmService alarmService;
 
-    @Async("alarmSender") // 비동기 처리로 속도 Up
+    @Async("alarmSender")
     @TransactionalEventListener(classes = LetterSendEvent.class,
             phase = TransactionPhase.AFTER_COMMIT)
     public void listen(LetterSendEvent event) {

@@ -1,4 +1,4 @@
-package dnd.myOcean.global.alarm.event;
+package dnd.myOcean.domain.letter.alarm.event;
 
 import dnd.myOcean.domain.letter.domain.Letter;
 import java.util.List;
@@ -13,7 +13,8 @@ public class LetterSendEvent extends ApplicationEvent {
 
     public LetterSendEvent(Object source, List<Letter> letters) {
         super(source);
-        this.receiversEmail = letters.stream().map(letter -> letter.getReceiver().getEmail())
+        this.receiversEmail = letters.stream()
+                .map(letter -> letter.getReceiver().getEmail())
                 .collect(Collectors.toList());
     }
 }
