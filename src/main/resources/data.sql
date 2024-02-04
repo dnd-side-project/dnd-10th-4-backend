@@ -10,12 +10,12 @@ VALUES ('WORK'),
 
 INSERT INTO MEMBER(create_Date, update_age_count, update_gender_count, email, nick_name, gender, role, age)
 VALUES (now(), 0, 0, 'kdo0422@nate.com', '낯선 유저1', 'MALE', 'USER', 26),
-       (now(), 0, 0, 'dog@naver.com', '낯선 강아지', 'MALE', 'USER', 20),
-       (now(), 0, 0, 'cat@naver.com', '낯선 고양이', 'MALE', 'USER', 20),
-       (now(), 0, 0, 'pig@naver.com', '낯선 돼지', 'MALE', 'USER', 100),
-       (now(), 0, 0, 'cow@naver.com', '낯선 소', 'MALE', 'USER', 30),
-       (now(), 0, 0, 'chicken@naver.com', '낯선 닭', 'MALE', 'USER', 40),
-       (now(), 0, 0, 'kimsb7218@naver.com', '낯선 jae', 'MALE', 'USER', 26);
+       (now(), 0, 0, 'dog@naver.com1', '낯선 강아지', 'MALE', 'USER', 20),
+       (now(), 0, 0, 'cat@naver.com1', '낯선 고양이', 'MALE', 'USER', 20),
+       (now(), 0, 0, 'pig@naver.com1', '낯선 돼지', 'MALE', 'USER', 100),
+       (now(), 0, 0, 'cow@naver.com1', '낯선 소', 'MALE', 'USER', 30),
+       (now(), 0, 0, 'chicken@naver.com1', '낯선 닭', 'MALE', 'USER', 40),
+       (now(), 0, 0, 'rlaehddnd0422@naver.com', '낯선 1', 'MALE', 'USER', 25);
 
 /*
  1. kdo0422@nate.com => work, course, relationship

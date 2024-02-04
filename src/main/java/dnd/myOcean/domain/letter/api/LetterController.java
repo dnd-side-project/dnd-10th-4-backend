@@ -31,9 +31,6 @@ public class LetterController {
 
     private final LetterService letterService;
 
-    // TODO : 0, 2-3, 2-5에 대한 이메일 알림 기능 추가
-    // TODO : 생성된 지 48시간이 지났고 && 답장이 존재하지 않는 편지 스케쥴러로 제거
-
     // 0. 편지 전송
     @PostMapping
     @AssignCurrentMemberId
