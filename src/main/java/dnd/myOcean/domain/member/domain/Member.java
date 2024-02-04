@@ -104,4 +104,8 @@ public class Member extends BaseEntity {
     public void updateReport() {
         this.hasReport = true;
     }
+
+    public boolean isHasReport() {
+        return this.hasReport;
+    }
 }

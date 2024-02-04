@@ -20,6 +20,7 @@ import dnd.myOcean.domain.member.domain.Member;
 import dnd.myOcean.domain.member.domain.WorryType;
 import dnd.myOcean.domain.member.exception.MemberNotFoundException;
 import dnd.myOcean.domain.member.repository.infra.jpa.MemberRepository;
+import dnd.myOcean.domain.report.repository.ReportRepository;
 import dnd.myOcean.global.auth.aop.dto.CurrentMemberIdRequest;
 import dnd.myOcean.global.exception.UnknownException;
 import java.util.Collections;
@@ -42,6 +43,7 @@ public class LetterService {
 
     private final MemberRepository memberRepository;
     private final LetterRepository letterRepository;
+    private final ReportRepository reportRepository;
 
     // 0. 편지 전송
     @Transactional
@@ -58,6 +60,11 @@ public class LetterService {
 
         if (!receivers.isEmpty() && receivers.size() < MAX_LETTER) {
             sendLetterUpToReceiversCount(request, receivers, sender);
+            return;
+        }
+
+        // 신고가 된 회원은 편지를 보낼 수 없음
+        if(!sender.isHasReport()){
             return;
         }
 
