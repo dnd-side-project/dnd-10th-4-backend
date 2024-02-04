@@ -2,11 +2,11 @@ package dnd.myOcean.domain.member.api;
 
 
 import dnd.myOcean.domain.member.application.MemberService;
-import dnd.myOcean.domain.member.dto.request.BirthdayUpdateRequest;
-import dnd.myOcean.domain.member.dto.request.GenderUpdateRequest;
-import dnd.myOcean.domain.member.dto.request.NicknameUpdateRequest;
-import dnd.myOcean.domain.member.dto.request.WorryCreateRequest;
-import dnd.myOcean.domain.member.dto.response.MemberInfoResponse;
+import dnd.myOcean.domain.member.domain.dto.request.BirthdayUpdateRequest;
+import dnd.myOcean.domain.member.domain.dto.request.GenderUpdateRequest;
+import dnd.myOcean.domain.member.domain.dto.request.NicknameUpdateRequest;
+import dnd.myOcean.domain.member.domain.dto.request.WorryCreateRequest;
+import dnd.myOcean.domain.member.domain.dto.response.MemberInfoResponse;
 import dnd.myOcean.global.auth.aop.AssignCurrentMemberId;
 import dnd.myOcean.global.auth.aop.dto.CurrentMemberIdRequest;
 import lombok.RequiredArgsConstructor;

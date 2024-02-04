@@ -1,4 +1,4 @@
-package dnd.myOcean.domain.member.dto.request;
+package dnd.myOcean.domain.member.domain.dto.request;
 
 
 import lombok.AllArgsConstructor;

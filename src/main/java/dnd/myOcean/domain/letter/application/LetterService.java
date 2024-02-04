@@ -2,11 +2,11 @@ package dnd.myOcean.domain.letter.application;
 
 
 import dnd.myOcean.domain.letter.domain.Letter;
-import dnd.myOcean.domain.letter.dto.request.LetterReplyRequest;
-import dnd.myOcean.domain.letter.dto.request.LetterSendRequest;
-import dnd.myOcean.domain.letter.dto.response.ReceivedLetterResponse;
-import dnd.myOcean.domain.letter.dto.response.RepliedLetterResponse;
-import dnd.myOcean.domain.letter.dto.response.SendLetterResponse;
+import dnd.myOcean.domain.letter.domain.dto.request.LetterReplyRequest;
+import dnd.myOcean.domain.letter.domain.dto.request.LetterSendRequest;
+import dnd.myOcean.domain.letter.domain.dto.response.ReceivedLetterResponse;
+import dnd.myOcean.domain.letter.domain.dto.response.RepliedLetterResponse;
+import dnd.myOcean.domain.letter.domain.dto.response.SendLetterResponse;
 import dnd.myOcean.domain.letter.exception.AccessDeniedLetterException;
 import dnd.myOcean.domain.letter.exception.AlreadyReplyExistException;
 import dnd.myOcean.domain.letter.exception.RepliedLetterPassException;
@@ -20,6 +20,7 @@ import dnd.myOcean.domain.member.domain.Member;
 import dnd.myOcean.domain.member.domain.WorryType;
 import dnd.myOcean.domain.member.exception.MemberNotFoundException;
 import dnd.myOcean.domain.member.repository.infra.jpa.MemberRepository;
+import dnd.myOcean.global.alarm.AlarmService;
 import dnd.myOcean.global.auth.aop.dto.CurrentMemberIdRequest;
 import dnd.myOcean.global.exception.UnknownException;
 import java.util.Collections;
@@ -40,6 +41,7 @@ public class LetterService {
 
     private static final Integer MAX_LETTER = 5;
 
+    private final AlarmService alarmService;
     private final MemberRepository memberRepository;
     private final LetterRepository letterRepository;
 
@@ -85,6 +87,8 @@ public class LetterService {
         List<Member> randomReceivers = memberRepository.findRandomMembers(sender.getEmail(), MAX_LETTER);
         List<Letter> letters = createLetters(request, randomReceivers, sender, randomReceivers.size());
         letterRepository.saveAll(letters);
+
+        alarmLetterReceiver(letters);
     }
 
     private void sendLetterUpToReceiversCount(LetterSendRequest request, List<Member> receivers,
@@ -92,16 +96,24 @@ public class LetterService {
         int letterMaxCount = generateRandomReceiverCount(receivers.size());
         Collections.shuffle(receivers);
         List<Letter> letters = createLetters(request, receivers, sender, letterMaxCount);
-
         letterRepository.saveAll(letters);
+
+        alarmLetterReceiver(letters);
     }
 
     private void sendLetterUptoMaxCount(List<Member> receivers, LetterSendRequest request,
                                         Member sender) {
         Collections.shuffle(receivers);
         List<Letter> letters = createLetters(request, receivers, sender, MAX_LETTER);
-
         letterRepository.saveAll(letters);
+
+        alarmLetterReceiver(letters);
+    }
+
+    private void alarmLetterReceiver(List<Letter> letters) {
+        List<String> receiversEmail = letters.stream().map(l -> l.getReceiver().getEmail())
+                .collect(Collectors.toList());
+        receiversEmail.forEach(email -> alarmService.alarmLetterReceived(email));
     }
 
     private List<Letter> createLetters(LetterSendRequest request, List<Member> receivers, Member sender,

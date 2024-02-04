@@ -1,4 +1,4 @@
-package dnd.myOcean.domain.letter.dto.request;
+package dnd.myOcean.domain.letter.domain.dto.request;
 
 import jakarta.validation.constraints.NotEmpty;
 import jakarta.validation.constraints.Null;

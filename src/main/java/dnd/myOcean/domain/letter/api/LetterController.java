@@ -1,11 +1,11 @@
 package dnd.myOcean.domain.letter.api;
 
 import dnd.myOcean.domain.letter.application.LetterService;
-import dnd.myOcean.domain.letter.dto.request.LetterReplyRequest;
-import dnd.myOcean.domain.letter.dto.request.LetterSendRequest;
-import dnd.myOcean.domain.letter.dto.response.ReceivedLetterResponse;
-import dnd.myOcean.domain.letter.dto.response.RepliedLetterResponse;
-import dnd.myOcean.domain.letter.dto.response.SendLetterResponse;
+import dnd.myOcean.domain.letter.domain.dto.request.LetterReplyRequest;
+import dnd.myOcean.domain.letter.domain.dto.request.LetterSendRequest;
+import dnd.myOcean.domain.letter.domain.dto.response.ReceivedLetterResponse;
+import dnd.myOcean.domain.letter.domain.dto.response.RepliedLetterResponse;
+import dnd.myOcean.domain.letter.domain.dto.response.SendLetterResponse;
 import dnd.myOcean.domain.letter.repository.infra.querydsl.dto.LetterReadCondition;
 import dnd.myOcean.domain.letter.repository.infra.querydsl.dto.PagedReceivedLettersResponse;
 import dnd.myOcean.domain.letter.repository.infra.querydsl.dto.PagedRepliedLettersResponse;
