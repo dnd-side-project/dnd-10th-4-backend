@@ -2,6 +2,7 @@ package dnd.myOcean.domain.letter.alarm;
 
 import java.util.List;
 import lombok.RequiredArgsConstructor;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.mail.SimpleMailMessage;
 import org.springframework.mail.javamail.JavaMailSender;
 import org.springframework.stereotype.Component;
@@ -10,6 +11,7 @@ import org.springframework.stereotype.Component;
 @RequiredArgsConstructor
 public class AlarmService {
 
+    @Autowired
     private final JavaMailSender javaMailSender;
 
     public void alarmLetterReceived(List<String> receiversEmail) {

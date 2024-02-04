@@ -13,7 +13,7 @@ public class LetterSendEventListener {
 
     private final AlarmService alarmService;
 
-    @Async("alarmSender")
+    @Async
     @TransactionalEventListener(classes = LetterSendEvent.class,
             phase = TransactionPhase.AFTER_COMMIT)
     public void listen(LetterSendEvent event) {
