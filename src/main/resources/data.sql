@@ -24,7 +24,7 @@ VALUES (now(), 0, 0, 'kdo0422@nate.com', '낯선 유저1', 'MALE', 'USER', 26),
  4. pig@naver.com => work
  5. cow@naver.com => study, family
  6. chicken@naver.com => work, love
- 7. tlswodnjs99@naver.com => etc
+ 7. rlaehddnd0422@naver.com => etc
  */
 
 INSERT INTO MEMBER_WORRY(member_id, worry_id)
