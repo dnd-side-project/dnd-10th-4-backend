@@ -13,7 +13,7 @@ public class LetterSendEventListener {
 
     private final AlarmService alarmService;
 
-    @Async // 비동기 처리로 속도 Up
+    @Async("alarmSender") // 비동기 처리로 속도 Up
     @TransactionalEventListener(classes = LetterSendEvent.class,
             phase = TransactionPhase.AFTER_COMMIT)
     public void listen(LetterSendEvent event) {
