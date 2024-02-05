@@ -29,11 +29,10 @@ public class Report extends BaseEntity {
     @JoinColumn(name = "reported_id")
     private Member reported;
 
-    @ManyToOne(fetch = FetchType.LAZY)
+    @OneToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "letter_id")
     private Letter letter;
 
-    @Builder
     public Report(Letter letter, Member reporter, Member reported, String reportContent) {
         this.reporter = reporter;
         this.reported = reported;
