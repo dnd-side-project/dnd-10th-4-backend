@@ -34,9 +34,6 @@ public class Member extends BaseEntity {
     @Column
     private Integer age;
 
-    @Column
-    private boolean hasReport;
-
     @Enumerated(EnumType.STRING)
     private Gender gender;
 
@@ -99,13 +96,5 @@ public class Member extends BaseEntity {
 
     public void clearWorries() {
         this.worries.clear();
-    }
-
-    public void updateReport() {
-        this.hasReport = true;
-    }
-
-    public boolean isHasReport() {
-        return this.hasReport;
     }
 }
