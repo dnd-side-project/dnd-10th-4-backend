@@ -20,7 +20,6 @@ import dnd.myOcean.domain.member.domain.Member;
 import dnd.myOcean.domain.member.domain.WorryType;
 import dnd.myOcean.domain.member.exception.MemberNotFoundException;
 import dnd.myOcean.domain.member.repository.infra.jpa.MemberRepository;
-import dnd.myOcean.domain.report.exception.LetterSendBlockException;
 import dnd.myOcean.domain.report.repository.ReportRepository;
 import dnd.myOcean.global.auth.aop.dto.CurrentMemberIdRequest;
 import dnd.myOcean.global.exception.UnknownException;
@@ -68,11 +67,12 @@ public class LetterService {
         sendLetterUptoMaxCount(receivers, request, sender);
     }
 
+    // TODO : 차단된 사용자 필터 기능
     private void filterReportReceiver(CurrentMemberIdRequest request, ReportRepository reportRepository) {
         Member sender = memberRepository.findById(request.getMemberId())
                 .orElseThrow(MemberNotFoundException::new);
 
-        reportRepository.existsByReporterIdAndReportedId(sender.getId(), ).orElseThrow(LetterSendBlockException::new);
+        reportRepository.existsByReporterIdAndReportedId(sender.getId(), 1L);
     }
 
     private List<Member> filterReceiver(LetterSendRequest request, MemberRepository memberRepository, Member sender) {
