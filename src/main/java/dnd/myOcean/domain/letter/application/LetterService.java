@@ -20,18 +20,20 @@ import dnd.myOcean.domain.member.domain.Member;
 import dnd.myOcean.domain.member.domain.WorryType;
 import dnd.myOcean.domain.member.exception.MemberNotFoundException;
 import dnd.myOcean.domain.member.repository.infra.jpa.MemberRepository;
+import dnd.myOcean.domain.report.exception.LetterSendBlockException;
 import dnd.myOcean.domain.report.repository.ReportRepository;
 import dnd.myOcean.global.auth.aop.dto.CurrentMemberIdRequest;
 import dnd.myOcean.global.exception.UnknownException;
+import lombok.RequiredArgsConstructor;
+import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
+
 import java.util.Collections;
 import java.util.List;
 import java.util.Random;
 import java.util.UUID;
 import java.util.stream.Collectors;
 import java.util.stream.IntStream;
-import lombok.RequiredArgsConstructor;
-import org.springframework.stereotype.Service;
-import org.springframework.transaction.annotation.Transactional;
 
 
 @Service
@@ -63,12 +65,14 @@ public class LetterService {
             return;
         }
 
-        // 신고가 된 회원은 편지를 보낼 수 없음
-        if(!sender.isHasReport()){
-            return;
-        }
-
         sendLetterUptoMaxCount(receivers, request, sender);
+    }
+
+    private void filterReportReceiver(CurrentMemberIdRequest request, ReportRepository reportRepository) {
+        Member sender = memberRepository.findById(request.getMemberId())
+                .orElseThrow(MemberNotFoundException::new);
+
+        reportRepository.existsByReporterIdAndReportedId(sender.getId(), ).orElseThrow(LetterSendBlockException::new);
     }
 
     private List<Member> filterReceiver(LetterSendRequest request, MemberRepository memberRepository, Member sender) {
