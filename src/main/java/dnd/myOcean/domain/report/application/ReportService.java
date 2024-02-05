@@ -32,14 +32,11 @@ public class ReportService {
         Member reporter = memberRepository.findById(request.getMemberId())
                 .orElseThrow(MemberNotFoundException::new);
 
-        Letter letter = letterRepository.findById(letterId)
+        Letter letter = letterRepository.findByIdAndReceiverIdAndHasRepliedIsFalse(letterId, request.getMemberId())
                 .orElseThrow(AccessDeniedLetterException::new);
         Member reported = letter.getSender();
 
-        reported.updateReport();
-
-        reportRepository
-                .save(Report
+        reportRepository.save(Report
                         .builder()
                         .reporter(reporter)
                         .reported(reported)
