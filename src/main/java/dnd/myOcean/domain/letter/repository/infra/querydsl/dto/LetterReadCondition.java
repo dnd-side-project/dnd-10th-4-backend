@@ -16,7 +16,7 @@ public class LetterReadCondition {
     @NotNull(message = "페이지 크기를 입력해주세요.")
     @Positive(message = "올바른 페이지 크기를 입력해주세요. (1 이상)")
     private Integer size;
-
+    
     @Null
     private Long memberId;
 

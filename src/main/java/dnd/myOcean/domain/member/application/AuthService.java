@@ -6,8 +6,9 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import dnd.myOcean.domain.member.domain.Gender;
 import dnd.myOcean.domain.member.domain.Member;
 import dnd.myOcean.domain.member.domain.Role;
-import dnd.myOcean.domain.member.dto.request.KakaoLoginRequest;
+import dnd.myOcean.domain.member.domain.dto.request.KakaoLoginRequest;
 import dnd.myOcean.domain.member.repository.infra.jpa.MemberRepository;
+import dnd.myOcean.global.auth.exception.auth.InvalidAuthCodeException;
 import dnd.myOcean.global.auth.jwt.token.TokenProvider;
 import dnd.myOcean.global.auth.jwt.token.TokenResponse;
 import dnd.myOcean.global.auth.jwt.token.repository.redis.RefreshTokenRedisRepository;
@@ -24,6 +25,7 @@ import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.stereotype.Service;
 import org.springframework.util.LinkedMultiValueMap;
 import org.springframework.util.MultiValueMap;
+import org.springframework.web.client.HttpClientErrorException;
 import org.springframework.web.client.RestTemplate;
 
 @Service
@@ -139,21 +141,21 @@ public class AuthService {
 
         // HTTP 요청 보내기
         HttpEntity<MultiValueMap<String, String>> kakaoTokenRequest = new HttpEntity<>(headers);
-        RestTemplate rt = new RestTemplate();
 
-        ResponseEntity<String> response = restTemplate.exchange(
-                "https://kapi.kakao.com/v2/user/me",
-                HttpMethod.POST,
-                kakaoTokenRequest,
-                String.class
-        );
-
-        String responseBody = response.getBody();
-        ObjectMapper objectMapper = new ObjectMapper();
-        JsonNode jsonNode = objectMapper.readTree(responseBody);
-
-        String email = jsonNode.get("kakao_account").get("email").asText();
-
-        return new KakaoLoginRequest(email);
+        try {
+            ResponseEntity<String> response = restTemplate.exchange(
+                    "https://kapi.kakao.com/v2/user/me",
+                    HttpMethod.POST,
+                    kakaoTokenRequest,
+                    String.class
+            );
+            String responseBody = response.getBody();
+            ObjectMapper objectMapper = new ObjectMapper();
+            JsonNode jsonNode = objectMapper.readTree(responseBody);
+            String email = jsonNode.get("kakao_account").get("email").asText();
+            return new KakaoLoginRequest(email);
+        } catch (HttpClientErrorException e) {
+            throw new InvalidAuthCodeException();
+        }
     }
 }

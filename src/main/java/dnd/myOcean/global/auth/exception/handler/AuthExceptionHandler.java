@@ -2,6 +2,7 @@ package dnd.myOcean.global.auth.exception.handler;
 
 import dnd.myOcean.global.auth.exception.auth.AccessDeniedException;
 import dnd.myOcean.global.auth.exception.auth.AuthenticationEntryPointException;
+import dnd.myOcean.global.auth.exception.auth.InvalidAuthCodeException;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.ExceptionHandler;
@@ -22,5 +23,11 @@ public class AuthExceptionHandler {
     @ResponseStatus(HttpStatus.UNAUTHORIZED)
     public ResponseEntity authenticationEntryPointException(AuthenticationEntryPointException e) {
         return new ResponseEntity("로그인이 필요한 요청입니다.", HttpStatus.UNAUTHORIZED);
+    }
+
+    @ExceptionHandler(InvalidAuthCodeException.class)
+    @ResponseStatus(HttpStatus.UNAUTHORIZED)
+    public ResponseEntity InvalidAuthCodeException(InvalidAuthCodeException e) {
+        return new ResponseEntity("유효하지 않은 인가 코드입니다.", HttpStatus.UNAUTHORIZED);
     }
 }

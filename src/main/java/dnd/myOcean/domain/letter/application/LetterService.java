@@ -1,12 +1,13 @@
 package dnd.myOcean.domain.letter.application;
 
 
+import dnd.myOcean.domain.letter.alarm.event.LetterSendEvent;
 import dnd.myOcean.domain.letter.domain.Letter;
-import dnd.myOcean.domain.letter.dto.request.LetterReplyRequest;
-import dnd.myOcean.domain.letter.dto.request.LetterSendRequest;
-import dnd.myOcean.domain.letter.dto.response.ReceivedLetterResponse;
-import dnd.myOcean.domain.letter.dto.response.RepliedLetterResponse;
-import dnd.myOcean.domain.letter.dto.response.SendLetterResponse;
+import dnd.myOcean.domain.letter.domain.dto.request.LetterReplyRequest;
+import dnd.myOcean.domain.letter.domain.dto.request.LetterSendRequest;
+import dnd.myOcean.domain.letter.domain.dto.response.ReceivedLetterResponse;
+import dnd.myOcean.domain.letter.domain.dto.response.RepliedLetterResponse;
+import dnd.myOcean.domain.letter.domain.dto.response.SendLetterResponse;
 import dnd.myOcean.domain.letter.exception.AccessDeniedLetterException;
 import dnd.myOcean.domain.letter.exception.AlreadyReplyExistException;
 import dnd.myOcean.domain.letter.exception.RepliedLetterPassException;
@@ -29,6 +30,7 @@ import java.util.UUID;
 import java.util.stream.Collectors;
 import java.util.stream.IntStream;
 import lombok.RequiredArgsConstructor;
+import org.springframework.context.ApplicationEventPublisher;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -40,6 +42,7 @@ public class LetterService {
 
     private static final Integer MAX_LETTER = 5;
 
+    private final ApplicationEventPublisher eventPublisher;
     private final MemberRepository memberRepository;
     private final LetterRepository letterRepository;
 
@@ -85,6 +88,8 @@ public class LetterService {
         List<Member> randomReceivers = memberRepository.findRandomMembers(sender.getEmail(), MAX_LETTER);
         List<Letter> letters = createLetters(request, randomReceivers, sender, randomReceivers.size());
         letterRepository.saveAll(letters);
+
+        eventPublisher.publishEvent(new LetterSendEvent(this, letters));
     }
 
     private void sendLetterUpToReceiversCount(LetterSendRequest request, List<Member> receivers,
@@ -92,27 +97,30 @@ public class LetterService {
         int letterMaxCount = generateRandomReceiverCount(receivers.size());
         Collections.shuffle(receivers);
         List<Letter> letters = createLetters(request, receivers, sender, letterMaxCount);
-
         letterRepository.saveAll(letters);
+
+        eventPublisher.publishEvent(new LetterSendEvent(this, letters));
     }
 
     private void sendLetterUptoMaxCount(List<Member> receivers, LetterSendRequest request,
                                         Member sender) {
         Collections.shuffle(receivers);
         List<Letter> letters = createLetters(request, receivers, sender, MAX_LETTER);
-
         letterRepository.saveAll(letters);
+
+        eventPublisher.publishEvent(new LetterSendEvent(this, letters));
     }
 
     private List<Letter> createLetters(LetterSendRequest request, List<Member> receivers, Member sender,
                                        int letterMaxCount) {
+        String letterUuid = String.valueOf(UUID.randomUUID());
         return IntStream.range(0, letterMaxCount)
                 .mapToObj(i -> Letter.createLetter(
                         sender,
                         request.getContent(),
                         receivers.get(i),
                         WorryType.from(request.getWorryType()),
-                        String.valueOf(UUID.randomUUID())))
+                        letterUuid))
                 .collect(Collectors.toList());
     }
 

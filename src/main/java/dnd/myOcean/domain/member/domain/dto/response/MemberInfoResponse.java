@@ -1,4 +1,4 @@
-package dnd.myOcean.domain.member.dto.response;
+package dnd.myOcean.domain.member.domain.dto.response;
 
 
 import dnd.myOcean.domain.member.domain.WorryType;

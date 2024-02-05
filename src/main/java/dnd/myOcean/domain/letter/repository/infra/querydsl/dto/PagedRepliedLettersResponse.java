@@ -1,6 +1,6 @@
 package dnd.myOcean.domain.letter.repository.infra.querydsl.dto;
 
-import dnd.myOcean.domain.letter.dto.response.RepliedLetterResponse;
+import dnd.myOcean.domain.letter.domain.dto.response.RepliedLetterResponse;
 import java.util.List;
 import lombok.AccessLevel;
 import lombok.AllArgsConstructor;
