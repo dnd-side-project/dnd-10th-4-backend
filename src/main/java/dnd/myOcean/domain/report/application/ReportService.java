@@ -21,12 +21,6 @@ public class ReportService {
     private final MemberRepository memberRepository;
     private final LetterRepository letterRepository;
 
-
-    /**
-     * 신고 기능
-     *
-     * @param request
-     */
     @Transactional
     public void report(ReportSendRequest request, Long letterId) {
         Member reporter = memberRepository.findById(request.getMemberId())
