@@ -33,10 +33,4 @@ public class Report extends BaseEntity {
     @JoinColumn(name = "letter_id")
     private Letter letter;
 
-    public Report(Letter letter, Member reporter, Member reported, String reportContent) {
-        this.reporter = reporter;
-        this.reported = reported;
-        this.letter = letter;
-        this.content = reportContent;
-    }
 }
