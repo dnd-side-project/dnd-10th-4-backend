@@ -1,8 +1,6 @@
 package dnd.myOcean.global.auth.jwt.token;
 
-import dnd.myOcean.global.auth.jwt.token.repository.redis.RefreshTokenRedisRepository;
 import dnd.myOcean.global.auth.oauth.kakao.details.KakaoMemberDetails;
-import dnd.myOcean.global.common.auth.RefreshToken;
 import io.jsonwebtoken.Claims;
 import io.jsonwebtoken.ExpiredJwtException;
 import io.jsonwebtoken.Jwts;
@@ -24,7 +22,6 @@ import org.springframework.security.core.Authentication;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.stereotype.Component;
-import org.springframework.transaction.annotation.Transactional;
 
 
 @Component
@@ -37,17 +34,14 @@ public class TokenProvider {
     private final String secretKey;
     private final long accessTokenValidityMilliSeconds;
     private final long refreshTokenValidityMilliSeconds;
-    private final RefreshTokenRedisRepository refreshTokenRedisRepository;
     private Key secretkey;
 
     public TokenProvider(@Value("${jwt.secret_key}") String secretKey,
                          @Value("${jwt.access-token-validity-in-seconds}") long accessTokenValiditySeconds,
-                         @Value("${jwt.refresh-token-validity-in-seconds}") long refreshTokenValiditySeconds,
-                         RefreshTokenRedisRepository refreshTokenRedisRepository) {
+                         @Value("${jwt.refresh-token-validity-in-seconds}") long refreshTokenValiditySeconds) {
         this.secretKey = secretKey;
         this.accessTokenValidityMilliSeconds = accessTokenValiditySeconds * 1000;
         this.refreshTokenValidityMilliSeconds = refreshTokenValiditySeconds * 1000;
-        this.refreshTokenRedisRepository = refreshTokenRedisRepository;
     }
 
     @PostConstruct
@@ -131,21 +125,5 @@ public class TokenProvider {
         } catch (ExpiredJwtException e) {
             return false;
         }
-    }
-
-    @Transactional
-    public TokenResponse reIssueAccessToken(String refreshToken) {
-        RefreshToken findToken = refreshTokenRedisRepository.findByRefreshToken(refreshToken);
-
-        TokenResponse tokenResponse = createToken(String.valueOf(findToken.getId()), findToken.getEmail(),
-                findToken.getAuthority());
-        
-        refreshTokenRedisRepository.save(RefreshToken.builder()
-                .id(findToken.getId())
-                .authorities(findToken.getAuthorities())
-                .refreshToken(tokenResponse.getRefreshToken())
-                .build());
-
-        return tokenResponse;
     }
 }

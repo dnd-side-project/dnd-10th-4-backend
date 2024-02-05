@@ -167,12 +167,26 @@ public class AuthService {
     public TokenResponse reissueAccessToken(HttpServletRequest request) {
         String refreshToken = getTokenFromHeader(request, REFRESH_HEADER);
         if (tokenProvider.validate(refreshToken) && tokenProvider.validateExpire(refreshToken)) {
-            TokenResponse tokenResponse = tokenProvider.reIssueAccessToken(refreshToken);
+            RefreshToken findToken = refreshTokenRedisRepository.findByRefreshToken(refreshToken);
+
+            TokenResponse tokenResponse = tokenProvider.createToken(
+                    String.valueOf(findToken.getId()),
+                    findToken.getEmail(),
+                    findToken.getAuthority());
+
+            refreshTokenRedisRepository.save(RefreshToken.builder()
+                    .id(findToken.getId())
+                    .email(findToken.getEmail())
+                    .authorities(findToken.getAuthorities())
+                    .refreshToken(tokenResponse.getRefreshToken())
+                    .build());
+
             SecurityContextHolder.getContext()
                     .setAuthentication(tokenProvider.getAuthentication(tokenResponse.getAccessToken()));
+
             return tokenResponse;
         }
-
+        
         throw new ReissueFailException();
     }
 
