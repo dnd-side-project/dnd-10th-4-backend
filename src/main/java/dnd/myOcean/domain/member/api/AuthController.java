@@ -5,7 +5,6 @@ import com.fasterxml.jackson.core.JsonProcessingException;
 import dnd.myOcean.domain.member.application.AuthService;
 import dnd.myOcean.global.auth.jwt.token.TokenResponse;
 import jakarta.servlet.http.HttpServletRequest;
-import jakarta.servlet.http.HttpSession;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -45,10 +44,6 @@ public class AuthController {
      */
     @GetMapping("/reissue")
     public ResponseEntity<TokenResponse> reissueToken(HttpServletRequest request) {
-        HttpSession session = request.getSession();
-        String accessToken = (String) session.getAttribute("accessToken");
-        String refreshToken = (String) session.getAttribute("refreshToken");
-
-        return new ResponseEntity(new TokenResponse(accessToken, refreshToken), HttpStatus.OK);
+        return new ResponseEntity<>(authService.reissueAccessToken(request), HttpStatus.OK);
     }
 }

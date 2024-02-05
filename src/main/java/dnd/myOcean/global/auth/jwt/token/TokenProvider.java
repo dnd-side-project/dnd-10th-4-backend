@@ -139,6 +139,7 @@ public class TokenProvider {
 
         TokenResponse tokenResponse = createToken(String.valueOf(findToken.getId()), findToken.getEmail(),
                 findToken.getAuthority());
+        
         refreshTokenRedisRepository.save(RefreshToken.builder()
                 .id(findToken.getId())
                 .authorities(findToken.getAuthorities())

@@ -1,8 +1,10 @@
 package dnd.myOcean.global.auth.exception.handler;
 
 import dnd.myOcean.global.auth.exception.auth.AccessDeniedException;
+import dnd.myOcean.global.auth.exception.auth.AccessTokenExpiredException;
 import dnd.myOcean.global.auth.exception.auth.AuthenticationEntryPointException;
 import dnd.myOcean.global.auth.exception.auth.InvalidAuthCodeException;
+import dnd.myOcean.global.auth.exception.auth.ReissueFailException;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.ExceptionHandler;
@@ -27,7 +29,19 @@ public class AuthExceptionHandler {
 
     @ExceptionHandler(InvalidAuthCodeException.class)
     @ResponseStatus(HttpStatus.UNAUTHORIZED)
-    public ResponseEntity InvalidAuthCodeException(InvalidAuthCodeException e) {
+    public ResponseEntity invalidAuthCodeException(InvalidAuthCodeException e) {
         return new ResponseEntity("유효하지 않은 인가 코드입니다.", HttpStatus.UNAUTHORIZED);
+    }
+
+    @ExceptionHandler(AccessTokenExpiredException.class)
+    @ResponseStatus(HttpStatus.UNAUTHORIZED)
+    public ResponseEntity accessTokenExpiredException(AccessTokenExpiredException e) {
+        return new ResponseEntity("액세스 토큰이 만료되었습니다.", HttpStatus.UNAUTHORIZED);
+    }
+
+    @ExceptionHandler(ReissueFailException.class)
+    @ResponseStatus(HttpStatus.UNAUTHORIZED)
+    public ResponseEntity reissueFailException(ReissueFailException e) {
+        return new ResponseEntity("리프레시 토큰이 올바르지 않습니다. 다시 로그인해주세요.", HttpStatus.UNAUTHORIZED);
     }
 }
