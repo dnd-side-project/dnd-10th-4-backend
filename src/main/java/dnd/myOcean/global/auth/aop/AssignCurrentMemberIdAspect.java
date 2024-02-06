@@ -3,7 +3,6 @@ package dnd.myOcean.global.auth.aop;
 
 import dnd.myOcean.global.auth.exception.auth.AccessDeniedException;
 import dnd.myOcean.global.auth.exception.auth.AuthenticationEntryPointException;
-import dnd.myOcean.global.auth.exception.auth.IllegalAuthenticationException;
 import dnd.myOcean.global.auth.oauth.kakao.details.KakaoMemberDetails;
 import java.lang.reflect.Method;
 import java.util.Arrays;
@@ -66,6 +65,6 @@ public class AssignCurrentMemberIdAspect {
             throw new AuthenticationEntryPointException();
         }
 
-        throw new IllegalAuthenticationException();
+        throw new AuthenticationEntryPointException();
     }
 }

@@ -9,10 +9,12 @@ import dnd.myOcean.domain.member.domain.Role;
 import dnd.myOcean.domain.member.domain.dto.request.KakaoLoginRequest;
 import dnd.myOcean.domain.member.repository.infra.jpa.MemberRepository;
 import dnd.myOcean.global.auth.exception.auth.InvalidAuthCodeException;
+import dnd.myOcean.global.auth.exception.auth.ReissueFailException;
 import dnd.myOcean.global.auth.jwt.token.TokenProvider;
 import dnd.myOcean.global.auth.jwt.token.TokenResponse;
 import dnd.myOcean.global.auth.jwt.token.repository.redis.RefreshTokenRedisRepository;
 import dnd.myOcean.global.common.auth.RefreshToken;
+import jakarta.servlet.http.HttpServletRequest;
 import java.util.ArrayList;
 import java.util.List;
 import lombok.RequiredArgsConstructor;
@@ -22,9 +24,11 @@ import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpMethod;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
 import org.springframework.util.LinkedMultiValueMap;
 import org.springframework.util.MultiValueMap;
+import org.springframework.util.StringUtils;
 import org.springframework.web.client.HttpClientErrorException;
 import org.springframework.web.client.RestTemplate;
 
@@ -32,6 +36,7 @@ import org.springframework.web.client.RestTemplate;
 @RequiredArgsConstructor
 public class AuthService {
 
+    private static final String REFRESH_HEADER = "RefreshToken";
     private static final String PREFIX = "낯선 ";
 
     private final RestTemplate restTemplate;
@@ -157,5 +162,40 @@ public class AuthService {
         } catch (HttpClientErrorException e) {
             throw new InvalidAuthCodeException();
         }
+    }
+
+    public TokenResponse reissueAccessToken(HttpServletRequest request) {
+        String refreshToken = getTokenFromHeader(request, REFRESH_HEADER);
+
+        if (!tokenProvider.validate(refreshToken) || !tokenProvider.validateExpire(refreshToken)) {
+            throw new ReissueFailException();
+        }
+
+        RefreshToken findToken = refreshTokenRedisRepository.findByRefreshToken(refreshToken);
+
+        TokenResponse tokenResponse = tokenProvider.createToken(
+                String.valueOf(findToken.getId()),
+                findToken.getEmail(),
+                findToken.getAuthority());
+
+        refreshTokenRedisRepository.save(RefreshToken.builder()
+                .id(findToken.getId())
+                .email(findToken.getEmail())
+                .authorities(findToken.getAuthorities())
+                .refreshToken(tokenResponse.getRefreshToken())
+                .build());
+
+        SecurityContextHolder.getContext()
+                .setAuthentication(tokenProvider.getAuthentication(tokenResponse.getAccessToken()));
+
+        return tokenResponse;
+    }
+
+    private String getTokenFromHeader(HttpServletRequest request, String headerName) {
+        String token = request.getHeader(headerName);
+        if (StringUtils.hasText(token)) {
+            return token;
+        }
+        return null;
     }
 }
