@@ -1,11 +1,11 @@
 package dnd.myOcean.domain.letter.api;
 
 import dnd.myOcean.domain.letter.application.LetterService;
-import dnd.myOcean.domain.letter.dto.request.LetterReplyRequest;
-import dnd.myOcean.domain.letter.dto.request.LetterSendRequest;
-import dnd.myOcean.domain.letter.dto.response.ReceivedLetterResponse;
-import dnd.myOcean.domain.letter.dto.response.RepliedLetterResponse;
-import dnd.myOcean.domain.letter.dto.response.SendLetterResponse;
+import dnd.myOcean.domain.letter.domain.dto.request.LetterReplyRequest;
+import dnd.myOcean.domain.letter.domain.dto.request.LetterSendRequest;
+import dnd.myOcean.domain.letter.domain.dto.response.ReceivedLetterResponse;
+import dnd.myOcean.domain.letter.domain.dto.response.RepliedLetterResponse;
+import dnd.myOcean.domain.letter.domain.dto.response.SendLetterResponse;
 import dnd.myOcean.domain.letter.repository.infra.querydsl.dto.LetterReadCondition;
 import dnd.myOcean.domain.letter.repository.infra.querydsl.dto.PagedReceivedLettersResponse;
 import dnd.myOcean.domain.letter.repository.infra.querydsl.dto.PagedRepliedLettersResponse;
@@ -30,9 +30,6 @@ import org.springframework.web.bind.annotation.RestController;
 public class LetterController {
 
     private final LetterService letterService;
-
-    // TODO : 0, 2-3, 2-5에 대한 이메일 알림 기능 추가
-    // TODO : 생성된 지 48시간이 지났고 && 답장이 존재하지 않는 편지 스케쥴러로 제거
 
     // 0. 편지 전송
     @PostMapping

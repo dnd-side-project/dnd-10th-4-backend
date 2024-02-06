@@ -1,4 +1,4 @@
-package dnd.myOcean.domain.member.dto.request;
+package dnd.myOcean.domain.member.domain.dto.request;
 
 import dnd.myOcean.domain.member.domain.WorryType;
 import jakarta.validation.constraints.Null;
@@ -16,7 +16,7 @@ public class WorryCreateRequest {
 
     @Null
     private Long memberId;
-    
+
     private List<String> worries;
 
     public List<WorryType> getWorries() {

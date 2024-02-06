@@ -1,4 +1,4 @@
-package dnd.myOcean.domain.letter.dto.response;
+package dnd.myOcean.domain.letter.domain.dto.response;
 
 import dnd.myOcean.domain.letter.domain.Letter;
 import dnd.myOcean.domain.member.domain.WorryType;
@@ -13,18 +13,20 @@ import lombok.NoArgsConstructor;
 @Builder
 @AllArgsConstructor
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
-public class SendLetterResponse {
+public class ReceivedLetterResponse {
 
     private LocalDateTime createdAt;
     private Long letterId;
     private String senderNickname;
+    private String receiverNickname;
     private String content;
     private WorryType worryType;
 
-    public static SendLetterResponse toDto(Letter letter) {
-        return SendLetterResponse.builder()
+    public static ReceivedLetterResponse toDto(Letter letter) {
+        return ReceivedLetterResponse.builder()
                 .createdAt(letter.getCreateDate())
                 .letterId(letter.getId())
+                .receiverNickname(letter.getReceiver().getNickName())
                 .senderNickname(letter.getSender().getNickName())
                 .content(letter.getContent())
                 .worryType(letter.getWorryType())
