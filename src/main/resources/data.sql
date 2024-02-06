@@ -52,5 +52,3 @@ VALUES ('1', 2, 1, '안녕', now(), 'WORK', true, false, true, '안녕하세요!
        ('2', 1, 3, '안녕', now(), 'WORK', false, false, false, ''),
        ('2', 1, 4, '안녕', now(), 'FAMILY', false, false, false, ''),
        ('2', 1, 5, '안녕', now(), 'ETC', false, false, false, '');
-
-

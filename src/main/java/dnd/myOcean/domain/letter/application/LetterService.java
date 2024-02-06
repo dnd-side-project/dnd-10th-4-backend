@@ -21,18 +21,18 @@ import dnd.myOcean.domain.member.domain.Member;
 import dnd.myOcean.domain.member.domain.WorryType;
 import dnd.myOcean.domain.member.exception.MemberNotFoundException;
 import dnd.myOcean.domain.member.repository.infra.jpa.MemberRepository;
+import dnd.myOcean.domain.report.domain.Report;
+import dnd.myOcean.domain.report.repository.ReportRepository;
 import dnd.myOcean.global.auth.aop.dto.CurrentMemberIdRequest;
 import dnd.myOcean.global.exception.UnknownException;
-import java.util.Collections;
-import java.util.List;
-import java.util.Random;
-import java.util.UUID;
-import java.util.stream.Collectors;
-import java.util.stream.IntStream;
 import lombok.RequiredArgsConstructor;
 import org.springframework.context.ApplicationEventPublisher;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+
+import java.util.*;
+import java.util.stream.Collectors;
+import java.util.stream.IntStream;
 
 
 @Service
@@ -45,6 +45,7 @@ public class LetterService {
     private final ApplicationEventPublisher eventPublisher;
     private final MemberRepository memberRepository;
     private final LetterRepository letterRepository;
+    private final ReportRepository reportRepository;
 
     // 0. 편지 전송
     @Transactional
@@ -96,6 +97,16 @@ public class LetterService {
                                               Member sender) {
         int letterMaxCount = generateRandomReceiverCount(receivers.size());
         Collections.shuffle(receivers);
+
+        List<Optional<Report>> reporteds = receivers.stream().map(randomReceiver ->
+                reportRepository.findByReporterAndReported(sender, randomReceiver)).collect(Collectors.toList());
+
+        if (!reporteds.isEmpty()) {
+            List<Member> members = reporteds.stream().map(reported -> reported.get().getReported()).collect(Collectors.toList());
+
+            receivers.removeAll(members);
+        }
+
         List<Letter> letters = createLetters(request, receivers, sender, letterMaxCount);
         letterRepository.saveAll(letters);
 
