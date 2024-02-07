@@ -36,7 +36,7 @@ public class Report extends BaseEntity {
     private String content;
 
     @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "reportera")
+    @JoinColumn(name = "reporter_id")
     @OnDelete(action = OnDeleteAction.CASCADE)
     private Member reporter;
 

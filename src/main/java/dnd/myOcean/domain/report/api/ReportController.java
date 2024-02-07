@@ -21,10 +21,9 @@ public class ReportController {
 
     @PostMapping("/{letterId}")
     @AssignCurrentMemberId
-    public ResponseEntity report(@RequestBody ReportSendRequest reportSendRequest,
-                                 @PathVariable("letterId") Long letterId) {
+    public ResponseEntity<Void> report(@RequestBody ReportSendRequest reportSendRequest,
+                                       @PathVariable("letterId") Long letterId) {
         reportService.report(reportSendRequest, letterId);
-
         return new ResponseEntity(HttpStatus.OK);
     }
 }

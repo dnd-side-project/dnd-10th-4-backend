@@ -8,6 +8,7 @@ import dnd.myOcean.domain.member.exception.MemberNotFoundException;
 import dnd.myOcean.domain.member.repository.infra.jpa.MemberRepository;
 import dnd.myOcean.domain.report.domain.Report;
 import dnd.myOcean.domain.report.dto.request.ReportSendRequest;
+import dnd.myOcean.domain.report.exception.AlreadyReportExistException;
 import dnd.myOcean.domain.report.repository.ReportRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
@@ -26,16 +27,22 @@ public class ReportService {
         Member reporter = memberRepository.findById(request.getMemberId())
                 .orElseThrow(MemberNotFoundException::new);
 
-        Letter letter = letterRepository.findByIdAndReceiverIdAndHasRepliedIsFalse(letterId, request.getMemberId())
+        Letter letter = letterRepository.findByIdAndReceiverId(letterId, request.getMemberId())
                 .orElseThrow(AccessDeniedLetterException::new);
-        Member reported = letter.getSender();
 
-        reportRepository.save(Report
-                        .builder()
-                        .reporter(reporter)
-                        .reported(reported)
-                        .letter(letter)
-                        .content(request.getReportContent())
-                        .build());
+        if (alreadyReported(request, letter)) {
+            throw new AlreadyReportExistException();
+        }
+
+        reportRepository.save(Report.builder()
+                .reporter(reporter)
+                .reported(letter.getSender())
+                .letter(letter)
+                .content(request.getReportContent())
+                .build());
+    }
+
+    private boolean alreadyReported(ReportSendRequest request, Letter letter) {
+        return reportRepository.existsByLetterIdAndReporterId(letter.getId(), request.getMemberId());
     }
 }
