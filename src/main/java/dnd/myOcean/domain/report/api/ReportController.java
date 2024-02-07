@@ -6,7 +6,6 @@ import dnd.myOcean.global.auth.aop.AssignCurrentMemberId;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -19,11 +18,10 @@ public class ReportController {
 
     private final ReportService reportService;
 
-    @PostMapping("/{letterId}")
+    @PostMapping
     @AssignCurrentMemberId
-    public ResponseEntity<Void> report(@RequestBody ReportSendRequest reportSendRequest,
-                                       @PathVariable("letterId") Long letterId) {
-        reportService.report(reportSendRequest, letterId);
+    public ResponseEntity<Void> report(@RequestBody ReportSendRequest reportSendRequest) {
+        reportService.report(reportSendRequest);
         return new ResponseEntity(HttpStatus.OK);
     }
 }

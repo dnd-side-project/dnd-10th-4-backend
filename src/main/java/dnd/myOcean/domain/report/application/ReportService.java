@@ -23,11 +23,11 @@ public class ReportService {
     private final LetterRepository letterRepository;
 
     @Transactional
-    public void report(ReportSendRequest request, Long letterId) {
+    public void report(ReportSendRequest request) {
         Member reporter = memberRepository.findById(request.getMemberId())
                 .orElseThrow(MemberNotFoundException::new);
 
-        Letter letter = letterRepository.findByIdAndReceiverId(letterId, request.getMemberId())
+        Letter letter = letterRepository.findByIdAndReceiverId(request.getLetterId(), request.getMemberId())
                 .orElseThrow(AccessDeniedLetterException::new);
 
         if (alreadyReported(request, letter)) {
