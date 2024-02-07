@@ -21,7 +21,6 @@ import dnd.myOcean.domain.member.domain.Member;
 import dnd.myOcean.domain.member.domain.WorryType;
 import dnd.myOcean.domain.member.exception.MemberNotFoundException;
 import dnd.myOcean.domain.member.repository.infra.jpa.MemberRepository;
-import dnd.myOcean.domain.report.repository.ReportRepository;
 import dnd.myOcean.global.auth.aop.dto.CurrentMemberIdRequest;
 import dnd.myOcean.global.exception.UnknownException;
 import java.util.Collections;
@@ -46,7 +45,6 @@ public class LetterService {
     private final ApplicationEventPublisher eventPublisher;
     private final MemberRepository memberRepository;
     private final LetterRepository letterRepository;
-    private final ReportRepository reportRepository;
 
     // 0. 편지 전송
     @Transactional
@@ -110,7 +108,7 @@ public class LetterService {
         Collections.shuffle(receivers);
         List<Letter> letters = createLetters(request, receivers, sender, MAX_LETTER);
         letterRepository.saveAll(letters);
-        
+
         eventPublisher.publishEvent(new LetterSendEvent(this, letters));
     }
 

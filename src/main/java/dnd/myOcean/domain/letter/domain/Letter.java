@@ -38,8 +38,8 @@ public class Letter extends BaseEntity {
     private String content;
 
     @ManyToOne(fetch = FetchType.LAZY)
-    @OnDelete(action = OnDeleteAction.CASCADE)
     @JoinColumn(name = "sender_id")
+    @OnDelete(action = OnDeleteAction.CASCADE)
     private Member sender;
 
     @ManyToOne(fetch = FetchType.LAZY)
