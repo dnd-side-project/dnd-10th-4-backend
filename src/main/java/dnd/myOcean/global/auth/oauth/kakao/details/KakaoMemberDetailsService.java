@@ -1,8 +1,6 @@
 package dnd.myOcean.global.auth.oauth.kakao.details;
 
-import dnd.myOcean.domain.member.domain.Gender;
 import dnd.myOcean.domain.member.domain.Member;
-import dnd.myOcean.domain.member.domain.Role;
 import dnd.myOcean.domain.member.repository.infra.jpa.MemberRepository;
 import java.util.Collections;
 import lombok.RequiredArgsConstructor;
@@ -18,8 +16,6 @@ import org.springframework.transaction.annotation.Transactional;
 @RequiredArgsConstructor
 public class KakaoMemberDetailsService extends DefaultOAuth2UserService {
 
-    private static final String PREFIX = "낯선 ";
-
     private final MemberRepository memberRepository;
 
     @Transactional
@@ -31,14 +27,7 @@ public class KakaoMemberDetailsService extends DefaultOAuth2UserService {
         Member member = memberRepository.findByEmail(kakaoUserInfo.getEmail())
                 .orElseGet(() ->
                         memberRepository.save(
-                                Member.builder()
-                                        .email(kakaoUserInfo.getEmail())
-                                        .role(Role.USER)
-                                        .nickName(PREFIX)
-                                        .gender(Gender.NONE)
-                                        .updateAgeCount(0)
-                                        .updateGenderCount(0)
-                                        .build()
+                                Member.createFirstLoginMember(kakaoUserInfo.getEmail())
                         )
                 );
 

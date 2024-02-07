@@ -25,7 +25,7 @@ import org.springframework.transaction.annotation.Transactional;
 @RequiredArgsConstructor
 public class KakaoAuthSuccessHandler extends SimpleUrlAuthenticationSuccessHandler {
 
-    private static final String REDIRECT_URI = "http://localhost:8080/api/auth/login/kakao?accessToken=%s&refreshToken=%s";
+    private static final String REDIRECT_URI = "http://localhost:8080/api/auth/login/kakao";
 
     private final TokenProvider tokenProvider;
     private final MemberRepository memberRepository;
@@ -46,9 +46,11 @@ public class KakaoAuthSuccessHandler extends SimpleUrlAuthenticationSuccessHandl
                 member.getRole().name());
 
         saveRefreshTokenOnRedis(member, tokenResponse);
-        String redirectURI = String.format(REDIRECT_URI, tokenResponse.getAccessToken(),
-                tokenResponse.getRefreshToken());
-        getRedirectStrategy().sendRedirect(request, response, redirectURI);
+
+        request.getSession().setAttribute("accessToken", tokenResponse.getAccessToken());
+        request.getSession().setAttribute("refreshToken", tokenResponse.getRefreshToken());
+        request.getSession().setAttribute("isFirstLogin", member.isFirstLogin());
+        getRedirectStrategy().sendRedirect(request, response, REDIRECT_URI);
     }
 
     private void saveRefreshTokenOnRedis(Member member, TokenResponse response) {
