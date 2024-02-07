@@ -9,7 +9,7 @@ VALUES ('WORK'),
        ('ETC');
 
 INSERT INTO MEMBER(create_Date, update_age_count, update_gender_count, email, nick_name, gender, role, age)
-VALUES (now(), 0, 0, 'kdo03422@nate.com', '낯선 유저1', 'MALE', 'USER', 26),
+VALUES (now(), 0, 0, 'kdo0422@nate.com', '낯선 유저1', 'MALE', 'USER', 26),
        (now(), 0, 0, 'dog@naver.com1', '낯선 강아지', 'MALE', 'USER', 20),
        (now(), 0, 0, 'cat@naver.com1', '낯선 고양이', 'MALE', 'USER', 20),
        (now(), 0, 0, 'pig@naver.com1', '낯선 돼지', 'MALE', 'USER', 100),
