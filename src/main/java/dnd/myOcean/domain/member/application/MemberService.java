@@ -123,4 +123,10 @@ public class MemberService {
                 member.getAge(),
                 member.getRole().name());
     }
+
+    @Transactional
+    public void deleteMember(CurrentMemberIdRequest request) {
+        memberRepository.deleteById(request.getMemberId());
+        return;
+    }
 }

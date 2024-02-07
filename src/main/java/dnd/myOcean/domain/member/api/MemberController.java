@@ -62,6 +62,13 @@ public class MemberController {
         return new ResponseEntity<>(HttpStatus.OK);
     }
 
+    @DeleteMapping("/sign-out")
+    @AssignCurrentMemberId
+    public ResponseEntity<Void> deleteMember(@RequestBody CurrentMemberIdRequest request) {
+        memberService.deleteMember(request);
+        return new ResponseEntity<>(HttpStatus.OK);
+    }
+
     @GetMapping
     @AssignCurrentMemberId
     public ResponseEntity<MemberInfoResponse> getMyInfo(@RequestBody CurrentMemberIdRequest request) {

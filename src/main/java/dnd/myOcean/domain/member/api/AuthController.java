@@ -3,6 +3,7 @@ package dnd.myOcean.domain.member.api;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
 import dnd.myOcean.domain.member.application.AuthService;
+import dnd.myOcean.global.auth.jwt.token.LoginResponse;
 import dnd.myOcean.global.auth.jwt.token.TokenResponse;
 import jakarta.servlet.http.HttpServletRequest;
 import lombok.RequiredArgsConstructor;
@@ -25,9 +26,11 @@ public class AuthController {
      * 실제 배포에서 사용하는 로그인 API
      */
     @GetMapping("/login/kakao")
-    public ResponseEntity<TokenResponse> loginKakao(@RequestParam(name = "accessToken") String accessToken,
-                                                    @RequestParam(name = "refreshToken") String refreshToken) {
-        return new ResponseEntity(TokenResponse.of(accessToken, refreshToken), HttpStatus.OK);
+    public ResponseEntity<LoginResponse> loginKakao(HttpServletRequest request) {
+        String accessToken = (String) request.getSession().getAttribute("accessToken");
+        String refreshToken = (String) request.getSession().getAttribute("refreshToken");
+        boolean isFirstLogin = (Boolean) request.getSession().getAttribute("isFirstLogin");
+        return new ResponseEntity(LoginResponse.of(accessToken, refreshToken, isFirstLogin), HttpStatus.OK);
     }
 
     /**
