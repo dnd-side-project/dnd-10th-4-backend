@@ -1,9 +1,11 @@
 package dnd.myOcean.domain.letter.domain;
 
 
+import dnd.myOcean.domain.letterimage.domain.LetterImage;
 import dnd.myOcean.domain.member.domain.Member;
 import dnd.myOcean.domain.member.domain.WorryType;
 import dnd.myOcean.global.common.base.BaseEntity;
+import jakarta.persistence.CascadeType;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.EnumType;
@@ -50,6 +52,11 @@ public class Letter extends BaseEntity {
     @Enumerated(EnumType.STRING)
     private WorryType worryType;
 
+    @ManyToOne(fetch = FetchType.LAZY, cascade = CascadeType.ALL)
+    @JoinColumn(name = "letter_image_id")
+    @OnDelete(action = OnDeleteAction.CASCADE)
+    private LetterImage letterImage;
+
     private boolean isDeleteBySender;
     private boolean hasReplied;
     private boolean isStored;
@@ -57,12 +64,13 @@ public class Letter extends BaseEntity {
     private String uuid;
 
     public static Letter createLetter(Member sender, String content, Member receiver, WorryType worryType,
-                                      String uuid) {
+                                      LetterImage letterImage, String uuid) {
         return Letter.builder()
                 .sender(sender)
                 .content(content)
                 .receiver(receiver)
                 .worryType(worryType)
+                .letterImage(letterImage)
                 .uuid(uuid)
                 .isDeleteBySender(false)
                 .hasReplied(false)
