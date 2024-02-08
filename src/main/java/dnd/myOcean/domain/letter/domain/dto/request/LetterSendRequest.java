@@ -1,5 +1,6 @@
 package dnd.myOcean.domain.letter.domain.dto.request;
 
+import jakarta.annotation.Nullable;
 import jakarta.validation.constraints.NotEmpty;
 import jakarta.validation.constraints.Null;
 import lombok.AccessLevel;
@@ -15,7 +16,7 @@ public class LetterSendRequest {
 
     @Null
     private Long memberId;
-    
+
     private boolean equalGender;
 
     @NotEmpty(message = "수신자의 최소 나이를 지정해주세요.")
@@ -30,5 +31,6 @@ public class LetterSendRequest {
     @NotEmpty(message = "편지 내용을 입력해주세요.")
     private String content;
 
+    @Nullable
     private MultipartFile image;
 }

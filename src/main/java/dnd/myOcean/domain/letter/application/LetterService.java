@@ -119,14 +119,7 @@ public class LetterService {
     private List<Letter> createLetters(LetterSendRequest request, List<Member> receivers, Member sender,
                                        int letterCount) {
         MultipartFile image = request.getImage();
-
-        LetterImage letterImage;
-        if (!image.isEmpty()) {
-            fileService.upload(image, image.getOriginalFilename());
-            letterImage = new LetterImage(image.getOriginalFilename());
-        } else {
-            letterImage = null;
-        }
+        LetterImage letterImage = getLetterImage(image);
 
         String letterUuid = String.valueOf(UUID.randomUUID());
         return IntStream.range(0, letterCount)
@@ -138,6 +131,16 @@ public class LetterService {
                         letterImage,
                         letterUuid))
                 .collect(Collectors.toList());
+    }
+
+    private LetterImage getLetterImage(MultipartFile image) {
+        LetterImage letterImage;
+        if (image != null) {
+            fileService.upload(image, image.getOriginalFilename());
+            letterImage = new LetterImage(image.getOriginalFilename());
+            return letterImage;
+        }
+        return null;
     }
 
     private int generateRandomReceiverCount(Integer maxCount) {
