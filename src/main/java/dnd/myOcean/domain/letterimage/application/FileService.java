@@ -1,6 +1,6 @@
 package dnd.myOcean.domain.letterimage.application;
 
-import dnd.myOcean.domain.letterimage.exception.FileUploadFailureException;
+import dnd.myOcean.global.exception.UnknownException;
 import jakarta.annotation.PostConstruct;
 import java.io.File;
 import java.io.IOException;
@@ -28,7 +28,7 @@ public class FileService {
         try {
             file.transferTo(new File(location + filename));
         } catch (IOException e) {
-            throw new FileUploadFailureException();
+            throw new UnknownException();
         }
     }
 }
