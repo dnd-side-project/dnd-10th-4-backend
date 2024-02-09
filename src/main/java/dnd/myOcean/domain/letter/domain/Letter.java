@@ -54,7 +54,6 @@ public class Letter extends BaseEntity {
 
     @ManyToOne(fetch = FetchType.LAZY, cascade = CascadeType.ALL)
     @JoinColumn(name = "letter_image_id")
-    @OnDelete(action = OnDeleteAction.CASCADE)
     private LetterImage letterImage;
 
     private boolean isDeleteBySender;
