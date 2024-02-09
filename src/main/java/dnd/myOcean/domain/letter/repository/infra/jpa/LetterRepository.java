@@ -2,9 +2,11 @@ package dnd.myOcean.domain.letter.repository.infra.jpa;
 
 import dnd.myOcean.domain.letter.domain.Letter;
 import dnd.myOcean.domain.letter.repository.infra.querydsl.LetterQuerydslRepository;
+import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Optional;
 import org.springframework.data.jpa.repository.JpaRepository;
+import org.springframework.data.jpa.repository.Modifying;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
 
@@ -35,4 +37,8 @@ public interface LetterRepository extends JpaRepository<Letter, Long>, LetterQue
 
     @Query("SELECT l FROM Letter l WHERE l.uuid = :uuid")
     List<Letter> findAllByUuid(@Param("uuid") String uuid);
+
+    @Modifying
+    @Query("DELETE FROM Letter l WHERE l.createDate <= :expirationDate and l.hasReplied = false")
+    void deleteDiscardedLetters(@Param("expirationDate") LocalDateTime expirationDate);
 }
