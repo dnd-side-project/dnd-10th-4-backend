@@ -21,6 +21,11 @@ jobs:
     - name: Checkout
       uses: actions/checkout@v3
 
+    - name: Set up JDK 17
+      uses: actions/setup-java@v2
+      with:
+        java-version: '17'  # Change this to '17' to use JDK 17
+
     - name: gradlew mod modify
       run: chmod +x gradlew
     
