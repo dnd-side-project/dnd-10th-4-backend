@@ -45,7 +45,7 @@ jobs:
 
       # Docker 이미지 Build (2)
       - name: docker image build
-        run: docker build -t rlaehddnd0422/dnd3
+        run: docker build -t rlaehddnd0422/dnd3 .
         
       # DockerHub Login (3)
       - name: docker login
@@ -56,7 +56,7 @@ jobs:
 
       # Docker Hub push (4)
       - name: docker Hub push
-        run: docker push rlaehddnd0422/dnd3 .
+        run: docker push rlaehddnd0422/dnd3
       
       # GET GitHub IP (5)
       - name: get GitHub IP 
