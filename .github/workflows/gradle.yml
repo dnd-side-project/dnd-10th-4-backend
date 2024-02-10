@@ -45,4 +45,4 @@ jobs:
 
       # Docker Hub push (4)
       - name: docker Hub push
-        run: docker push rlaehddnd0422/dnd
+        run: docker push rlaehddnd0422/dnd-10th-4-backend_springbootapp
