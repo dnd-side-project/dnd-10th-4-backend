@@ -45,7 +45,7 @@ jobs:
 
       # Docker 이미지 Build (2)
       - name: docker image build
-        run: docker build -t rlaehddnd0422/dnd .
+        run: docker build -t rlaehddnd0422/dnd2 .
 
       # DockerHub Login (3)
       - name: docker login
@@ -56,7 +56,7 @@ jobs:
 
       # Docker Hub push (4)
       - name: docker Hub push
-        run: docker push rlaehddnd0422/dnd
+        run: docker push rlaehddnd0422/dnd2
       
       # GET GitHub IP (5)
       - name: get GitHub IP 
@@ -88,7 +88,7 @@ jobs:
           script: |
             sudo docker stop dnd
             sudo docker rm dnd
-            sudo docker run -it -d -p 8080:8080 --name dnd rlaehddnd0422/dnd
+            sudo docker run -it -d -p 8080:8080 --name dnd rlaehddnd0422/dnd2
       
       # REMOVE Github IP FROM security group (9)
       - name: Remove IP FROM security group
