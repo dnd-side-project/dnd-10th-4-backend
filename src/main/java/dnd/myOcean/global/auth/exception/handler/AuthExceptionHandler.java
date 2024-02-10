@@ -24,7 +24,7 @@ public class AuthExceptionHandler {
     @ExceptionHandler(AuthenticationEntryPointException.class)
     @ResponseStatus(HttpStatus.UNAUTHORIZED)
     public ResponseEntity authenticationEntryPointException(AuthenticationEntryPointException e) {
-        return new ResponseEntity("로그인이 필요한 요청입니다.", HttpStatus.UNAUTHORIZED);
+        return new ResponseEntity("로그인이 필요한 요청 입니다.", HttpStatus.UNAUTHORIZED);
     }
 
     @ExceptionHandler(InvalidAuthCodeException.class)
