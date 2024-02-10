@@ -56,7 +56,7 @@ jobs:
 
       # Docker Hub push (4)
       - name: docker Hub push
-        run: docker push rlaehddnd0422/dnd3
+        run: docker push rlaehddnd0422/dnd3 .
       
       # GET GitHub IP (5)
       - name: get GitHub IP 
