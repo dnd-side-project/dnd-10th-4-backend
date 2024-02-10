@@ -15,7 +15,7 @@ import org.springframework.scheduling.annotation.EnableScheduling;
 public class MyOceanApplication {
 
     public static void main(String[] args) {
-        System.out.println("HI");s
+        System.out.println("HI");
         SpringApplication.run(MyOceanApplication.class, args);
     }
 }
