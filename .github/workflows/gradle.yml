@@ -45,7 +45,7 @@ jobs:
 
       # Docker 이미지 Build (2)
       - name: docker image build
-        run: docker build -t rlaehddnd0422/dnd .
+        run: docker build -t rlaehddnd0422/dnd . --build-arg JAR_FILE=build/libs/*.jar
 
       # DockerHub Login (3)
       - name: docker login
