@@ -45,9 +45,7 @@ jobs:
 
       # Docker 이미지 Build (2)
       - name: docker image build
-        run: |
-          docker rmi rlaehddnd0422/dnd:latest
-          docker build -t rlaehddnd0422/dnd:latest .
+        run: docker build -t rlaehddnd0422/dnd:latest .
 
       # DockerHub Login (3)
       - name: docker login
