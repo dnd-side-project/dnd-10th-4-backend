@@ -86,9 +86,9 @@ jobs:
           port: ${{ secrets.EC2_SSH_PORT }}
           timeout: 60s
           script: |
-            sudo docker stop boot-prac-ci
-            sudo docker rm boot-prac-ci
-            sudo docker run -it -d -p 8080:8080 --name boot-prac-ci rlaehddnd0422/dnd-10th-4-backend_springbootapp
+            sudo docker stop dnd-10th-4-backend_springbootapp
+            sudo docker rm dnd-10th-4-backend_springbootapp
+            sudo docker run -it -d -p 8080:8080 --name dnd-10th-4-backend_springbootapp rlaehddnd0422/dnd-10th-4-backend_springbootapp
       
       # REMOVE Github IP FROM security group (9)
       - name: Remove IP FROM security group
