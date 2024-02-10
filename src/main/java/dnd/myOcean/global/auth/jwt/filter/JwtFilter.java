@@ -48,11 +48,6 @@ public class JwtFilter extends OncePerRequestFilter {
                                             FilterChain filterChain)
             throws IOException, ServletException {
 
-        if (request.getRequestURI().startsWith("/home")) {
-            filterChain.doFilter(request, response);
-            return true;
-        }
-
         if (request.getRequestURI().startsWith("/api/auth")) {
             filterChain.doFilter(request, response);
             return true;
