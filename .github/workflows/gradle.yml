@@ -45,7 +45,9 @@ jobs:
 
       # Docker 이미지 Build (2)
       - name: docker image build
-        run: docker build --no-cache -t rlaehddnd0422/dnd2 .
+        run: |
+          docker builder prune
+          docker build --no-cache -t rlaehddnd0422/dnd2 .
         
       # DockerHub Login (3)
       - name: docker login
