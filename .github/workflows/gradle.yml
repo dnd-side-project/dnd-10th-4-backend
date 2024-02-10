@@ -47,7 +47,7 @@ jobs:
       - name: docker image build
         run: |
           docker builder prune
-          docker build --no-cache -t rlaehddnd0422/dnd2:latest .
+          docker build --no-cache -t rlaehddnd0422/dnd3
         
       # DockerHub Login (3)
       - name: docker login
@@ -58,7 +58,7 @@ jobs:
 
       # Docker Hub push (4)
       - name: docker Hub push
-        run: docker push rlaehddnd0422/dnd2:latest
+        run: docker push rlaehddnd0422/dnd3
       
       # GET GitHub IP (5)
       - name: get GitHub IP 
@@ -90,7 +90,7 @@ jobs:
           script: |
             sudo docker stop dnd
             sudo docker rm dnd
-            sudo docker run -it -d -p 8080:8080 --name dnd rlaehddnd0422/dnd2:latest
+            sudo docker run -it -d -p 8080:8080 --name dnd rlaehddnd0422/dnd3
       
       # REMOVE Github IP FROM security group (9)
       - name: Remove IP FROM security group
