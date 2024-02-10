@@ -41,11 +41,11 @@ jobs:
         
       # Spring Boot 어플리케이션 Build (1)
       - name: Spring Boot Build
-        run: ./gradlew clean build --exclude-task test
+        run: ./gradlew clean build
 
       # Docker 이미지 Build (2)
       - name: docker image build
-        run: docker build -t rlaehddnd0422/dnd . --build-arg JAR_FILE=build/libs/*.jar
+        run: docker build -t rlaehddnd0422/dnd . --build-arg JAR_FILE=build/libs/myOcean-0.0.1-SNAPSHOT.jar
 
       # DockerHub Login (3)
       - name: docker login
