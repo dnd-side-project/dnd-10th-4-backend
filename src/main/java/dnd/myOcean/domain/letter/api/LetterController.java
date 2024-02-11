@@ -17,6 +17,7 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.PatchMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -34,7 +35,7 @@ public class LetterController {
     // 0. 편지 전송
     @PostMapping
     @AssignCurrentMemberId
-    public ResponseEntity<Void> send(@RequestBody LetterSendRequest request) {
+    public ResponseEntity<Void> send(@ModelAttribute LetterSendRequest request) {
         letterService.send(request);
         return new ResponseEntity(HttpStatus.CREATED);
     }

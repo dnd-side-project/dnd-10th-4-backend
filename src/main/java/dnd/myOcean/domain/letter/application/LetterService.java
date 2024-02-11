@@ -17,22 +17,25 @@ import dnd.myOcean.domain.letter.repository.infra.querydsl.dto.LetterReadConditi
 import dnd.myOcean.domain.letter.repository.infra.querydsl.dto.PagedReceivedLettersResponse;
 import dnd.myOcean.domain.letter.repository.infra.querydsl.dto.PagedRepliedLettersResponse;
 import dnd.myOcean.domain.letter.repository.infra.querydsl.dto.PagedSendLettersResponse;
+import dnd.myOcean.domain.letterimage.application.FileService;
+import dnd.myOcean.domain.letterimage.domain.LetterImage;
 import dnd.myOcean.domain.member.domain.Member;
 import dnd.myOcean.domain.member.domain.WorryType;
 import dnd.myOcean.domain.member.exception.MemberNotFoundException;
 import dnd.myOcean.domain.member.repository.infra.jpa.MemberRepository;
-import dnd.myOcean.domain.report.domain.Report;
-import dnd.myOcean.domain.report.repository.ReportRepository;
 import dnd.myOcean.global.auth.aop.dto.CurrentMemberIdRequest;
 import dnd.myOcean.global.exception.UnknownException;
+import java.util.Collections;
+import java.util.List;
+import java.util.Random;
+import java.util.UUID;
+import java.util.stream.Collectors;
+import java.util.stream.IntStream;
 import lombok.RequiredArgsConstructor;
 import org.springframework.context.ApplicationEventPublisher;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-
-import java.util.*;
-import java.util.stream.Collectors;
-import java.util.stream.IntStream;
+import org.springframework.web.multipart.MultipartFile;
 
 
 @Service
@@ -42,10 +45,10 @@ public class LetterService {
 
     private static final Integer MAX_LETTER = 5;
 
+    private final FileService fileService;
     private final ApplicationEventPublisher eventPublisher;
     private final MemberRepository memberRepository;
     private final LetterRepository letterRepository;
-    private final ReportRepository reportRepository;
 
     // 0. 편지 전송
     @Transactional
@@ -70,7 +73,8 @@ public class LetterService {
 
     private List<Member> filterReceiver(LetterSendRequest request, MemberRepository memberRepository, Member sender) {
         if (request.isEqualGender()) {
-            return memberRepository.findFilteredAndSameGenderMember(request.getAgeRangeStart(),
+            return memberRepository.findFilteredAndSameGenderMember(
+                    request.getAgeRangeStart(),
                     request.getAgeRangeEnd(),
                     sender.getGender(),
                     sender.getId(),
@@ -86,7 +90,7 @@ public class LetterService {
     }
 
     private void sendLetterWithoutFilterUpToMaxLetter(LetterSendRequest request, Member sender) {
-        List<Member> randomReceivers = memberRepository.findRandomMembers(sender.getEmail(), MAX_LETTER);
+        List<Member> randomReceivers = memberRepository.findRandomMembers(request.getMemberId(), MAX_LETTER);
         List<Letter> letters = createLetters(request, randomReceivers, sender, randomReceivers.size());
         letterRepository.saveAll(letters);
 
@@ -95,19 +99,9 @@ public class LetterService {
 
     private void sendLetterUpToReceiversCount(LetterSendRequest request, List<Member> receivers,
                                               Member sender) {
-        int letterMaxCount = generateRandomReceiverCount(receivers.size());
+        int letterCount = generateRandomReceiverCount(receivers.size());
         Collections.shuffle(receivers);
-
-        List<Optional<Report>> reporteds = receivers.stream().map(randomReceiver ->
-                reportRepository.findByReporterAndReported(sender, randomReceiver)).collect(Collectors.toList());
-
-        if (!reporteds.isEmpty()) {
-            List<Member> members = reporteds.stream().map(reported -> reported.get().getReported()).collect(Collectors.toList());
-
-            receivers.removeAll(members);
-        }
-
-        List<Letter> letters = createLetters(request, receivers, sender, letterMaxCount);
+        List<Letter> letters = createLetters(request, receivers, sender, letterCount);
         letterRepository.saveAll(letters);
 
         eventPublisher.publishEvent(new LetterSendEvent(this, letters));
@@ -123,16 +117,30 @@ public class LetterService {
     }
 
     private List<Letter> createLetters(LetterSendRequest request, List<Member> receivers, Member sender,
-                                       int letterMaxCount) {
+                                       int letterCount) {
+        MultipartFile image = request.getImage();
+        LetterImage letterImage = getLetterImage(image);
+
         String letterUuid = String.valueOf(UUID.randomUUID());
-        return IntStream.range(0, letterMaxCount)
+        return IntStream.range(0, letterCount)
                 .mapToObj(i -> Letter.createLetter(
                         sender,
                         request.getContent(),
                         receivers.get(i),
                         WorryType.from(request.getWorryType()),
+                        letterImage,
                         letterUuid))
                 .collect(Collectors.toList());
+    }
+
+    private LetterImage getLetterImage(MultipartFile image) {
+        LetterImage letterImage;
+        if (image != null) {
+            fileService.upload(image, image.getOriginalFilename());
+            letterImage = new LetterImage(image.getOriginalFilename());
+            return letterImage;
+        }
+        return null;
     }
 
     private int generateRandomReceiverCount(Integer maxCount) {

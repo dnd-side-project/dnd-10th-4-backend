@@ -37,8 +37,8 @@ public interface MemberRepository extends JpaRepository<Member, Long> {
                                     @Param("id") long id,
                                     @Param("worryType") WorryType worryType);
 
-    @Query(value = "SELECT m FROM Member m WHERE m.email != :email ORDER BY RAND() LIMIT :n", nativeQuery = false)
-    List<Member> findRandomMembers(@Param("email") String email, @Param("n") int n);
+    @Query(value = "SELECT m FROM Member m WHERE m.id != :id ORDER BY RAND() LIMIT :n", nativeQuery = false)
+    List<Member> findRandomMembers(@Param("id") Long id, @Param("n") int n);
 
     boolean existsByNickName(String nickname);
 
