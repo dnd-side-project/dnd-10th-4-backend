@@ -86,8 +86,9 @@ jobs:
           port: ${{ secrets.EC2_SSH_PORT }}
           timeout: 60s
           script: |
-            sudo docker stop dnd-10th-4-backend-app-1
-            sudo docker rm dnd-10th-4-backend-app-1
+            sudo docker stop dnd2
+            sudo docker rm dnd2
+            sudo docker pull rlaehddnd0422/dnd
             sudo docker run -it -d -p 8080:8080 --name dnd2 rlaehddnd0422/dnd
       
       # REMOVE Github IP FROM security group (10)
