@@ -6,8 +6,7 @@ services:
       - "8081:8080"
     restart: always
     depends_on:
-      - nginx
-#      - db
+      - db
 #  db:
 #    image: mysql:latest
 #    restart: always
