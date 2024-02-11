@@ -1,100 +1,100 @@
-# # This workflow uses actions that are not certified by GitHub.
-# # They are provided by a third-party and are governed by
-# # separate terms of service, privacy policy, and support
-# # documentation.
-# # This workflow will build a Java project with Gradle and cache/restore any dependencies to improve the workflow execution time
-# # For more information see: https://docs.github.com/en/actions/automating-builds-and-tests/building-and-testing-java-with-gradle
+# This workflow uses actions that are not certified by GitHub.
+# They are provided by a third-party and are governed by
+# separate terms of service, privacy policy, and support
+# documentation.
+# This workflow will build a Java project with Gradle and cache/restore any dependencies to improve the workflow execution time
+# For more information see: https://docs.github.com/en/actions/automating-builds-and-tests/building-and-testing-java-with-gradle
 
-# name: Java CI with Gradle
+name: Java CI with Gradle
 
-# on:
-#   push:
-#     branches: [ "develop" ]
+on:
+  push:
+    branches: [ "develop" ]
 
-# jobs:
-#   deploy:
-#     runs-on: ubuntu-latest
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
 
-#     steps:
-#       - name: Checkout
-#         uses: actions/checkout@v3
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v3
 
-#       - name: Set up JDK 17
-#         uses: actions/setup-java@v3
-#         with:
-#           java-version: '17'
-#           distribution: 'adopt'
+      - name: Set up JDK 17
+        uses: actions/setup-java@v3
+        with:
+          java-version: '17'
+          distribution: 'adopt'
 
-#       - name: gradlew mod modify
-#         run: chmod +x gradlew
+      - name: gradlew mod modify
+        run: chmod +x gradlew
 
-#       # gradle 캐싱
-#       - name: Gradle Caching
-#         uses: actions/cache@v3
-#         with:
-#           path: |
-#             ~/.gradle/caches
-#             ~/.gradle/wrapper
-#           key: ${{ runner.os }}-gradle-${{ hashFiles('**/*.gradle*', '**/gradle-wrapper.properties') }}
-#           restore-keys: |
-#             ${{ runner.os }}-gradle-
+      # gradle 캐싱
+      - name: Gradle Caching
+        uses: actions/cache@v3
+        with:
+          path: |
+            ~/.gradle/caches
+            ~/.gradle/wrapper
+          key: ${{ runner.os }}-gradle-${{ hashFiles('**/*.gradle*', '**/gradle-wrapper.properties') }}
+          restore-keys: |
+            ${{ runner.os }}-gradle-
         
-#       # Spring Boot 어플리케이션 Build (1)
-#       - name: Spring Boot Build
-#         run: ./gradlew clean build --exclude-task test
+      # Spring Boot 어플리케이션 Build (1)
+      - name: Spring Boot Build
+        run: ./gradlew clean build --exclude-task test
 
-#       # Docker 이미지 Build (2)
-#       - name: docker image build
-#         run: docker build -t rlaehddnd0422/dnd3 .
+      # Docker 이미지 Build (2)
+      - name: docker image build
+        run: docker build -t rlaehddnd0422/dnd3 .
         
-#       # DockerHub Login (3)
-#       - name: docker login
-#         uses: docker/login-action@v2
-#         with:
-#           username: ${{ secrets.DOCKERHUB_USERNAME }}
-#           password: ${{ secrets.DOCKERHUB_TOKEN }}
+      # DockerHub Login (3)
+      - name: docker login
+        uses: docker/login-action@v2
+        with:
+          username: ${{ secrets.DOCKERHUB_USERNAME }}
+          password: ${{ secrets.DOCKERHUB_TOKEN }}
 
-#       # Docker Hub Image Remove (3.5)
-#       - name: docker Hub Image Remove
-#         run: docker rmi -f rlaehddnd0422/dnd3
+      # Docker Hub Image Remove (3.5)
+      - name: docker Hub Image Remove
+        run: docker rmi -f rlaehddnd0422/dnd
 
-#       # Docker Hub push (4)
-#       - name: docker Hub push
-#         run: docker push rlaehddnd0422/dnd3
+      # Docker Hub push (4)
+      - name: docker Hub push
+        run: docker push rlaehddnd0422/dnd
       
-#       # GET GitHub IP (5)
-#       - name: get GitHub IP 
-#         id: ip
-#         uses: haythem/public-ip@v1.2
+      # GET GitHub IP (5)
+      - name: get GitHub IP 
+        id: ip
+        uses: haythem/public-ip@v1.2
         
-#       # Configure AWS Credentials (6) - AWS 접근 권한 취득(IAM)
-#       - name: Configure AWS Credentials
-#         uses: aws-actions/configure-aws-credentials@v1
-#         with: 
-#           aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY_ID }}
-#           aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
-#           aws-region: ap-northeast-2
+      # Configure AWS Credentials (6) - AWS 접근 권한 취득(IAM)
+      - name: Configure AWS Credentials
+        uses: aws-actions/configure-aws-credentials@v1
+        with: 
+          aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY_ID }}
+          aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+          aws-region: ap-northeast-2
       
-#       # Add github ip to AWS (7)
-#       - name: Add GitHub IP to AWS
-#         run: |
-#           aws ec2 authorize-security-group-ingress --group-id ${{ secrets.AWS_SG_ID }} --protocol tcp --port 22 --cidr ${{ steps.ip.outputs.ipv4 }}/32
+      # Add github ip to AWS (7)
+      - name: Add GitHub IP to AWS
+        run: |
+          aws ec2 authorize-security-group-ingress --group-id ${{ secrets.AWS_SG_ID }} --protocol tcp --port 22 --cidr ${{ steps.ip.outputs.ipv4 }}/32
       
-#       # AWS EC2 Server Connect & Docker 명령어 실행 (8)
-#       - name: AWS EC2 Connection
-#         uses: appleboy/ssh-action@v0.1.6
-#         with:
-#           host: ${{ secrets.EC2_HOST }}
-#           username: ubuntu
-#           password: ${{ secrets.EC2_PASSWORD }} 
-#           port: ${{ secrets.EC2_SSH_PORT }}
-#           timeout: 60s
-#           script: |
-#             sudo docker stop dnd
-#             sudo docker rm dnd
-#             sudo docker run -it -d -p 8080:8080 --name dnd rlaehddnd0422/dnd3
+      # AWS EC2 Server Connect & Docker 명령어 실행 (8)
+      - name: AWS EC2 Connection
+        uses: appleboy/ssh-action@v0.1.6
+        with:
+          host: ${{ secrets.EC2_HOST }}
+          username: ubuntu
+          password: ${{ secrets.EC2_PASSWORD }} 
+          port: ${{ secrets.EC2_SSH_PORT }}
+          timeout: 60s
+          script: |
+            sudo docker stop dnd
+            sudo docker rm dnd
+            sudo docker run -it -d -p 8080:8080 --name dnd rlaehddnd0422/dnd
       
-#       # REMOVE Github IP FROM security group (9)
-#       - name: Remove IP FROM security group
-#         run: |
-#           aws ec2 revoke-security-group-ingress --group-id ${{ secrets.AWS_SG_ID }} --protocol tcp --port 22 --cidr ${{ steps.ip.outputs.ipv4 }}/32
+      # REMOVE Github IP FROM security group (9)
+      - name: Remove IP FROM security group
+        run: |
+          aws ec2 revoke-security-group-ingress --group-id ${{ secrets.AWS_SG_ID }} --protocol tcp --port 22 --cidr ${{ steps.ip.outputs.ipv4 }}/32
