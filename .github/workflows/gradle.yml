@@ -24,6 +24,13 @@ jobs:
         with:
           java-version: '17'
           distribution: 'adopt'
+          
+      - name: Copy Secret
+        env:
+          OCCUPY_SECRET: ${{ secrets.OCCUPY_SECRET }}
+          OCCUPY_SECRET_DIR: src/main/resources
+          OCCUPY_SECRET_DIR_FILE_NAME: application-secret.yml
+        run: echo $OCCUPY_SECRET | base64 --decode > $OCCUPY_SECRET_DIR/$OCCUPY_SECRET_DIR_FILE_NAME
 
       - name: gradlew mod modify
         run: chmod +x gradlew
