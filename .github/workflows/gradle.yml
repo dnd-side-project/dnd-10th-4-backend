@@ -83,8 +83,8 @@ jobs:
           host: ${{ secrets.EC2_HOST }}
           username: ubuntu
           password: ${{ secrets.EC2_PASSWORD }}
-          source: "./app/dnd-10th-4-backend/docker-compose.yml"
-          target: "/home/ubuntu"
+          source: "./docker-compose.yml"
+          target: "/home/ubuntu/app/dnd-10th-4-backend"
       
       # AWS EC2 Server Connect & Docker 명령어 실행 (9)
       - name: AWS EC2 Connection
@@ -96,7 +96,7 @@ jobs:
           port: ${{ secrets.EC2_SSH_PORT }}
           timeout: 60s
           script:  |
-            cd /home/ubuntu
+            cd /home/ubuntu/app/dnd-10th-4-backend
             sudo docker-compose up -d --no-deps --build
       
       # REMOVE Github IP FROM security group (10)
