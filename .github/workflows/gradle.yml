@@ -85,6 +85,7 @@ jobs:
           password: ${{ secrets.EC2_PASSWORD }} 
           port: ${{ secrets.EC2_SSH_PORT }}
           timeout: 60s
+      # 'dnd'라는 이름의 Docker 컨테이너가 실행 중인지 확인후 실행 중이라면 해당 컨테이너를 중지하고 삭제한 후에 새로운 컨테이너를 실행
           script: |
             if [ -n "$(sudo docker ps | grep 'dnd')" ]; then
               sudo docker stop dnd
