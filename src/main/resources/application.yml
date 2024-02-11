@@ -65,6 +65,13 @@ jwt:
   access-token-validity-in-seconds: 86400 # (배포 시 30분 -> 1800 설정)
   refresh-token-validity-in-seconds: 86400 # (배포 시 1일 -> 86400설정)
 
-upload:
-  image:
-    location: ${local.image.location}
+cloud:
+  aws:
+    s3:
+      bucket: '${cloud.aws.s3.bucket}'
+      url: '${cloud.aws.s3.url}'
+    stack.auto: false
+    region.static: ap-northeast-2
+    credentials:
+      accessKey: '${cloud.aws.s3.credentials.accessKey}'
+      secretKey: '${cloud.aws.s3.credentials.secretKey}'
