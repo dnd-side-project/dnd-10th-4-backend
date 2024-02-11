@@ -54,10 +54,6 @@ jobs:
           username: ${{ secrets.DOCKERHUB_USERNAME }}
           password: ${{ secrets.DOCKERHUB_TOKEN }}
 
-      # Docker Hub Image Remove (3.5)
-      - name: docker Hub Image Remove
-        run: docker rmi -f rlaehddnd0422/dnd
-
       # Docker Hub push (4)
       - name: docker Hub push
         run: docker push rlaehddnd0422/dnd
