@@ -75,16 +75,6 @@ jobs:
       - name: Add GitHub IP to AWS
         run: |
           aws ec2 authorize-security-group-ingress --group-id ${{ secrets.AWS_SG_ID }} --protocol tcp --port 22 --cidr ${{ steps.ip.outputs.ipv4 }}/32
-
-      # docker-compose 파일을 EC2 서버로 복사합니다. (8)
-      - name: Copy docker-compose file to server
-        uses: appleboy/scp-action@master
-        with:
-          host: ${{ secrets.EC2_HOST }}
-          username: ubuntu
-          password: ${{ secrets.EC2_PASSWORD }}
-          source: "./docker-compose.yml"
-          target: "/home/ubuntu/app/dnd-10th-4-backend"
       
       # AWS EC2 Server Connect & Docker 명령어 실행 (9)
       - name: AWS EC2 Connection
@@ -95,9 +85,10 @@ jobs:
           password: ${{ secrets.EC2_PASSWORD }} 
           port: ${{ secrets.EC2_SSH_PORT }}
           timeout: 60s
-          script:  |
-            cd /home/ubuntu/app/dnd-10th-4-backend
-            sudo docker-compose up -d --no-deps --build
+          script: |
+            sudo docker stop dnd-10th-4-backend-app-1
+            sudo docker rm dnd-10th-4-backend-app-1
+            sudo docker run -it -d -p 8080:8080 --name dnd2 rlaehddnd0422/dnd
       
       # REMOVE Github IP FROM security group (10)
       - name: Remove IP FROM security group
