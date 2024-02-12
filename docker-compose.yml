@@ -14,26 +14,6 @@ services:
     ports:
       - 6379:6379
 
-  nginx:
-    image: nginx:latest
-    volumes:
-      - ./nginx/conf.d:/etc/nginx/conf.d
-      - ./nginx/log:/var/log/nginx
-      - ./www:/var/www/html
-    ports:
-      - 80:80
-
-  certbot:
-    depends_on:
-      - nginx
-    image: certbot/certbot
-    container_name: certbot
-    volumes:
-      - ./certbot/etc:/etc/letsencrypt
-      - ./certbot/var:/var/lib/letsencrypt
-      - ./www:/var/www/html
-    command: certonly --webroot --webroot-path=/var/www/html --email kdo042232@gmail.com --agree-tos --no-eff-email --force-renewal -d oceanletter.site -d www.oceanletter.site
-
   springbootapp:
     build: .
     ports:
