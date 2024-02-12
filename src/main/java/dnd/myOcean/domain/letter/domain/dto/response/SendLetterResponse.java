@@ -20,6 +20,7 @@ public class SendLetterResponse {
     private String senderNickname;
     private String content;
     private WorryType worryType;
+    private String imagePath;
 
     public static SendLetterResponse toDto(Letter letter) {
         return SendLetterResponse.builder()
@@ -28,6 +29,7 @@ public class SendLetterResponse {
                 .senderNickname(letter.getSender().getNickName())
                 .content(letter.getContent())
                 .worryType(letter.getWorryType())
+                .imagePath(letter.getLetterImage() == null ? "이미지가 존재하지 않습니다" : letter.getLetterImage().getImagePath())
                 .build();
     }
 }
