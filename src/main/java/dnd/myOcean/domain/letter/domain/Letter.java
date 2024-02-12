@@ -7,6 +7,7 @@ import dnd.myOcean.domain.member.domain.WorryType;
 import dnd.myOcean.global.common.base.BaseEntity;
 import jakarta.persistence.CascadeType;
 import jakarta.persistence.Column;
+import jakarta.persistence.Embedded;
 import jakarta.persistence.Entity;
 import jakarta.persistence.EnumType;
 import jakarta.persistence.Enumerated;
@@ -36,6 +37,9 @@ public class Letter extends BaseEntity {
     @Column(name = "letter_id")
     private Long id;
 
+    @Embedded
+    private LetterTag letterTag;
+
     @Column(updatable = false)
     private String content;
 
@@ -63,12 +67,13 @@ public class Letter extends BaseEntity {
     private String uuid;
 
     public static Letter createLetter(Member sender, String content, Member receiver, WorryType worryType,
-                                      LetterImage letterImage, String uuid) {
+                                      LetterTag letterTag, LetterImage letterImage, String uuid) {
         return Letter.builder()
                 .sender(sender)
                 .content(content)
                 .receiver(receiver)
                 .worryType(worryType)
+                .letterTag(letterTag)
                 .letterImage(letterImage)
                 .uuid(uuid)
                 .isDeleteBySender(false)

@@ -2,6 +2,7 @@ package dnd.myOcean.domain.letter.domain.dto.response;
 
 import com.fasterxml.jackson.annotation.JsonFormat;
 import dnd.myOcean.domain.letter.domain.Letter;
+import dnd.myOcean.domain.letter.domain.LetterTag;
 import dnd.myOcean.domain.member.domain.WorryType;
 import java.time.LocalDateTime;
 import lombok.AccessLevel;
@@ -18,8 +19,8 @@ public class SendLetterResponse {
 
     @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd'T'HH:mm:ss", timezone = "Asia/Seoul")
     private LocalDateTime createdAt;
-    
     private Long letterId;
+    private LetterTag letterTag;
     private String senderNickname;
     private String content;
     private WorryType worryType;
@@ -28,6 +29,7 @@ public class SendLetterResponse {
     public static SendLetterResponse toDto(Letter letter) {
         return SendLetterResponse.builder()
                 .createdAt(letter.getCreateDate())
+                .letterTag(letter.getLetterTag())
                 .letterId(letter.getId())
                 .senderNickname(letter.getSender().getNickName())
                 .content(letter.getContent())

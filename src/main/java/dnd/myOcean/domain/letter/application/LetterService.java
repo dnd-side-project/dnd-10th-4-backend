@@ -3,6 +3,7 @@ package dnd.myOcean.domain.letter.application;
 
 import dnd.myOcean.domain.letter.alarm.event.LetterSendEvent;
 import dnd.myOcean.domain.letter.domain.Letter;
+import dnd.myOcean.domain.letter.domain.LetterTag;
 import dnd.myOcean.domain.letter.domain.dto.request.LetterReplyRequest;
 import dnd.myOcean.domain.letter.domain.dto.request.LetterSendRequest;
 import dnd.myOcean.domain.letter.domain.dto.response.ReceivedLetterResponse;
@@ -121,6 +122,10 @@ public class LetterService {
         MultipartFile image = request.getImage();
         LetterImage letterImage = getLetterImage(image);
 
+        LetterTag letterTag = LetterTag.of(request.getAgeRangeStart(),
+                request.getAgeRangeEnd(),
+                request.isEqualGender());
+
         String letterUuid = String.valueOf(UUID.randomUUID());
         return IntStream.range(0, letterCount)
                 .mapToObj(i -> Letter.createLetter(
@@ -128,6 +133,7 @@ public class LetterService {
                         request.getContent(),
                         receivers.get(i),
                         WorryType.from(request.getWorryType()),
+                        letterTag,
                         letterImage,
                         letterUuid))
                 .collect(Collectors.toList());
@@ -135,7 +141,7 @@ public class LetterService {
 
     private LetterImage getLetterImage(MultipartFile image) throws IOException {
         LetterImage letterImage;
-        
+
         if (image != null) {
             String imagePath = fileService.uploadImage(image);
             letterImage = new LetterImage(imagePath, image.getOriginalFilename());
