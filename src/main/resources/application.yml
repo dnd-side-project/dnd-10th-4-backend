@@ -61,7 +61,7 @@ spring:
             enable: true
 
 jwt:
-  secret_key: ${jwt.secret_key}
+  secret_key: ${jwt.secret.secret_key}
   access-token-validity-in-seconds: 86400 # (배포 시 30분 -> 1800 설정)
   refresh-token-validity-in-seconds: 86400 # (배포 시 1일 -> 86400설정)
 
