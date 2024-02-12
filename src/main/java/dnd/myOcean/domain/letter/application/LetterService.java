@@ -25,17 +25,19 @@ import dnd.myOcean.domain.member.exception.MemberNotFoundException;
 import dnd.myOcean.domain.member.repository.infra.jpa.MemberRepository;
 import dnd.myOcean.global.auth.aop.dto.CurrentMemberIdRequest;
 import dnd.myOcean.global.exception.UnknownException;
+import lombok.RequiredArgsConstructor;
+import org.springframework.context.ApplicationEventPublisher;
+import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
+import org.springframework.web.multipart.MultipartFile;
+
+import java.io.IOException;
 import java.util.Collections;
 import java.util.List;
 import java.util.Random;
 import java.util.UUID;
 import java.util.stream.Collectors;
 import java.util.stream.IntStream;
-import lombok.RequiredArgsConstructor;
-import org.springframework.context.ApplicationEventPublisher;
-import org.springframework.stereotype.Service;
-import org.springframework.transaction.annotation.Transactional;
-import org.springframework.web.multipart.MultipartFile;
 
 
 @Service
@@ -52,7 +54,7 @@ public class LetterService {
 
     // 0. 편지 전송
     @Transactional
-    public void send(LetterSendRequest request) {
+    public void send(LetterSendRequest request) throws IOException {
         Member sender = memberRepository.findById(request.getMemberId())
                 .orElseThrow(MemberNotFoundException::new);
 
@@ -89,7 +91,7 @@ public class LetterService {
                 WorryType.from(request.getWorryType()));
     }
 
-    private void sendLetterWithoutFilterUpToMaxLetter(LetterSendRequest request, Member sender) {
+    private void sendLetterWithoutFilterUpToMaxLetter(LetterSendRequest request, Member sender) throws IOException {
         List<Member> randomReceivers = memberRepository.findRandomMembers(request.getMemberId(), MAX_LETTER);
         List<Letter> letters = createLetters(request, randomReceivers, sender, randomReceivers.size());
         letterRepository.saveAll(letters);
@@ -98,7 +100,7 @@ public class LetterService {
     }
 
     private void sendLetterUpToReceiversCount(LetterSendRequest request, List<Member> receivers,
-                                              Member sender) {
+                                              Member sender) throws IOException {
         int letterCount = generateRandomReceiverCount(receivers.size());
         Collections.shuffle(receivers);
         List<Letter> letters = createLetters(request, receivers, sender, letterCount);
@@ -108,7 +110,7 @@ public class LetterService {
     }
 
     private void sendLetterUptoMaxCount(List<Member> receivers, LetterSendRequest request,
-                                        Member sender) {
+                                        Member sender) throws IOException {
         Collections.shuffle(receivers);
         List<Letter> letters = createLetters(request, receivers, sender, MAX_LETTER);
         letterRepository.saveAll(letters);
@@ -117,7 +119,7 @@ public class LetterService {
     }
 
     private List<Letter> createLetters(LetterSendRequest request, List<Member> receivers, Member sender,
-                                       int letterCount) {
+                                       int letterCount) throws IOException {
         MultipartFile image = request.getImage();
         LetterImage letterImage = getLetterImage(image);
 
@@ -133,11 +135,11 @@ public class LetterService {
                 .collect(Collectors.toList());
     }
 
-    private LetterImage getLetterImage(MultipartFile image) {
+    private LetterImage getLetterImage(MultipartFile image) throws IOException {
         LetterImage letterImage;
         if (image != null) {
-            fileService.upload(image, image.getOriginalFilename());
-            letterImage = new LetterImage(image.getOriginalFilename());
+            String imagePath = fileService.uploadImage(image);
+            letterImage = new LetterImage(imagePath, image.getOriginalFilename());
             return letterImage;
         }
         return null;
