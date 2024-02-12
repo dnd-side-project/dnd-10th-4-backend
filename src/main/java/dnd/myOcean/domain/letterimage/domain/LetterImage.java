@@ -3,16 +3,13 @@ package dnd.myOcean.domain.letterimage.domain;
 
 import dnd.myOcean.domain.letterimage.exception.NoExtException;
 import dnd.myOcean.domain.letterimage.exception.UnSupportExtException;
-import jakarta.persistence.Column;
-import jakarta.persistence.Entity;
-import jakarta.persistence.GeneratedValue;
-import jakarta.persistence.GenerationType;
-import jakarta.persistence.Id;
-import java.util.Arrays;
-import java.util.UUID;
+import jakarta.persistence.*;
 import lombok.AccessLevel;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
+
+import java.util.Arrays;
+import java.util.UUID;
 
 @Entity
 @Getter
@@ -26,15 +23,19 @@ public class LetterImage {
     @Column(name = "letter_image_id")
     private Long id;
 
-    @Column(nullable = false)
+    @Column(nullable = false, updatable = false)
     private String uniqueName;
 
-    @Column(nullable = false)
+    @Column(nullable = false, updatable = false)
     private String originName;
 
-    public LetterImage(String originName) {
+    @Column(nullable = false, updatable = false)
+    private String imagePath;
+
+    public LetterImage(String imagePath, String originName) {
         this.originName = originName;
         this.uniqueName = extractExtAndGenerateUniqueName(originName);
+        this.imagePath = imagePath;
     }
 
     private String extractExtAndGenerateUniqueName(String originName) {
