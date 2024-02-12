@@ -3,6 +3,7 @@ package dnd.myOcean.domain.letter.application;
 
 import dnd.myOcean.domain.letter.alarm.event.LetterSendEvent;
 import dnd.myOcean.domain.letter.domain.Letter;
+import dnd.myOcean.domain.letter.domain.LetterTag;
 import dnd.myOcean.domain.letter.domain.dto.request.LetterReplyRequest;
 import dnd.myOcean.domain.letter.domain.dto.request.LetterSendRequest;
 import dnd.myOcean.domain.letter.domain.dto.response.ReceivedLetterResponse;
@@ -15,7 +16,6 @@ import dnd.myOcean.domain.letter.exception.UnAnsweredLetterStoreException;
 import dnd.myOcean.domain.letter.repository.infra.jpa.LetterRepository;
 import dnd.myOcean.domain.letter.repository.infra.querydsl.dto.LetterReadCondition;
 import dnd.myOcean.domain.letter.repository.infra.querydsl.dto.PagedReceivedLettersResponse;
-import dnd.myOcean.domain.letter.repository.infra.querydsl.dto.PagedRepliedLettersResponse;
 import dnd.myOcean.domain.letter.repository.infra.querydsl.dto.PagedSendLettersResponse;
 import dnd.myOcean.domain.letterimage.application.FileService;
 import dnd.myOcean.domain.letterimage.domain.LetterImage;
@@ -25,12 +25,6 @@ import dnd.myOcean.domain.member.exception.MemberNotFoundException;
 import dnd.myOcean.domain.member.repository.infra.jpa.MemberRepository;
 import dnd.myOcean.global.auth.aop.dto.CurrentMemberIdRequest;
 import dnd.myOcean.global.exception.UnknownException;
-import lombok.RequiredArgsConstructor;
-import org.springframework.context.ApplicationEventPublisher;
-import org.springframework.stereotype.Service;
-import org.springframework.transaction.annotation.Transactional;
-import org.springframework.web.multipart.MultipartFile;
-
 import java.io.IOException;
 import java.util.Collections;
 import java.util.List;
@@ -38,6 +32,11 @@ import java.util.Random;
 import java.util.UUID;
 import java.util.stream.Collectors;
 import java.util.stream.IntStream;
+import lombok.RequiredArgsConstructor;
+import org.springframework.context.ApplicationEventPublisher;
+import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
+import org.springframework.web.multipart.MultipartFile;
 
 
 @Service
@@ -123,6 +122,10 @@ public class LetterService {
         MultipartFile image = request.getImage();
         LetterImage letterImage = getLetterImage(image);
 
+        LetterTag letterTag = LetterTag.of(request.getAgeRangeStart(),
+                request.getAgeRangeEnd(),
+                request.isEqualGender());
+
         String letterUuid = String.valueOf(UUID.randomUUID());
         return IntStream.range(0, letterCount)
                 .mapToObj(i -> Letter.createLetter(
@@ -130,6 +133,7 @@ public class LetterService {
                         request.getContent(),
                         receivers.get(i),
                         WorryType.from(request.getWorryType()),
+                        letterTag,
                         letterImage,
                         letterUuid))
                 .collect(Collectors.toList());
@@ -137,6 +141,7 @@ public class LetterService {
 
     private LetterImage getLetterImage(MultipartFile image) throws IOException {
         LetterImage letterImage;
+
         if (image != null) {
             String imagePath = fileService.uploadImage(image);
             letterImage = new LetterImage(imagePath, image.getOriginalFilename());
@@ -265,8 +270,10 @@ public class LetterService {
     }
 
     // 4-1. 답장 받은 편지 전체 조회
-    public PagedRepliedLettersResponse readRepliedLetters(LetterReadCondition cond) {
-        return PagedRepliedLettersResponse.of(letterRepository.findAllReliedLetter(cond));
+    public List<RepliedLetterResponse> readRepliedLetters(LetterReadCondition cond) {
+        return RepliedLetterResponse.toDtoList(
+                letterRepository.findAllByReceiverIdAndHasRepliedTrue(cond.getMemberId())
+        );
     }
 
     // 4-2. 단건 조회

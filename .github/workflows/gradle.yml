@@ -10,8 +10,6 @@ name: Java CI with Gradle
 on:
   push:
     branches: [ "develop" ]
-  pull_request:
-    branches: [ "develop" ]
 
 jobs:
   deploy:
@@ -26,7 +24,7 @@ jobs:
         with:
           java-version: '17'
           distribution: 'adopt'
-          
+
       - name: Copy Secret
         env:
           OCCUPY_SECRET: ${{ secrets.OCCUPY_SECRET }}
@@ -47,7 +45,7 @@ jobs:
           key: ${{ runner.os }}-gradle-${{ hashFiles('**/*.gradle*', '**/gradle-wrapper.properties') }}
           restore-keys: |
             ${{ runner.os }}-gradle-
-        
+
       # Spring Boot 어플리케이션 Build (1)
       - name: Spring Boot Build
         run: ./gradlew clean build --exclude-task test
@@ -55,7 +53,7 @@ jobs:
       # Docker 이미지 Build (2)
       - name: docker image build
         run: docker build -t rlaehddnd0422/dnd .
-        
+
       # DockerHub Login (3)
       - name: docker login
         uses: docker/login-action@v2
@@ -68,14 +66,14 @@ jobs:
         run: docker push rlaehddnd0422/dnd
       
       # GET GitHub IP (5)
-      - name: get GitHub IP 
+      - name: get GitHub IP
         id: ip
         uses: haythem/public-ip@v1.2
-        
+
       # Configure AWS Credentials (6) - AWS 접근 권한 취득(IAM)
       - name: Configure AWS Credentials
         uses: aws-actions/configure-aws-credentials@v1
-        with: 
+        with:
           aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY_ID }}
           aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
           aws-region: ap-northeast-2
@@ -91,7 +89,7 @@ jobs:
         with:
           host: ${{ secrets.EC2_HOST }}
           username: ubuntu
-          password: ${{ secrets.EC2_PASSWORD }} 
+          password: ${{ secrets.EC2_PASSWORD }}
           port: ${{ secrets.EC2_SSH_PORT }}
           timeout: 60s
           script: |

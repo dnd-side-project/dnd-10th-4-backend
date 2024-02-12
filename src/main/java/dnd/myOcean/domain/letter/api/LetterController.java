@@ -8,17 +8,22 @@ import dnd.myOcean.domain.letter.domain.dto.response.RepliedLetterResponse;
 import dnd.myOcean.domain.letter.domain.dto.response.SendLetterResponse;
 import dnd.myOcean.domain.letter.repository.infra.querydsl.dto.LetterReadCondition;
 import dnd.myOcean.domain.letter.repository.infra.querydsl.dto.PagedReceivedLettersResponse;
-import dnd.myOcean.domain.letter.repository.infra.querydsl.dto.PagedRepliedLettersResponse;
 import dnd.myOcean.domain.letter.repository.infra.querydsl.dto.PagedSendLettersResponse;
 import dnd.myOcean.global.auth.aop.AssignCurrentMemberId;
 import dnd.myOcean.global.auth.aop.dto.CurrentMemberIdRequest;
+import java.io.IOException;
+import java.util.List;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.*;
-
-import java.io.IOException;
-import java.util.List;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.ModelAttribute;
+import org.springframework.web.bind.annotation.PatchMapping;
+import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RestController;
 
 @RestController
 @RequiredArgsConstructor
@@ -121,7 +126,7 @@ public class LetterController {
     // 4-1. 답장 받은 편지 전체 조회
     @GetMapping("/reply")
     @AssignCurrentMemberId
-    public ResponseEntity<PagedRepliedLettersResponse> readRepliedLetters(@RequestBody LetterReadCondition cond) {
+    public ResponseEntity<List<RepliedLetterResponse>> readRepliedLetters(@RequestBody LetterReadCondition cond) {
         return new ResponseEntity<>(letterService.readRepliedLetters(cond), HttpStatus.OK);
     }
 
