@@ -39,5 +39,3 @@ services:
     depends_on:
       - mysql
       - redis
-      - nginx
-      - certbot
