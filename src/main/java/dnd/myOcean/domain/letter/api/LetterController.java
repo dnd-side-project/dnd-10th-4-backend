@@ -12,18 +12,13 @@ import dnd.myOcean.domain.letter.repository.infra.querydsl.dto.PagedRepliedLette
 import dnd.myOcean.domain.letter.repository.infra.querydsl.dto.PagedSendLettersResponse;
 import dnd.myOcean.global.auth.aop.AssignCurrentMemberId;
 import dnd.myOcean.global.auth.aop.dto.CurrentMemberIdRequest;
-import java.util.List;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.ModelAttribute;
-import org.springframework.web.bind.annotation.PatchMapping;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
+
+import java.io.IOException;
+import java.util.List;
 
 @RestController
 @RequiredArgsConstructor
@@ -35,7 +30,7 @@ public class LetterController {
     // 0. 편지 전송
     @PostMapping
     @AssignCurrentMemberId
-    public ResponseEntity<Void> send(@ModelAttribute LetterSendRequest request) {
+    public ResponseEntity<Void> send(@ModelAttribute LetterSendRequest request) throws IOException {
         letterService.send(request);
         return new ResponseEntity(HttpStatus.CREATED);
     }
