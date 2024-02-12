@@ -135,6 +135,7 @@ public class LetterService {
 
     private LetterImage getLetterImage(MultipartFile image) throws IOException {
         LetterImage letterImage;
+        
         if (image != null) {
             String imagePath = fileService.uploadImage(image);
             letterImage = new LetterImage(imagePath, image.getOriginalFilename());
