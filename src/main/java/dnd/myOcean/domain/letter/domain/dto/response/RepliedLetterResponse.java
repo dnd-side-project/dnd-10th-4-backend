@@ -1,5 +1,6 @@
 package dnd.myOcean.domain.letter.domain.dto.response;
 
+import com.fasterxml.jackson.annotation.JsonFormat;
 import dnd.myOcean.domain.letter.domain.Letter;
 import dnd.myOcean.domain.member.domain.WorryType;
 import java.time.LocalDateTime;
@@ -17,13 +18,16 @@ import lombok.NoArgsConstructor;
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 public class RepliedLetterResponse {
 
+    @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd'T'HH:mm:ss", timezone = "Asia/Seoul")
     private LocalDateTime createdAt;
+    
     private Long letterId;
     private String senderNickname;
     private String receiverNickname;
     private String content;
     private String repliedContent;
     private WorryType worryType;
+    private String imagePath;
 
     public static RepliedLetterResponse toDto(Letter letter) {
         return RepliedLetterResponse.builder()
@@ -34,6 +38,7 @@ public class RepliedLetterResponse {
                 .content(letter.getContent())
                 .repliedContent(letter.getReplyContent())
                 .worryType(letter.getWorryType())
+                .imagePath(letter.getLetterImage() == null ? "이미지가 존재하지 않습니다" : letter.getLetterImage().getImagePath())
                 .build();
     }
 

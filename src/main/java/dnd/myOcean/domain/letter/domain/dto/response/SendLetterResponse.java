@@ -1,5 +1,6 @@
 package dnd.myOcean.domain.letter.domain.dto.response;
 
+import com.fasterxml.jackson.annotation.JsonFormat;
 import dnd.myOcean.domain.letter.domain.Letter;
 import dnd.myOcean.domain.member.domain.WorryType;
 import java.time.LocalDateTime;
@@ -15,7 +16,9 @@ import lombok.NoArgsConstructor;
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 public class SendLetterResponse {
 
+    @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd'T'HH:mm:ss", timezone = "Asia/Seoul")
     private LocalDateTime createdAt;
+    
     private Long letterId;
     private String senderNickname;
     private String content;
