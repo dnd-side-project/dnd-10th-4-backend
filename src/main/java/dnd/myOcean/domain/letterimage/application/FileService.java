@@ -27,28 +27,28 @@ public class FileService {
 
     @Transactional
     public String uploadImage(MultipartFile file) throws IOException {
-        String requestTypeSimpleName = "letter" + "/";
+        String folderName = "letter" + "/";
         String imageName = file.getOriginalFilename();
-        String fileName = requestTypeSimpleName + file.getOriginalFilename();
+        String fileName = folderName + file.getOriginalFilename();
 
-        uploadResizedImage(bucket, fileName, file);
+        createResizeImage(bucket, fileName, file);
 
-        return bucketUrl + requestTypeSimpleName + imageName;
+        return bucketUrl + folderName + imageName;
     }
 
-    private void uploadResizedImage(String bucketName, String fileName, MultipartFile image) throws IOException {
+    private void createResizeImage(String bucketName, String fileName, MultipartFile image) throws IOException {
         ObjectMetadata metadata = new ObjectMetadata();
         metadata.setContentType(image.getContentType());
         metadata.setContentLength(image.getSize());
 
-        byte[] buffer = getResizedImageStream(image);
+        byte[] buffer = resizeImage(image);
         metadata.setContentLength(buffer.length);
         ByteArrayInputStream inputStream = new ByteArrayInputStream(buffer);
 
         amazonS3Client.putObject(bucketName, fileName, inputStream, metadata);
     }
 
-    private byte[] getResizedImageStream(MultipartFile image) throws IOException {
+    private byte[] resizeImage(MultipartFile image) throws IOException {
         ByteArrayOutputStream outputStream = new ByteArrayOutputStream();
         Thumbnails.of(image.getInputStream()).size(400, 400).toOutputStream(outputStream);
         return outputStream.toByteArray();
