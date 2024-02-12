@@ -94,13 +94,6 @@ public class LetterQuerydslRepositoryImpl extends QuerydslRepositorySupport impl
         ).fetch();
     }
 
-    @Override
-    public Page<RepliedLetterResponse> findAllReliedLetter(LetterReadCondition cond) {
-        Pageable pageable = PageRequest.of(cond.getPage(), cond.getSize());
-        Predicate predicate = createPredicateByCurrentMemberGetReplied(cond);
-        return new PageImpl<>(fetchAllRepliedLetter(predicate, pageable), pageable, fetchCount(predicate));
-    }
-
     private Predicate createPredicateByCurrentMemberGetReplied(LetterReadCondition cond) {
         BooleanBuilder builder = new BooleanBuilder();
         if (!String.valueOf(cond.getMemberId()).isEmpty()) {

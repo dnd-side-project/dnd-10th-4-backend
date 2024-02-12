@@ -3,6 +3,8 @@ package dnd.myOcean.domain.letter.domain.dto.response;
 import dnd.myOcean.domain.letter.domain.Letter;
 import dnd.myOcean.domain.member.domain.WorryType;
 import java.time.LocalDateTime;
+import java.util.List;
+import java.util.stream.Collectors;
 import lombok.AccessLevel;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -33,5 +35,10 @@ public class RepliedLetterResponse {
                 .repliedContent(letter.getReplyContent())
                 .worryType(letter.getWorryType())
                 .build();
+    }
+
+    public static List<RepliedLetterResponse> toDtoList(List<Letter> letters) {
+        return letters.stream().map(letter -> toDto(letter))
+                .collect(Collectors.toList());
     }
 }
