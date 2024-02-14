@@ -53,7 +53,7 @@ public class WebSecurityConfig {
                 })
 
                 .authorizeHttpRequests((authz) -> authz
-                        .requestMatchers("/home").permitAll()
+                        .requestMatchers("/").permitAll()
                         .requestMatchers("/api/auth/**").permitAll()
                         .requestMatchers("/login/oauth2/code/kakao").permitAll() // for Postman - redirect_uri
                         .requestMatchers("/api/exception/**").permitAll()

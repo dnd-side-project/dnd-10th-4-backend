@@ -26,7 +26,8 @@ public class JwtFilter extends OncePerRequestFilter {
     protected void doFilterInternal(HttpServletRequest request,
                                     HttpServletResponse response,
                                     FilterChain filterChain) throws ServletException, IOException {
-        if (isRequestPassURI(request, response, filterChain)) {
+        if (isRequestPassURI(request)) {
+            filterChain.doFilter(request, response);
             return;
         }
 
@@ -44,22 +45,20 @@ public class JwtFilter extends OncePerRequestFilter {
         filterChain.doFilter(request, response);
     }
 
-    private static boolean isRequestPassURI(HttpServletRequest request, HttpServletResponse response,
-                                            FilterChain filterChain)
-            throws IOException, ServletException {
+    private static boolean isRequestPassURI(HttpServletRequest request) {
+        if (request.getRequestURI().equals("/")) {
+            return true;
+        }
 
         if (request.getRequestURI().startsWith("/api/auth")) {
-            filterChain.doFilter(request, response);
             return true;
         }
 
         if (request.getRequestURI().startsWith("/api/exception")) {
-            filterChain.doFilter(request, response);
             return true;
         }
 
         if (request.getRequestURI().startsWith("/favicon.ico")) {
-            filterChain.doFilter(request, response);
             return true;
         }
 
