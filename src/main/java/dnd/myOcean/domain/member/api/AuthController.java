@@ -39,8 +39,8 @@ public class AuthController {
     @PostMapping("/login/kakao/postman")
     public ResponseEntity<TokenResponse> loginKakao(@RequestParam(name = "code") String code)
             throws JsonProcessingException {
-        TokenResponse tokenResponse = authService.kakaoLogin(code);
         System.out.println("DID");
+        TokenResponse tokenResponse = authService.kakaoLogin(code);
         return new ResponseEntity(tokenResponse, HttpStatus.OK);
     }
 
