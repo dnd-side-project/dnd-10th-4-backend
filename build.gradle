@@ -65,6 +65,8 @@ dependencies {
 
     // resizing
     implementation 'net.coobird:thumbnailator:0.4.19'
+
+//    implementation 'org.apache.httpcomponents:httpclient:5.1.4'
 }
 
 tasks.named('test') {
