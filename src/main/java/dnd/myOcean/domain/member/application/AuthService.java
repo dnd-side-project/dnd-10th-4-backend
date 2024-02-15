@@ -55,7 +55,7 @@ public class AuthService {
          *    포스트맨 내부적으로 code로 token 요청하고, token으로 사용자정보를 받아오는 거 같음.
          * // 포스트맨이 아닌 실제 배포 시에는 getKakaoUserInfo(code) -> getKakaoUserInfo(getToken(code)) 으로 변경해주어야 할 듯.
          */
-        KakaoLoginRequest request = getKakaoUserInfo(getToken(code));
+        KakaoLoginRequest request = getKakaoUserInfo(code);
 
         /**
          * 2. 받아온 사용자 정보가 데이터베이스에 없다면 가입 후 리턴, 있으면 리턴
@@ -133,6 +133,7 @@ public class AuthService {
         String responseBody = response.getBody();
         ObjectMapper objectMapper = new ObjectMapper();
         JsonNode jsonNode = objectMapper.readTree(responseBody);
+
         return jsonNode.get("access_token").asText();
     }
 
