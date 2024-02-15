@@ -18,7 +18,7 @@ spring:
     username: '${custom.db.username}'
     password: '${custom.db.password}'
     redis:
-      host: localhost
+      host: '${redis.host}'
       port: 6379
 
   session:
