@@ -132,6 +132,7 @@ public class AuthService {
         body.add("redirect_uri", redirect_uri);
         body.add("code", code);
 
+        log.info("code = {}", code);
         log.info("ID = {}", kakaoClientId);
         log.info("redirectURI = {}", redirect_uri);
 
@@ -147,6 +148,8 @@ public class AuthService {
         );
 
         String responseBody = response.getBody();
+
+        log.info("RB = {} ", responseBody);
         ObjectMapper objectMapper = new ObjectMapper();
         JsonNode jsonNode = objectMapper.readTree(responseBody);
 
