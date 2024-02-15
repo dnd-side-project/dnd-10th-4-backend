@@ -23,7 +23,6 @@ import org.springframework.http.HttpEntity;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpMethod;
 import org.springframework.http.ResponseEntity;
-import org.springframework.http.client.HttpComponentsClientHttpRequestFactory;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
@@ -40,6 +39,7 @@ public class AuthService {
     private static final String REFRESH_HEADER = "RefreshToken";
     private static final String PREFIX = "낯선 ";
 
+    private final RestTemplate restTemplate;
     private final TokenProvider tokenProvider;
     private final MemberRepository memberRepository;
     private final RefreshTokenRedisRepository refreshTokenRedisRepository;
@@ -120,9 +120,6 @@ public class AuthService {
         body.add("redirect_uri", redirect_uri);
         body.add("code", code);
 
-        RestTemplate restTemplate = new RestTemplate();
-        restTemplate.setRequestFactory(new HttpComponentsClientHttpRequestFactory());
-
         // HTTP 요청 보내기
         HttpEntity<MultiValueMap<String, String>> kakaoTokenRequest =
                 new HttpEntity<>(body, headers);
@@ -151,7 +148,6 @@ public class AuthService {
         HttpEntity<MultiValueMap<String, String>> kakaoTokenRequest = new HttpEntity<>(headers);
 
         try {
-            RestTemplate restTemplate = new RestTemplate();
             ResponseEntity<String> response = restTemplate.exchange(
                     "https://kapi.kakao.com/v2/user/me",
                     HttpMethod.POST,
