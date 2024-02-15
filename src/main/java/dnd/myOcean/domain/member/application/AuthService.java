@@ -50,12 +50,13 @@ public class AuthService {
     private String redirect_uri;
 
     public TokenResponse kakaoLogin(String code) throws JsonProcessingException {
+
         /**
          * 1. code로 사용자 정보 받기 (원래는 받은 code를 가지고 토큰 발급 -> 토큰으로 사용자 정보 요청 Flow인데,
          *    포스트맨 내부적으로 code로 token 요청하고, token으로 사용자정보를 받아오는 거 같음.
          * // 포스트맨이 아닌 실제 배포 시에는 getKakaoUserInfo(code) -> getKakaoUserInfo(getToken(code)) 으로 변경해주어야 할 듯.
          */
-        KakaoLoginRequest request = getKakaoUserInfo(code);
+        KakaoLoginRequest request = getKakaoUserInfo(getToken(code));
 
         /**
          * 2. 받아온 사용자 정보가 데이터베이스에 없다면 가입 후 리턴, 있으면 리턴
