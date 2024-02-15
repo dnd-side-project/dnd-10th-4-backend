@@ -18,6 +18,7 @@ import jakarta.servlet.http.HttpServletRequest;
 import java.util.ArrayList;
 import java.util.List;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.HttpEntity;
 import org.springframework.http.HttpHeaders;
@@ -33,6 +34,7 @@ import org.springframework.web.client.HttpClientErrorException;
 import org.springframework.web.client.RestTemplate;
 
 @Service
+@Slf4j
 @RequiredArgsConstructor
 public class AuthService {
 
@@ -63,6 +65,8 @@ public class AuthService {
          */
         Member member = saveIfNonExist(request);
 
+        log.info("member = {}", member.getEmail());
+
         /**
          * 3. JWT 생성
          */
@@ -70,6 +74,7 @@ public class AuthService {
                 member.getEmail(),
                 member.getRole().name());
 
+        log.info("token = {}", tokenResponse.getAccessToken());
         /**
          * 4. Redis에 RefreshToken 저장
          */
