@@ -27,6 +27,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 import org.springframework.util.LinkedMultiValueMap;
 import org.springframework.util.MultiValueMap;
 import org.springframework.util.StringUtils;
@@ -51,6 +52,7 @@ public class AuthService {
     @Value("${kakao.redirect-url}")
     private String redirect_uri;
 
+    @Transactional
     public TokenResponse kakaoLogin(String code) throws JsonProcessingException {
 
         /**
