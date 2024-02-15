@@ -99,7 +99,8 @@ public class AuthService {
                 .build());
     }
 
-    private Member saveIfNonExist(KakaoLoginRequest request) {
+    @Transactional
+    public Member saveIfNonExist(KakaoLoginRequest request) {
         return memberRepository.findByEmail(request.getEmail())
                 .orElseGet(() ->
                         memberRepository.save(
