@@ -25,7 +25,7 @@ import org.springframework.transaction.annotation.Transactional;
 @RequiredArgsConstructor
 public class KakaoAuthSuccessHandler extends SimpleUrlAuthenticationSuccessHandler {
 
-    private static final String REDIRECT_URI = "http://13.124.75.121:8080/api/auth/login/kakao";
+    private static final String REDIRECT_URI = "https://oceanletter.site/api/auth/login/kakao";
 
     private final TokenProvider tokenProvider;
     private final MemberRepository memberRepository;
