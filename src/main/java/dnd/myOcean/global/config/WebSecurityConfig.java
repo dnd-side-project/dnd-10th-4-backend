@@ -3,7 +3,6 @@ package dnd.myOcean.global.config;
 import dnd.myOcean.global.auth.jwt.filter.JwtFilter;
 import dnd.myOcean.global.auth.jwt.handler.JwtAccessDeniedHandler;
 import dnd.myOcean.global.auth.jwt.handler.JwtAuthenticationFailEntryPoint;
-import dnd.myOcean.global.auth.oauth.handler.KakaoAuthSuccessHandler;
 import dnd.myOcean.global.auth.oauth.kakao.details.KakaoMemberDetailsService;
 import java.util.List;
 import lombok.RequiredArgsConstructor;
@@ -31,7 +30,6 @@ public class WebSecurityConfig {
     private final JwtAuthenticationFailEntryPoint jwtAuthenticationFailEntryPoint;
     private final JwtAccessDeniedHandler jwtAccessDeniedHandler;
     private final KakaoMemberDetailsService kakaoMemberDetailsService;
-    private final KakaoAuthSuccessHandler kakaoAuthSuccessHandler;
     private final JwtFilter jwtFilter;
 
     @Bean
@@ -49,7 +47,6 @@ public class WebSecurityConfig {
                 .oauth2Login(oAuth2Login -> {
                     oAuth2Login.userInfoEndpoint(userInfoEndpointConfig ->
                             userInfoEndpointConfig.userService(kakaoMemberDetailsService));
-                    oAuth2Login.successHandler(kakaoAuthSuccessHandler);
                 })
 
                 .authorizeHttpRequests((authz) -> authz

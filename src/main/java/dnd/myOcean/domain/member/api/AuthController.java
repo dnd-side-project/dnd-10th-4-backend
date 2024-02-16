@@ -23,25 +23,23 @@ public class AuthController {
     private final AuthService authService;
 
     /**
-     * 실제 배포에서 사용하는 로그인 API
+     * 로그인 API
      */
-    @GetMapping("/login/kakao")
-    public ResponseEntity<LoginResponse> loginKakao(HttpServletRequest request) {
-        String accessToken = (String) request.getSession().getAttribute("accessToken");
-        String refreshToken = (String) request.getSession().getAttribute("refreshToken");
-        boolean isFirstLogin = (Boolean) request.getSession().getAttribute("isFirstLogin");
-        return new ResponseEntity(LoginResponse.of(accessToken, refreshToken, isFirstLogin), HttpStatus.OK);
+    @PostMapping("/login/kakao")
+    public ResponseEntity<LoginResponse> loginKakao(@RequestParam(name = "code") String code)
+            throws JsonProcessingException {
+        LoginResponse loginResponse = authService.kakaoLogin(code);
+        return new ResponseEntity(loginResponse, HttpStatus.OK);
     }
 
     /**
      * 포스트맨으로 테스트하기 위한 로그인 API
      */
     @PostMapping("/login/kakao/postman")
-    public ResponseEntity<TokenResponse> loginKakao(@RequestParam(name = "code") String code)
+    public ResponseEntity<LoginResponse> loginKakaoForPostman(@RequestParam(name = "code") String code)
             throws JsonProcessingException {
-        System.out.println("DID");
-        TokenResponse tokenResponse = authService.kakaoLogin(code);
-        return new ResponseEntity(tokenResponse, HttpStatus.OK);
+        LoginResponse loginResponse = authService.kakaoLoginForPostman(code);
+        return new ResponseEntity(loginResponse, HttpStatus.OK);
     }
 
     /**

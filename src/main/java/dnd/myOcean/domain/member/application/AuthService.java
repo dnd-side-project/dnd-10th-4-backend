@@ -10,6 +10,7 @@ import dnd.myOcean.domain.member.domain.dto.request.KakaoLoginRequest;
 import dnd.myOcean.domain.member.repository.infra.jpa.MemberRepository;
 import dnd.myOcean.global.auth.exception.auth.InvalidAuthCodeException;
 import dnd.myOcean.global.auth.exception.auth.ReissueFailException;
+import dnd.myOcean.global.auth.jwt.token.LoginResponse;
 import dnd.myOcean.global.auth.jwt.token.TokenProvider;
 import dnd.myOcean.global.auth.jwt.token.TokenResponse;
 import dnd.myOcean.global.auth.jwt.token.repository.redis.RefreshTokenRedisRepository;
@@ -53,7 +54,7 @@ public class AuthService {
     private String redirect_uri;
 
     @Transactional
-    public TokenResponse kakaoLogin(String code) throws JsonProcessingException {
+    public LoginResponse kakaoLogin(String code) throws JsonProcessingException {
 
         /**
          * 1. code로 사용자 정보 받기 (원래는 받은 code를 가지고 토큰 발급 -> 토큰으로 사용자 정보 요청 Flow인데,
@@ -61,17 +62,12 @@ public class AuthService {
          * // 포스트맨이 아닌 실제 배포 시에는 getKakaoUserInfo(code) -> getKakaoUserInfo(getToken(code)) 으로 변경해주어야 할 듯.
          */
         String token = getToken(code);
-        log.info("Token = {}", token);
         KakaoLoginRequest request = getKakaoUserInfo(token);
-
-        log.info("request = {}", request.getEmail());
 
         /**
          * 2. 받아온 사용자 정보가 데이터베이스에 없다면 가입 후 리턴, 있으면 리턴
          */
         Member member = saveIfNonExist(request);
-
-        log.info("member = {}", member.getEmail());
 
         /**
          * 3. JWT 생성
@@ -80,16 +76,45 @@ public class AuthService {
                 member.getEmail(),
                 member.getRole().name());
 
-        log.info("token = {}", tokenResponse.getAccessToken());
         /**
          * 4. Redis에 RefreshToken 저장
          */
         saveRefreshTokenOnRedis(member, tokenResponse);
 
+        if (member.isFirstLogin()) {
+            return LoginResponse.of(tokenResponse.getAccessToken(), tokenResponse.getRefreshToken(), true);
+        }
+
+        return LoginResponse.of(tokenResponse.getAccessToken(), tokenResponse.getRefreshToken(), false);
+    }
+
+    @Transactional
+    public LoginResponse kakaoLoginForPostman(String code) throws JsonProcessingException {
+
+        KakaoLoginRequest request = getKakaoUserInfo(code);
+
         /**
-         * 5. token 리턴
+         * 2. 받아온 사용자 정보가 데이터베이스에 없다면 가입 후 리턴, 있으면 리턴
          */
-        return tokenResponse;
+        Member member = saveIfNonExist(request);
+
+        /**
+         * 3. JWT 생성
+         */
+        TokenResponse tokenResponse = tokenProvider.createToken(String.valueOf(member.getId()),
+                member.getEmail(),
+                member.getRole().name());
+
+        /**
+         * 4. Redis에 RefreshToken 저장
+         */
+        saveRefreshTokenOnRedis(member, tokenResponse);
+
+        if (member.isFirstLogin()) {
+            return LoginResponse.of(tokenResponse.getAccessToken(), tokenResponse.getRefreshToken(), true);
+        }
+
+        return LoginResponse.of(tokenResponse.getAccessToken(), tokenResponse.getRefreshToken(), false);
     }
 
     private void saveRefreshTokenOnRedis(Member member, TokenResponse response) {
@@ -132,10 +157,6 @@ public class AuthService {
         body.add("redirect_uri", redirect_uri);
         body.add("code", code);
 
-        log.info("code = {}", code);
-        log.info("ID = {}", kakaoClientId);
-        log.info("redirectURI = {}", redirect_uri);
-
         // HTTP 요청 보내기
         HttpEntity<MultiValueMap<String, String>> kakaoTokenRequest = new HttpEntity<>(body, headers);
 
@@ -149,7 +170,6 @@ public class AuthService {
 
         String responseBody = response.getBody();
 
-        log.info("RB = {} ", responseBody);
         ObjectMapper objectMapper = new ObjectMapper();
         JsonNode jsonNode = objectMapper.readTree(responseBody);
 
