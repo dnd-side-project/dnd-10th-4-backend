@@ -3,9 +3,7 @@ package dnd.myOcean.domain.member.application;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
-import dnd.myOcean.domain.member.domain.Gender;
 import dnd.myOcean.domain.member.domain.Member;
-import dnd.myOcean.domain.member.domain.Role;
 import dnd.myOcean.domain.member.domain.dto.request.KakaoLoginRequest;
 import dnd.myOcean.domain.member.repository.infra.jpa.MemberRepository;
 import dnd.myOcean.global.auth.exception.auth.InvalidAuthCodeException;
@@ -133,14 +131,7 @@ public class AuthService {
         return memberRepository.findByEmail(request.getEmail())
                 .orElseGet(() ->
                         memberRepository.save(
-                                Member.builder()
-                                        .email(request.getEmail())
-                                        .role(Role.USER)
-                                        .nickName(PREFIX)
-                                        .gender(Gender.NONE)
-                                        .updateAgeCount(0)
-                                        .updateGenderCount(0)
-                                        .build()
+                                Member.createFirstLoginMember(request.getEmail())
                         )
                 );
     }
