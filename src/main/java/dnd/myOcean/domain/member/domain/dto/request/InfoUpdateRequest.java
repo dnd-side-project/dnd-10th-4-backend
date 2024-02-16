@@ -27,9 +27,6 @@ public class InfoUpdateRequest {
     @NotEmpty
     private String gender;
 
-    @NotEmpty
-    private String nickname;
-
     private List<String> worries;
 
     public List<WorryType> getWorries() {
