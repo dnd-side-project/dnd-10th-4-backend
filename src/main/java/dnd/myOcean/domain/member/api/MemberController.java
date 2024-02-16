@@ -4,6 +4,7 @@ package dnd.myOcean.domain.member.api;
 import dnd.myOcean.domain.member.application.MemberService;
 import dnd.myOcean.domain.member.domain.dto.request.BirthdayUpdateRequest;
 import dnd.myOcean.domain.member.domain.dto.request.GenderUpdateRequest;
+import dnd.myOcean.domain.member.domain.dto.request.InfoUpdateRequest;
 import dnd.myOcean.domain.member.domain.dto.request.NicknameUpdateRequest;
 import dnd.myOcean.domain.member.domain.dto.request.WorryCreateRequest;
 import dnd.myOcean.domain.member.domain.dto.response.MemberInfoResponse;
@@ -27,10 +28,23 @@ public class MemberController {
 
     private final MemberService memberService;
 
+    @GetMapping
+    @AssignCurrentMemberId
+    public ResponseEntity<MemberInfoResponse> getMyInfo(@RequestBody CurrentMemberIdRequest request) {
+        return new ResponseEntity(memberService.getMyInfo(request), HttpStatus.OK);
+    }
+    
+    @PatchMapping
+    @AssignCurrentMemberId
+    public ResponseEntity<Void> updateInfo(@RequestBody InfoUpdateRequest request) {
+        memberService.updateInfo(request);
+        return new ResponseEntity<>(HttpStatus.OK);
+    }
+
     @PatchMapping("/birthday")
     @AssignCurrentMemberId
     public ResponseEntity<Void> updateBirthday(@RequestBody BirthdayUpdateRequest request) {
-        memberService.updateAge(request);
+        memberService.updateBirthday(request);
         return new ResponseEntity<>(HttpStatus.OK);
     }
 
@@ -67,11 +81,5 @@ public class MemberController {
     public ResponseEntity<Void> deleteMember(@RequestBody CurrentMemberIdRequest request) {
         memberService.deleteMember(request);
         return new ResponseEntity<>(HttpStatus.OK);
-    }
-
-    @GetMapping
-    @AssignCurrentMemberId
-    public ResponseEntity<MemberInfoResponse> getMyInfo(@RequestBody CurrentMemberIdRequest request) {
-        return new ResponseEntity(memberService.getMyInfo(request), HttpStatus.OK);
     }
 }

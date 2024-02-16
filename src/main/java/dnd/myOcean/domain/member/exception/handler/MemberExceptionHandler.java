@@ -1,11 +1,11 @@
 package dnd.myOcean.domain.member.exception.handler;
 
 import dnd.myOcean.domain.member.exception.AlreadyExistNicknameException;
+import dnd.myOcean.domain.member.exception.AlreadyOnBoardingExecutedException;
 import dnd.myOcean.domain.member.exception.BirthdayUpdateLimitExceedException;
 import dnd.myOcean.domain.member.exception.GenderUpdateLimitExceedException;
 import dnd.myOcean.domain.member.exception.MemberNotFoundException;
 import dnd.myOcean.domain.member.exception.NoSuchGenderException;
-import dnd.myOcean.domain.member.exception.SameNicknameModifyRequestException;
 import dnd.myOcean.domain.member.exception.WorrySelectionRangeLimitException;
 import dnd.myOcean.domain.member.exception.WorryTypeContainsNotAccepted;
 import lombok.RequiredArgsConstructor;
@@ -58,15 +58,15 @@ public class MemberExceptionHandler {
         return new ResponseEntity("이미 사용 중인 닉네임 입니다.", httpHeaders, HttpStatus.CONFLICT);
     }
 
-    @ExceptionHandler(SameNicknameModifyRequestException.class)
-    @ResponseStatus(HttpStatus.CONFLICT)
-    public ResponseEntity sameNicknameModifyRequestException(SameNicknameModifyRequestException e) {
-        return new ResponseEntity("현재 로그인한 계정에서 이미 사용 중인 닉네임입니다.", httpHeaders, HttpStatus.CONFLICT);
-    }
-
     @ExceptionHandler(MemberNotFoundException.class)
     @ResponseStatus(HttpStatus.NOT_FOUND)
     public ResponseEntity memberNotFoundException(MemberNotFoundException e) {
         return new ResponseEntity("존재하지 않는 회원입니다.", httpHeaders, HttpStatus.NOT_FOUND);
+    }
+
+    @ExceptionHandler(AlreadyOnBoardingExecutedException.class)
+    @ResponseStatus(HttpStatus.BAD_REQUEST)
+    public ResponseEntity alreadyOnBoardingExecutedException(AlreadyOnBoardingExecutedException e) {
+        return new ResponseEntity("이미 온보딩이 완료된 회원입니다.", httpHeaders, HttpStatus.BAD_REQUEST);
     }
 }

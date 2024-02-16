@@ -1,5 +1,6 @@
 package dnd.myOcean.domain.member.domain;
 
+import dnd.myOcean.domain.member.domain.dto.request.InfoUpdateRequest;
 import dnd.myOcean.global.common.base.BaseEntity;
 import jakarta.persistence.CascadeType;
 import jakarta.persistence.Column;
@@ -44,6 +45,9 @@ public class Member extends BaseEntity {
     private String nickName;
 
     @Column
+    private LocalDate birthDay;
+
+    @Column
     private Integer age;
 
     @Enumerated(EnumType.STRING)
@@ -59,28 +63,16 @@ public class Member extends BaseEntity {
     @Column
     private Integer updateGenderCount;
 
-    public void updateAge(final String birthday) {
+    public void updateBirthday(final String birthday) {
         LocalDate birthDay = LocalDate.parse(birthday);
+        this.birthDay = birthDay;
+        updateAge(birthDay);
+    }
+
+    private void updateAge(LocalDate birthDay) {
         LocalDate now = LocalDate.now();
         this.age = calculateAge(birthDay, now);
         this.updateAgeCount++;
-    }
-
-    public void updateGender(final Gender gender) {
-        this.gender = gender;
-        this.updateGenderCount++;
-    }
-
-    public void updateNickname(final String nickname) {
-        this.nickName = "낯선 " + nickname;
-    }
-
-    public boolean isBirthDayChangeLimitExceeded() {
-        return updateAgeCount >= 2;
-    }
-
-    public boolean isGenderChangeLimitExceeded() {
-        return updateGenderCount >= 2;
     }
 
     private static Integer calculateAge(LocalDate birthday, LocalDate currentDate) {
@@ -92,11 +84,24 @@ public class Member extends BaseEntity {
         return age;
     }
 
-    public boolean isNicknameEqualTo(String nickname) {
-        return this.nickName.equals(nickname);
+    public void updateGender(final Gender gender) {
+        this.gender = gender;
+        this.updateGenderCount++;
     }
 
-    public void setWorries(List<Worry> worries) {
+    public void updateNickname(final String nickname) {
+        this.nickName = "낯선 " + nickname + " " + this.id;
+    }
+
+    public boolean isBirthDayChangeLimitExceeded() {
+        return updateAgeCount >= 2;
+    }
+
+    public boolean isGenderChangeLimitExceeded() {
+        return updateGenderCount >= 2;
+    }
+
+    public void updateWorries(List<Worry> worries) {
         this.worries.clear();
         List<MemberWorry> memberWorries = worries.stream()
                 .map(worry -> new MemberWorry(this, worry))
@@ -124,5 +129,12 @@ public class Member extends BaseEntity {
                 .updateAgeCount(0)
                 .updateGenderCount(0)
                 .build();
+    }
+
+    public void updateInfo(InfoUpdateRequest request, List<Worry> worries) {
+        updateNickname(request.getNickname());
+        updateBirthday(request.getBirthday());
+        updateGender(Gender.from(request.getGender()));
+        updateWorries(worries);
     }
 }

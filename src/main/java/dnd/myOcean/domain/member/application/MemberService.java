@@ -8,14 +8,14 @@ import dnd.myOcean.domain.member.domain.Worry;
 import dnd.myOcean.domain.member.domain.WorryType;
 import dnd.myOcean.domain.member.domain.dto.request.BirthdayUpdateRequest;
 import dnd.myOcean.domain.member.domain.dto.request.GenderUpdateRequest;
+import dnd.myOcean.domain.member.domain.dto.request.InfoUpdateRequest;
 import dnd.myOcean.domain.member.domain.dto.request.NicknameUpdateRequest;
 import dnd.myOcean.domain.member.domain.dto.request.WorryCreateRequest;
 import dnd.myOcean.domain.member.domain.dto.response.MemberInfoResponse;
-import dnd.myOcean.domain.member.exception.AlreadyExistNicknameException;
+import dnd.myOcean.domain.member.exception.AlreadyOnBoardingExecutedException;
 import dnd.myOcean.domain.member.exception.BirthdayUpdateLimitExceedException;
 import dnd.myOcean.domain.member.exception.GenderUpdateLimitExceedException;
 import dnd.myOcean.domain.member.exception.MemberNotFoundException;
-import dnd.myOcean.domain.member.exception.SameNicknameModifyRequestException;
 import dnd.myOcean.domain.member.exception.WorrySelectionRangeLimitException;
 import dnd.myOcean.domain.member.exception.WorryTypeContainsNotAccepted;
 import dnd.myOcean.domain.member.repository.infra.jpa.MemberRepository;
@@ -36,7 +36,29 @@ public class MemberService {
     private final WorryRepository worryRepository;
 
     @Transactional
-    public void updateAge(final BirthdayUpdateRequest request) {
+    public void updateInfo(final InfoUpdateRequest request) {
+        Member member = memberRepository.findById(request.getMemberId())
+                .orElseThrow(MemberNotFoundException::new);
+
+        if (!member.isFirstLogin()) {
+            throw new AlreadyOnBoardingExecutedException();
+        }
+
+        List<WorryType> worryTypes = request.getWorries();
+        if (worryTypes.size() < 1 || worryTypes.size() > 3) {
+            throw new WorrySelectionRangeLimitException();
+        }
+
+        List<Worry> worries = worryTypes.stream()
+                .map(worryType -> worryRepository.findByWorryType(worryType)
+                        .orElseThrow(WorryTypeContainsNotAccepted::new))
+                .collect(Collectors.toList());
+
+        member.updateInfo(request, worries);
+    }
+
+    @Transactional
+    public void updateBirthday(final BirthdayUpdateRequest request) {
         Member member = memberRepository.findById(request.getMemberId())
                 .orElseThrow(MemberNotFoundException::new);
 
@@ -44,7 +66,7 @@ public class MemberService {
             throw new BirthdayUpdateLimitExceedException();
         }
 
-        member.updateAge(request.getBirthday());
+        member.updateBirthday(request.getBirthday());
     }
 
     @Transactional
@@ -63,14 +85,6 @@ public class MemberService {
     public void updateNickname(final NicknameUpdateRequest request) {
         Member member = memberRepository.findById(request.getMemberId())
                 .orElseThrow(MemberNotFoundException::new);
-
-        if (member.isNicknameEqualTo(request.getNickname())) {
-            throw new SameNicknameModifyRequestException();
-        }
-
-        if (!isNicknameAvailable(request.getNickname())) {
-            throw new AlreadyExistNicknameException();
-        }
 
         member.updateNickname(request.getNickname());
     }
@@ -91,7 +105,7 @@ public class MemberService {
                         .orElseThrow(WorryTypeContainsNotAccepted::new))
                 .collect(Collectors.toList());
 
-        member.setWorries(worries);
+        member.updateWorries(worries);
     }
 
     @Transactional
@@ -99,10 +113,6 @@ public class MemberService {
         Member member = memberRepository.findById(request.getMemberId())
                 .orElseThrow(MemberNotFoundException::new);
         member.clearWorries();
-    }
-
-    public boolean isNicknameAvailable(String nickname) {
-        return !memberRepository.existsByNickName(nickname);
     }
 
     public MemberInfoResponse getMyInfo(CurrentMemberIdRequest request) {
@@ -120,6 +130,7 @@ public class MemberService {
                 member.getNickName(),
                 worryTypes,
                 member.getGender().name(),
+                member.getBirthDay(),
                 member.getAge(),
                 member.getRole().name());
     }
@@ -127,6 +138,5 @@ public class MemberService {
     @Transactional
     public void deleteMember(CurrentMemberIdRequest request) {
         memberRepository.deleteById(request.getMemberId());
-        return;
     }
 }

@@ -2,6 +2,7 @@ package dnd.myOcean.domain.member.domain.dto.response;
 
 
 import dnd.myOcean.domain.member.domain.WorryType;
+import java.time.LocalDate;
 import java.util.List;
 import lombok.AccessLevel;
 import lombok.AllArgsConstructor;
@@ -18,6 +19,7 @@ public class MemberInfoResponse {
     private String nickname;
     private List<WorryType> worryTypes;
     private String gender;
+    private LocalDate birthDay;
     private Integer age;
     private String role;
 }
