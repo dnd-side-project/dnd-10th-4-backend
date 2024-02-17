@@ -270,9 +270,9 @@ public class LetterService {
     }
 
     // 4-1. 답장 받은 편지 전체 조회
-    public List<RepliedLetterResponse> readRepliedLetters(LetterReadCondition cond) {
+    public List<RepliedLetterResponse> readRepliedLetters(CurrentMemberIdRequest request) {
         return RepliedLetterResponse.toDtoList(
-                letterRepository.findAllByReceiverIdAndHasRepliedTrue(cond.getMemberId())
+                letterRepository.findAllByReceiverIdAndHasRepliedTrue(request.getMemberId())
         );
     }
 
