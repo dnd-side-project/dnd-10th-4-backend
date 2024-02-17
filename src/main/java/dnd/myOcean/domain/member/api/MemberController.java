@@ -30,10 +30,10 @@ public class MemberController {
 
     @GetMapping
     @AssignCurrentMemberId
-    public ResponseEntity<MemberInfoResponse> getMyInfo(@RequestBody CurrentMemberIdRequest request) {
+    public ResponseEntity<MemberInfoResponse> getMyInfo(CurrentMemberIdRequest request) {
         return new ResponseEntity(memberService.getMyInfo(request), HttpStatus.OK);
     }
-    
+
     @PatchMapping
     @AssignCurrentMemberId
     public ResponseEntity<Void> updateInfo(@RequestBody InfoUpdateRequest request) {
@@ -71,14 +71,14 @@ public class MemberController {
 
     @DeleteMapping("/worry")
     @AssignCurrentMemberId
-    public ResponseEntity<Void> deleteAllWorry(@RequestBody CurrentMemberIdRequest request) {
+    public ResponseEntity<Void> deleteAllWorry(CurrentMemberIdRequest request) {
         memberService.deleteAllWorry(request);
         return new ResponseEntity<>(HttpStatus.OK);
     }
 
     @DeleteMapping("/sign-out")
     @AssignCurrentMemberId
-    public ResponseEntity<Void> deleteMember(@RequestBody CurrentMemberIdRequest request) {
+    public ResponseEntity<Void> deleteMember(CurrentMemberIdRequest request) {
         memberService.deleteMember(request);
         return new ResponseEntity<>(HttpStatus.OK);
     }

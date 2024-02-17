@@ -43,7 +43,7 @@ public class LetterController {
     // 1-1. 보낸 편지 단건 조회
     @GetMapping("/send/{letterId}")
     @AssignCurrentMemberId
-    public ResponseEntity<SendLetterResponse> readSentLetter(@RequestBody CurrentMemberIdRequest request,
+    public ResponseEntity<SendLetterResponse> readSentLetter(CurrentMemberIdRequest request,
                                                              @PathVariable("letterId") Long letterId) {
         return new ResponseEntity(letterService.readSendLetter(request, letterId), HttpStatus.OK);
     }
@@ -51,7 +51,7 @@ public class LetterController {
     // 1-2. 보낸 편지 삭제 (실제 삭제 X, 프로퍼티 값 변경)
     @PatchMapping("/send/{letterId}")
     @AssignCurrentMemberId
-    public ResponseEntity<Void> deleteSentLetter(@RequestBody CurrentMemberIdRequest request,
+    public ResponseEntity<Void> deleteSentLetter(CurrentMemberIdRequest request,
                                                  @PathVariable("letterId") Long letterId) {
         letterService.deleteSendLetter(request, letterId);
         return new ResponseEntity(HttpStatus.OK);
@@ -67,7 +67,7 @@ public class LetterController {
     // 2-1. 받은 편지 단건 조회 (프로퍼티 값 변경)
     @GetMapping("/reception/{letterId}")
     @AssignCurrentMemberId
-    public ResponseEntity<ReceivedLetterResponse> readReceivedLetter(@RequestBody CurrentMemberIdRequest request,
+    public ResponseEntity<ReceivedLetterResponse> readReceivedLetter(CurrentMemberIdRequest request,
                                                                      @PathVariable("letterId") Long letterId) {
         return new ResponseEntity<>(letterService.readReceivedLetter(request, letterId), HttpStatus.OK);
     }
@@ -76,7 +76,7 @@ public class LetterController {
     @GetMapping("/reception")
     @AssignCurrentMemberId
     public ResponseEntity<List<ReceivedLetterResponse>> readReceivedLetters(
-            @RequestBody CurrentMemberIdRequest request) {
+            CurrentMemberIdRequest request) {
         return new ResponseEntity(letterService.readReceivedLetters(request), HttpStatus.OK);
     }
 
@@ -92,7 +92,7 @@ public class LetterController {
     // 2-4. 받은 편지 보관 (프로퍼티 값 변경)
     @PatchMapping("/reception/storage/{letterId}")
     @AssignCurrentMemberId
-    public ResponseEntity<Void> storeReceivedLetter(@RequestBody CurrentMemberIdRequest request,
+    public ResponseEntity<Void> storeReceivedLetter(CurrentMemberIdRequest request,
                                                     @PathVariable("letterId") Long letterId) {
         letterService.storeReceivedLetter(request, letterId);
         return new ResponseEntity<>(HttpStatus.OK);
@@ -101,7 +101,7 @@ public class LetterController {
     // 2-5. 받은 편지를 답장하지 않고 다른 사람에게 패스
     @PatchMapping("/reception/pass/{letterId}")
     @AssignCurrentMemberId
-    public ResponseEntity<Void> passReceivedLetter(@RequestBody CurrentMemberIdRequest request,
+    public ResponseEntity<Void> passReceivedLetter(CurrentMemberIdRequest request,
                                                    @PathVariable("letterId") Long letterId) {
         letterService.passReceivedLetter(request, letterId);
         return new ResponseEntity<>(HttpStatus.OK);
@@ -117,7 +117,7 @@ public class LetterController {
     // 3-2. 보관한 편지 보관 해제
     @PatchMapping("/storage/{letterId}")
     @AssignCurrentMemberId
-    public ResponseEntity<Void> deleteStoredLetter(@RequestBody CurrentMemberIdRequest request,
+    public ResponseEntity<Void> deleteStoredLetter(CurrentMemberIdRequest request,
                                                    @PathVariable("letterId") Long letterId) {
         letterService.deleteStoredLetter(request, letterId);
         return new ResponseEntity<>(HttpStatus.OK);
@@ -133,7 +133,7 @@ public class LetterController {
     // 4-2. 답장 받은 편지 전체 조회
     @GetMapping("/reply/{letterId}")
     @AssignCurrentMemberId
-    public ResponseEntity<RepliedLetterResponse> readRepliedLetter(@RequestBody CurrentMemberIdRequest request,
+    public ResponseEntity<RepliedLetterResponse> readRepliedLetter(CurrentMemberIdRequest request,
                                                                    @PathVariable("letterId") Long letterId) {
         return new ResponseEntity<>(letterService.readRepliedLetter(request, letterId), HttpStatus.OK);
     }
