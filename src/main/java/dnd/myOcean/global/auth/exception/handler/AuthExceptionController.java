@@ -16,7 +16,7 @@ public class AuthExceptionController {
         throw new AccessDeniedException();
     }
 
-    @GetMapping("/entry-points")
+    @GetMapping("/entry-point")
     public void authenticateException() {
         throw new AuthenticationEntryPointException();
     }
