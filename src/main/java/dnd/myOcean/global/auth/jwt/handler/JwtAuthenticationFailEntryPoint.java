@@ -10,7 +10,7 @@ import org.springframework.stereotype.Component;
 @Component
 public class JwtAuthenticationFailEntryPoint implements AuthenticationEntryPoint {
 
-    private static final String EXCEPTION_ENTRY_POINT = "/api/exception/entry-point";
+    private static final String EXCEPTION_ENTRY_POINT = "/api/exception/entry-points";
 
     @Override
     public void commence(HttpServletRequest request, HttpServletResponse response,
