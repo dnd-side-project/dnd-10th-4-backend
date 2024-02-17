@@ -17,7 +17,7 @@ public class JwtAuthenticationFailEntryPoint implements AuthenticationEntryPoint
                          AuthenticationException authException) throws IOException {
         if (!request.isSecure()) {
             String redirectUrl =
-                    "https://" + request.getServerName() + ":" + request.getServerPort() + EXCEPTION_ENTRY_POINT;
+                    "https://" + request.getServerName() + EXCEPTION_ENTRY_POINT;
             response.sendRedirect(redirectUrl);
         } else {
             response.sendRedirect(EXCEPTION_ENTRY_POINT);
