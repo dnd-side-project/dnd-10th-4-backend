@@ -6,7 +6,7 @@ import lombok.Getter;
 @Getter
 public enum Gender {
 
-    MALE, FEMALE, NONE;
+    MALE, FEMALE;
 
     public static Gender from(String value) {
         for (Gender gender : Gender.values()) {
