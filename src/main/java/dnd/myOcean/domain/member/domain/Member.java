@@ -114,8 +114,8 @@ public class Member extends BaseEntity {
     }
 
     public boolean isFirstLogin() {
-        return nickName.equals("NONE") &&
-                gender.equals(Gender.NONE) &&
+        return nickName.equals(null) &&
+                gender.equals(null) &&
                 updateAgeCount.equals(0) &&
                 updateGenderCount.equals(0);
     }
