@@ -75,3 +75,8 @@ cloud:
     credentials:
       accessKey: '${cloud.aws.s3.credentials.accessKey}'
       secretKey: '${cloud.aws.s3.credentials.secretKey}'
+
+  servlet:
+    multipart:
+      max-file-size: 30MB
+      max-request-size: 30MB
