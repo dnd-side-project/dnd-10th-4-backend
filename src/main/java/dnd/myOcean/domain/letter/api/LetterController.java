@@ -90,7 +90,7 @@ public class LetterController {
     }
 
     // 2-4. 받은 편지 보관 (프로퍼티 값 변경)
-    @PatchMapping("/reception/storage/{letterId}")
+    @PatchMapping("/reply/storage/{letterId}")
     @AssignCurrentMemberId
     public ResponseEntity<Void> storeReceivedLetter(CurrentMemberIdRequest request,
                                                     @PathVariable("letterId") Long letterId) {
