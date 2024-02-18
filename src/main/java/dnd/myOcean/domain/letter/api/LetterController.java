@@ -7,8 +7,8 @@ import dnd.myOcean.domain.letter.domain.dto.response.ReceivedLetterResponse;
 import dnd.myOcean.domain.letter.domain.dto.response.RepliedLetterResponse;
 import dnd.myOcean.domain.letter.domain.dto.response.SendLetterResponse;
 import dnd.myOcean.domain.letter.repository.infra.querydsl.dto.LetterReadCondition;
-import dnd.myOcean.domain.letter.repository.infra.querydsl.dto.PagedReceivedLettersResponse;
 import dnd.myOcean.domain.letter.repository.infra.querydsl.dto.PagedSendLettersResponse;
+import dnd.myOcean.domain.letter.repository.infra.querydsl.dto.PagedStoredLetterResponse;
 import dnd.myOcean.global.auth.aop.AssignCurrentMemberId;
 import dnd.myOcean.global.auth.aop.dto.CurrentMemberIdRequest;
 import jakarta.validation.Valid;
@@ -65,7 +65,7 @@ public class LetterController {
         return new ResponseEntity(letterService.readSendLetters(cond), HttpStatus.OK);
     }
 
-    // 2-1. 받은 편지 단건 조회 (프로퍼티 값 변경)
+    // 2-1. 받은 편지 단건 조회
     @GetMapping("/reception/{letterId}")
     @AssignCurrentMemberId
     public ResponseEntity<ReceivedLetterResponse> readReceivedLetter(CurrentMemberIdRequest request,
@@ -110,7 +110,7 @@ public class LetterController {
     // 3-1. 보관한 편지 전체 페이징 조회
     @GetMapping("/storage")
     @AssignCurrentMemberId
-    public ResponseEntity<PagedReceivedLettersResponse> readStoredLetters(@Valid LetterReadCondition cond) {
+    public ResponseEntity<PagedStoredLetterResponse> readStoredLetters(@Valid LetterReadCondition cond) {
         return new ResponseEntity<>(letterService.readStoredLetters(cond), HttpStatus.OK);
     }
 

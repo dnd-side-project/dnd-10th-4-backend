@@ -2,13 +2,14 @@ package dnd.myOcean.domain.letter.repository.infra.querydsl;
 
 import static com.querydsl.core.types.Projections.constructor;
 import static dnd.myOcean.domain.letter.domain.QLetter.letter;
+import static dnd.myOcean.domain.letterimage.domain.QLetterImage.letterImage;
 
 import com.querydsl.core.BooleanBuilder;
 import com.querydsl.core.types.Predicate;
 import com.querydsl.jpa.impl.JPAQueryFactory;
 import dnd.myOcean.domain.letter.domain.Letter;
-import dnd.myOcean.domain.letter.domain.dto.response.ReceivedLetterResponse;
 import dnd.myOcean.domain.letter.domain.dto.response.SendLetterResponse;
+import dnd.myOcean.domain.letter.domain.dto.response.StoredLetterResponse;
 import dnd.myOcean.domain.letter.repository.infra.querydsl.dto.LetterReadCondition;
 import java.util.List;
 import org.springframework.data.domain.Page;
@@ -17,6 +18,7 @@ import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.support.QuerydslRepositorySupport;
 import org.springframework.stereotype.Repository;
+
 
 @Repository
 public class LetterQuerydslRepositoryImpl extends QuerydslRepositorySupport implements LetterQuerydslRepository {
@@ -55,15 +57,16 @@ public class LetterQuerydslRepositoryImpl extends QuerydslRepositorySupport impl
                                 letter.sender.nickName,
                                 letter.content,
                                 letter.worryType,
-                                letter.letterImage.imagePath))
+                                letterImage.imagePath.coalesce("이미지가 존재하지 않습니다.")))
                         .from(letter)
+                        .leftJoin(letter.letterImage, letterImage)
                         .where(predicate)
                         .orderBy(letter.createDate.asc())
         ).fetch();
     }
 
     @Override
-    public Page<ReceivedLetterResponse> findAllStoredLetter(LetterReadCondition cond) {
+    public Page<StoredLetterResponse> findAllStoredLetter(LetterReadCondition cond) {
         Pageable pageable = PageRequest.of(cond.getPage(), cond.getSize());
         Predicate predicate = createPredicateByCurrentMemberStored(cond);
         return new PageImpl<>(fetchAllStoredLetter(predicate, pageable), pageable, fetchCount(predicate));
@@ -79,25 +82,30 @@ public class LetterQuerydslRepositoryImpl extends QuerydslRepositorySupport impl
         return builder;
     }
 
-    private List<ReceivedLetterResponse> fetchAllStoredLetter(Predicate predicate, Pageable pageable) {
+    private List<StoredLetterResponse> fetchAllStoredLetter(Predicate predicate, Pageable pageable) {
         return getQuerydsl().applyPagination(
                 pageable,
-                query.select(constructor(ReceivedLetterResponse.class,
+                query.select(constructor(StoredLetterResponse.class,
                                 letter.createDate,
                                 letter.id,
                                 letter.letterTag,
                                 letter.sender.nickName,
                                 letter.receiver.nickName,
                                 letter.content,
+                                letter.replyContent,
                                 letter.worryType,
-                                letter.letterImage.imagePath))
+                                letterImage.imagePath.coalesce("이미지가 존재하지 않습니다.")))
                         .from(letter)
+                        .leftJoin(letter.letterImage, letterImage)
                         .where(predicate)
                         .orderBy(letter.createDate.asc())
         ).fetch();
     }
 
     private Long fetchCount(Predicate predicate) {
-        return query.select(letter.count()).from(letter).where(predicate).fetchOne();
+        return query.select(letter.count())
+                .from(letter)
+                .where(predicate)
+                .fetchOne();
     }
 }

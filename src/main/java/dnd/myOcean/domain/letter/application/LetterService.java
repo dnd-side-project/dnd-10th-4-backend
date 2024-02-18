@@ -15,8 +15,8 @@ import dnd.myOcean.domain.letter.exception.RepliedLetterPassException;
 import dnd.myOcean.domain.letter.exception.UnAnsweredLetterStoreException;
 import dnd.myOcean.domain.letter.repository.infra.jpa.LetterRepository;
 import dnd.myOcean.domain.letter.repository.infra.querydsl.dto.LetterReadCondition;
-import dnd.myOcean.domain.letter.repository.infra.querydsl.dto.PagedReceivedLettersResponse;
 import dnd.myOcean.domain.letter.repository.infra.querydsl.dto.PagedSendLettersResponse;
+import dnd.myOcean.domain.letter.repository.infra.querydsl.dto.PagedStoredLetterResponse;
 import dnd.myOcean.domain.letterimage.application.FileService;
 import dnd.myOcean.domain.letterimage.domain.LetterImage;
 import dnd.myOcean.domain.member.domain.Member;
@@ -256,8 +256,8 @@ public class LetterService {
     }
 
     // 3-1. 보관한 편지 전체 페이징 조회
-    public PagedReceivedLettersResponse readStoredLetters(LetterReadCondition cond) {
-        return PagedReceivedLettersResponse.of(letterRepository.findAllStoredLetter(cond));
+    public PagedStoredLetterResponse readStoredLetters(LetterReadCondition cond) {
+        return PagedStoredLetterResponse.of(letterRepository.findAllStoredLetter(cond));
     }
 
     // 3-2. 보관한 편지 보관 해제

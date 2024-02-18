@@ -16,7 +16,7 @@ public class PagedSendLettersResponse {
     private Long totalElements;
     private Integer totalPage;
     private boolean hasNextPage;
-    private List<SendLetterResponse> postList;
+    private List<SendLetterResponse> letters;
 
     public static PagedSendLettersResponse of(Page<SendLetterResponse> page) {
         return new PagedSendLettersResponse(
