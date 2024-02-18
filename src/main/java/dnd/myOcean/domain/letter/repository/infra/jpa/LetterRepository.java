@@ -30,13 +30,13 @@ public interface LetterRepository extends JpaRepository<Letter, Long>, LetterQue
     Optional<Letter> findByIdAndReceiverId(@Param("id") Long id,
                                            @Param("receiverId") Long receiverId);
 
-    @Query("SELECT l FROM Letter l JOIN FETCH l.receiver lr WHERE l.id = :id AND lr.id = :receiverId AND l.hasReplied = true")
-    Optional<Letter> findByIdAndReceiverIdAndHasRepliedTrue(@Param("id") Long id,
-                                                            @Param("receiverId") Long receiverId);
+    @Query("SELECT l FROM Letter l JOIN FETCH l.sender ls WHERE l.id = :id AND ls.id = :senderId AND l.hasReplied = true")
+    Optional<Letter> findByIdAndSenderIdAndHasRepliedTrue(@Param("id") Long id,
+                                                          @Param("senderId") Long senderId);
 
-    @Query("SELECT l FROM Letter l JOIN FETCH l.sender sr WHERE l.id = :id AND sr.id = :receiverId AND l.hasReplied = false")
+    @Query("SELECT l FROM Letter l JOIN FETCH l.receiver lr WHERE l.id = :id AND lr.id = :receiverId AND l.hasReplied = false")
     Optional<Letter> findByIdAndReceiverIdAndHasRepliedIsFalse(@Param("id") Long id,
-                                                               @Param("senderId") Long senderId);
+                                                               @Param("receiverId") Long receiverId);
 
     @Query("SELECT l FROM Letter l WHERE l.uuid = :uuid")
     List<Letter> findAllByUuid(@Param("uuid") String uuid);

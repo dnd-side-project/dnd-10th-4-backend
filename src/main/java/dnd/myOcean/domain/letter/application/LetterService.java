@@ -279,7 +279,7 @@ public class LetterService {
     // 4-2. 단건 조회
     @Transactional
     public RepliedLetterResponse readRepliedLetter(CurrentMemberIdRequest request, Long letterId) {
-        Letter letter = letterRepository.findByIdAndReceiverIdAndHasRepliedTrue(letterId, request.getMemberId())
+        Letter letter = letterRepository.findByIdAndSenderIdAndHasRepliedTrue(letterId, request.getMemberId())
                 .orElseThrow(AccessDeniedLetterException::new);
         return RepliedLetterResponse.toDto(letter);
     }
