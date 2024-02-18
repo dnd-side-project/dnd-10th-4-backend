@@ -272,7 +272,7 @@ public class LetterService {
     // 4-1. 답장 받은 편지 전체 조회
     public List<RepliedLetterResponse> readRepliedLetters(CurrentMemberIdRequest request) {
         return RepliedLetterResponse.toDtoList(
-                letterRepository.findAllByReceiverIdAndHasRepliedTrue(request.getMemberId())
+                letterRepository.findAllBySenderIdAndHasRepliedTrue(request.getMemberId())
         );
     }
 
