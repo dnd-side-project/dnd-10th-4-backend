@@ -1,6 +1,7 @@
 package dnd.myOcean.member.application;
 
 
+import dnd.myOcean.global.auth.aop.dto.CurrentMemberIdRequest;
 import dnd.myOcean.member.domain.Gender;
 import dnd.myOcean.member.domain.Member;
 import dnd.myOcean.member.domain.MemberWorry;
@@ -20,7 +21,6 @@ import dnd.myOcean.member.exception.WorrySelectionRangeLimitException;
 import dnd.myOcean.member.exception.WorryTypeContainsNotAccepted;
 import dnd.myOcean.member.repository.infra.jpa.MemberRepository;
 import dnd.myOcean.member.repository.infra.jpa.WorryRepository;
-import dnd.myOcean.global.auth.aop.dto.CurrentMemberIdRequest;
 import java.util.List;
 import java.util.stream.Collectors;
 import lombok.RequiredArgsConstructor;

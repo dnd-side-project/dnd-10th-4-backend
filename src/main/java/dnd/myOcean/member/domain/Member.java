@@ -132,7 +132,7 @@ public class Member extends BaseEntity {
     }
 
     public void updateInfo(InfoUpdateRequest request, List<Worry> worries) {
-        updateNickname(request.getNickName());
+        updateNickname(request.getNickname());
         updateBirthday(request.getBirthday());
         updateGender(Gender.from(request.getGender()));
         updateWorries(worries);

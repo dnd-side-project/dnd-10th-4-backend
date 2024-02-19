@@ -19,7 +19,7 @@ public class InfoUpdateRequest {
     private Long memberId;
 
     @NotEmpty
-    private String nickName;
+    private String nickname;
 
     @NotEmpty
     private String birthday;
