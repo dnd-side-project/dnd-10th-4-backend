@@ -1,7 +1,7 @@
 package dnd.myOcean.global.auth.oauth.kakao.details;
 
-import dnd.myOcean.domain.member.domain.Member;
-import dnd.myOcean.domain.member.repository.infra.jpa.MemberRepository;
+import dnd.myOcean.member.domain.Member;
+import dnd.myOcean.member.repository.infra.jpa.MemberRepository;
 import java.util.Collections;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
