@@ -95,10 +95,11 @@ jobs:
           script: |
             sudo docker stop dnd2
             sudo docker rm dnd2
+            sudo docker rmi rlaehddnd0422/dnd
             sudo docker pull rlaehddnd0422/dnd
             sudo docker run -it -d -p 8080:8080 --name dnd2 rlaehddnd0422/dnd
       
-      # REMOVE Github IP FROM security group (10)
+      # REMOVE GitHub IP FROM security group (10)
       - name: Remove IP FROM security group
         run: |
           aws ec2 revoke-security-group-ingress --group-id ${{ secrets.AWS_SG_ID }} --protocol tcp --port 22 --cidr ${{ steps.ip.outputs.ipv4 }}/32
