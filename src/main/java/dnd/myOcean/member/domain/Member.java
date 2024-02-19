@@ -124,8 +124,6 @@ public class Member extends BaseEntity {
         return Member.builder()
                 .email(email)
                 .role(Role.USER)
-                .nickName(null)
-                .gender(null)
                 .updateAgeCount(0)
                 .updateGenderCount(0)
                 .build();
