@@ -1,8 +1,8 @@
 package dnd.myOcean.letter.repository.infra.querydsl;
 
 import static com.querydsl.core.types.Projections.constructor;
-import static dnd.myOcean.domain.letter.domain.QLetter.letter;
-import static dnd.myOcean.domain.letterimage.domain.QLetterImage.letterImage;
+import static dnd.myOcean.letter.domain.QLetter.letter;
+import static dnd.myOcean.letterimage.domain.QLetterImage.letterImage;
 
 import com.querydsl.core.BooleanBuilder;
 import com.querydsl.core.types.Predicate;
