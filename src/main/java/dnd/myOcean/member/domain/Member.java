@@ -115,7 +115,7 @@ public class Member extends BaseEntity {
 
     public boolean isFirstLogin() {
         return nickName == null &&
-                gender == null &&
+                gender.equals(Gender.NONE) &&
                 updateAgeCount.equals(0) &&
                 updateGenderCount.equals(0);
     }
