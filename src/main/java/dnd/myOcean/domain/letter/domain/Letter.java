@@ -17,6 +17,7 @@ import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
 import jakarta.persistence.JoinColumn;
 import jakarta.persistence.ManyToOne;
+import java.time.LocalDateTime;
 import lombok.AccessLevel;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -60,11 +61,15 @@ public class Letter extends BaseEntity {
     @JoinColumn(name = "letter_image_id")
     private LetterImage letterImage;
 
-    private boolean isDeleteBySender;
-    private boolean hasReplied;
-    private boolean isStored;
-    private String replyContent;
     private String uuid;
+
+    private boolean isDeleteBySender;
+
+    private boolean hasReplied;
+    private LocalDateTime repliedDate;
+    private String replyContent;
+
+    private boolean isStored;
 
     public static Letter createLetter(Member sender, String content, Member receiver, WorryType worryType,
                                       LetterTag letterTag, LetterImage letterImage, String uuid) {
@@ -89,6 +94,7 @@ public class Letter extends BaseEntity {
     public void reply(String replyContent) {
         this.replyContent = replyContent;
         this.hasReplied = true;
+        this.repliedDate = LocalDateTime.now();
     }
 
     public void store(boolean isStored) {

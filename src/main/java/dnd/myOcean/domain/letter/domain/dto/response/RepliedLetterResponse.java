@@ -22,6 +22,9 @@ public class RepliedLetterResponse {
     @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd'T'HH:mm:ss", timezone = "Asia/Seoul")
     private LocalDateTime createdAt;
 
+    @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd'T'HH:mm:ss", timezone = "Asia/Seoul")
+    private LocalDateTime repliedAt;
+
     private Long letterId;
     private LetterTag letterTag;
     private String senderNickname;
@@ -34,6 +37,7 @@ public class RepliedLetterResponse {
     public static RepliedLetterResponse toDto(Letter letter) {
         return RepliedLetterResponse.builder()
                 .createdAt(letter.getCreateDate())
+                .repliedAt(letter.getRepliedDate())
                 .letterId(letter.getId())
                 .letterTag(letter.getLetterTag())
                 .senderNickname(letter.getSender().getNickName())
