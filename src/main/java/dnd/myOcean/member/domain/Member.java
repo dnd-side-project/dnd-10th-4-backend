@@ -1,7 +1,7 @@
 package dnd.myOcean.member.domain;
 
-import dnd.myOcean.member.domain.dto.request.InfoUpdateRequest;
 import dnd.myOcean.global.common.base.BaseEntity;
+import dnd.myOcean.member.domain.dto.request.InfoUpdateRequest;
 import jakarta.persistence.CascadeType;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
@@ -114,8 +114,8 @@ public class Member extends BaseEntity {
     }
 
     public boolean isFirstLogin() {
-        return nickName.equals(null) &&
-                gender.equals(null) &&
+        return nickName == null &&
+                gender == null &&
                 updateAgeCount.equals(0) &&
                 updateGenderCount.equals(0);
     }
