@@ -116,7 +116,7 @@ public class LetterController {
     // 답장 받은 편지 보관
     @PatchMapping("/reply/storage/{letterId}")
     @AssignCurrentMemberId
-    public ResponseEntity<Void> storeRepliedLetter(CurrentMemberIdRequest request,0
+    public ResponseEntity<Void> storeRepliedLetter(CurrentMemberIdRequest request,
                                                    @PathVariable("letterId") Long letterId) {
         letterService.storeRepliedLetter(request, letterId);
         return new ResponseEntity<>(HttpStatus.OK);
