@@ -1,6 +1,5 @@
 package dnd.myOcean.domain.member.api;
 
-
 import dnd.myOcean.domain.member.application.MemberService;
 import dnd.myOcean.domain.member.domain.dto.request.BirthdayUpdateRequest;
 import dnd.myOcean.domain.member.domain.dto.request.GenderUpdateRequest;

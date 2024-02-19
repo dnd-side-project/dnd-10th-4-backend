@@ -33,7 +33,7 @@ public class LetterController {
 
     private final LetterService letterService;
 
-    // 0. 편지 전송
+    // 편지 전송
     @PostMapping
     @AssignCurrentMemberId
     public ResponseEntity<Void> send(@ModelAttribute LetterSendRequest request) throws IOException {
@@ -41,7 +41,7 @@ public class LetterController {
         return new ResponseEntity(HttpStatus.CREATED);
     }
 
-    // 1-1. 보낸 편지 단건 조회
+    // 보낸 편지 단건 조회
     @GetMapping("/send/{letterId}")
     @AssignCurrentMemberId
     public ResponseEntity<SendLetterResponse> readSentLetter(CurrentMemberIdRequest request,
@@ -49,7 +49,7 @@ public class LetterController {
         return new ResponseEntity(letterService.readSendLetter(request, letterId), HttpStatus.OK);
     }
 
-    // 1-2. 보낸 편지 삭제 (실제 삭제 X, 프로퍼티 값 변경)
+    // 보낸 편지 삭제 (실제 삭제 X, 프로퍼티 값 변경)
     @PatchMapping("/send/{letterId}")
     @AssignCurrentMemberId
     public ResponseEntity<Void> deleteSentLetter(CurrentMemberIdRequest request,
@@ -58,14 +58,14 @@ public class LetterController {
         return new ResponseEntity(HttpStatus.OK);
     }
 
-    // 1-3. 보낸 편지 중 삭제하지 않은 편지 전체 조회 (페이징)
+    // 보낸 편지 전체 조회 (페이징)
     @GetMapping("/send")
     @AssignCurrentMemberId
     public ResponseEntity<PagedSendLettersResponse> readSentLetter(@Valid LetterReadCondition cond) {
         return new ResponseEntity(letterService.readSendLetters(cond), HttpStatus.OK);
     }
 
-    // 2-1. 받은 편지 단건 조회
+    // 받은 편지 단건 조회
     @GetMapping("/reception/{letterId}")
     @AssignCurrentMemberId
     public ResponseEntity<ReceivedLetterResponse> readReceivedLetter(CurrentMemberIdRequest request,
@@ -73,14 +73,14 @@ public class LetterController {
         return new ResponseEntity<>(letterService.readReceivedLetter(request, letterId), HttpStatus.OK);
     }
 
-    // 2-2. 받은 편지 전체 조회
+    // 받은 편지 전체 조회
     @GetMapping("/reception")
     @AssignCurrentMemberId
     public ResponseEntity<List<ReceivedLetterResponse>> readReceivedLetters(CurrentMemberIdRequest request) {
         return new ResponseEntity(letterService.readReceivedLetters(request), HttpStatus.OK);
     }
 
-    // 2-3. 받은 편지에 대한 답장 설정
+    // 받은 편지에 대한 답장 설정
     @PatchMapping("/reception/reply/{letterId}")
     @AssignCurrentMemberId
     public ResponseEntity<Void> replyReceivedLetter(@RequestBody LetterReplyRequest request,
@@ -89,16 +89,7 @@ public class LetterController {
         return new ResponseEntity<>(HttpStatus.OK);
     }
 
-    // 2-4. 받은 편지 보관 (프로퍼티 값 변경)
-    @PatchMapping("/reply/storage/{letterId}")
-    @AssignCurrentMemberId
-    public ResponseEntity<Void> storeReceivedLetter(CurrentMemberIdRequest request,
-                                                    @PathVariable("letterId") Long letterId) {
-        letterService.storeReceivedLetter(request, letterId);
-        return new ResponseEntity<>(HttpStatus.OK);
-    }
-
-    // 2-5. 받은 편지를 답장하지 않고 다른 사람에게 패스
+    // 받은 편지를 답장하지 않고 다른 사람에게 패스
     @PatchMapping("/reception/pass/{letterId}")
     @AssignCurrentMemberId
     public ResponseEntity<Void> passReceivedLetter(CurrentMemberIdRequest request,
@@ -107,34 +98,43 @@ public class LetterController {
         return new ResponseEntity<>(HttpStatus.OK);
     }
 
-    // 3-1. 보관한 편지 전체 페이징 조회
-    @GetMapping("/storage")
-    @AssignCurrentMemberId
-    public ResponseEntity<PagedStoredLetterResponse> readStoredLetters(@Valid LetterReadCondition cond) {
-        return new ResponseEntity<>(letterService.readStoredLetters(cond), HttpStatus.OK);
-    }
-
-    // 3-2. 보관한 편지 보관 해제
-    @PatchMapping("/storage/{letterId}")
-    @AssignCurrentMemberId
-    public ResponseEntity<Void> deleteStoredLetter(CurrentMemberIdRequest request,
-                                                   @PathVariable("letterId") Long letterId) {
-        letterService.deleteStoredLetter(request, letterId);
-        return new ResponseEntity<>(HttpStatus.OK);
-    }
-
-    // 4-1. 답장 받은 편지 전체 조회
+    // 답장 받은 편지 전체 조회
     @GetMapping("/reply")
     @AssignCurrentMemberId
     public ResponseEntity<List<RepliedLetterResponse>> readRepliedLetters(CurrentMemberIdRequest request) {
         return new ResponseEntity<>(letterService.readRepliedLetters(request), HttpStatus.OK);
     }
 
-    // 4-2. 답장 받은 편지 단건 조회
+    // 답장 받은 편지 단건 조회
     @GetMapping("/reply/{letterId}")
     @AssignCurrentMemberId
     public ResponseEntity<RepliedLetterResponse> readRepliedLetter(CurrentMemberIdRequest request,
                                                                    @PathVariable("letterId") Long letterId) {
         return new ResponseEntity<>(letterService.readRepliedLetter(request, letterId), HttpStatus.OK);
+    }
+
+    // 답장 받은 편지 보관
+    @PatchMapping("/reply/storage/{letterId}")
+    @AssignCurrentMemberId
+    public ResponseEntity<Void> storeRepliedLetter(CurrentMemberIdRequest request,0
+                                                   @PathVariable("letterId") Long letterId) {
+        letterService.storeRepliedLetter(request, letterId);
+        return new ResponseEntity<>(HttpStatus.OK);
+    }
+
+    // 보관한 편지 전체 조회 (페이징)
+    @GetMapping("/storage")
+    @AssignCurrentMemberId
+    public ResponseEntity<PagedStoredLetterResponse> readStoredLetters(@Valid LetterReadCondition cond) {
+        return new ResponseEntity<>(letterService.readStoredLetters(cond), HttpStatus.OK);
+    }
+
+    // 보관한 편지 보관 해제
+    @PatchMapping("/storage/{letterId}")
+    @AssignCurrentMemberId
+    public ResponseEntity<Void> deleteStoredLetter(CurrentMemberIdRequest request,
+                                                   @PathVariable("letterId") Long letterId) {
+        letterService.deleteStoredLetter(request, letterId);
+        return new ResponseEntity<>(HttpStatus.OK);
     }
 }

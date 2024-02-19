@@ -18,7 +18,7 @@ VALUES (now(), 0, 0, 'kdo0422@nate.com', '낯선 유저1', 'MALE', 'USER', 26, n
        (now(), 0, 0, 'rlaehddnd0422@naver.com', '낯선 1', 'MALE', 'USER', 25, now());
 
 /*
- 1. kdo04222@nate.com => work, course, relationship
+ 1. kdo0422@nate.com => work, course, relationship
  2. dog@naver.com => break_love, love
  3. cat@naver.com => relationship, break_love, etc
  4. pig@naver.com => work

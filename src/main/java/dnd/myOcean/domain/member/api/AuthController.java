@@ -22,9 +22,7 @@ public class AuthController {
 
     private final AuthService authService;
 
-    /**
-     * 로그인 API
-     */
+    // 카카오 로그인
     @PostMapping("/login/kakao")
     public ResponseEntity<LoginResponse> loginKakao(@RequestParam(name = "code") String code)
             throws JsonProcessingException {
@@ -32,9 +30,7 @@ public class AuthController {
         return new ResponseEntity(loginResponse, HttpStatus.OK);
     }
 
-    /**
-     * 포스트맨으로 테스트하기 위한 로그인 API
-     */
+    // 카카오 로그인 API for Postman
     @PostMapping("/login/kakao/postman")
     public ResponseEntity<LoginResponse> loginKakaoForPostman(@RequestParam(name = "code") String code)
             throws JsonProcessingException {
@@ -42,9 +38,7 @@ public class AuthController {
         return new ResponseEntity(loginResponse, HttpStatus.OK);
     }
 
-    /**
-     * 액세스 토큰 재발급 API
-     */
+    // 액세스 토큰 재발급
     @GetMapping("/reissue")
     public ResponseEntity<TokenResponse> reissueToken(HttpServletRequest request) {
         return new ResponseEntity<>(authService.reissueAccessToken(request), HttpStatus.OK);

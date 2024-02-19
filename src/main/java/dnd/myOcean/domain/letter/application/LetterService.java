@@ -12,7 +12,6 @@ import dnd.myOcean.domain.letter.domain.dto.response.SendLetterResponse;
 import dnd.myOcean.domain.letter.exception.AccessDeniedLetterException;
 import dnd.myOcean.domain.letter.exception.AlreadyReplyExistException;
 import dnd.myOcean.domain.letter.exception.RepliedLetterPassException;
-import dnd.myOcean.domain.letter.exception.UnAnsweredLetterStoreException;
 import dnd.myOcean.domain.letter.repository.infra.jpa.LetterRepository;
 import dnd.myOcean.domain.letter.repository.infra.querydsl.dto.LetterReadCondition;
 import dnd.myOcean.domain.letter.repository.infra.querydsl.dto.PagedSendLettersResponse;
@@ -51,7 +50,7 @@ public class LetterService {
     private final MemberRepository memberRepository;
     private final LetterRepository letterRepository;
 
-    // 0. 편지 전송
+    // 편지 전송
     @Transactional
     public void send(LetterSendRequest request) throws IOException {
         Member sender = memberRepository.findById(request.getMemberId())
@@ -154,14 +153,14 @@ public class LetterService {
         return new Random().nextInt(maxCount) + 1;
     }
 
-    // 1-1. 보낸 편지 단건 조회
+    // 보낸 편지 단건 조회
     public SendLetterResponse readSendLetter(CurrentMemberIdRequest request, Long letterId) {
         Letter letter = letterRepository.findByIdAndSenderIdAndIsDeleteBySenderFalse(letterId, request.getMemberId())
                 .orElseThrow(AccessDeniedLetterException::new);
         return SendLetterResponse.toDto(letter);
     }
 
-    // 1-2. 보낸 편지 삭제 (실제 삭제 X, 프로퍼티 값 변경)
+    // 보낸 편지 삭제 (실제 삭제 X, 프로퍼티 값 변경)
     @Transactional
     public void deleteSendLetter(CurrentMemberIdRequest request, Long letterId) {
         Letter letter = letterRepository.findByIdAndSenderId(letterId, request.getMemberId())
@@ -169,19 +168,19 @@ public class LetterService {
         letter.deleteBySender();
     }
 
-    // 1-3. 보낸 편지 페이징 조회 (삭제하지 않은 메시지만 페이징)
+    // 보낸 편지 페이징 조회 (삭제하지 않은 메시지만 페이징)
     public PagedSendLettersResponse readSendLetters(LetterReadCondition cond) {
         return PagedSendLettersResponse.of(letterRepository.findAllSendLetter(cond));
     }
 
-    // 2-1. 받은 편지 단건 조회
+    // 받은 편지 단건 조회
     public ReceivedLetterResponse readReceivedLetter(CurrentMemberIdRequest request, Long letterId) {
         Letter letter = letterRepository.findByIdAndReceiverIdAndHasRepliedIsFalse(letterId, request.getMemberId())
                 .orElseThrow(AccessDeniedLetterException::new);
         return ReceivedLetterResponse.toDto(letter);
     }
 
-    // 2-2. 받은 편지 전체 조회
+    // 받은 편지 전체 조회
     public List<ReceivedLetterResponse> readReceivedLetters(CurrentMemberIdRequest request) {
         List<Letter> letters = letterRepository.findAllByReceiverIdAndHasRepliedFalse(request.getMemberId());
 
@@ -190,7 +189,7 @@ public class LetterService {
                 .collect(Collectors.toList());
     }
 
-    // 2-3. 받은 편지에 대한 답장 설정
+    // 받은 편지에 대한 답장 설정
     @Transactional
     public void replyReceivedLetter(LetterReplyRequest request, Long letterId) {
         Letter letter = letterRepository.findByIdAndReceiverId(letterId,
@@ -204,20 +203,7 @@ public class LetterService {
         letter.reply(request.getReplyContent());
     }
 
-    // 2-4. 받은 편지 보관 (프로퍼티 값 변경) - 답장을 하지 않은 경우 해당 편지는 보관할 수 없음
-    @Transactional
-    public void storeReceivedLetter(CurrentMemberIdRequest request, Long letterId) {
-        Letter letter = letterRepository.findByIdAndReceiverId(letterId, request.getMemberId())
-                .orElseThrow(AccessDeniedLetterException::new);
-
-        if (!letter.isHasReplied()) {
-            throw new UnAnsweredLetterStoreException();
-        }
-
-        letter.store(true);
-    }
-
-    // 2-5. 받은 편지 답장하지 않고 다른 사람에게 전달
+    // 받은 편지 답장하지 않고 다른 사람에게 전달
     @Transactional
     public void passReceivedLetter(CurrentMemberIdRequest request, Long letterId) {
         Letter letter = letterRepository.findByIdAndReceiverId(letterId, request.getMemberId())
@@ -255,32 +241,42 @@ public class LetterService {
         return memberIds;
     }
 
-    // 3-1. 보관한 편지 전체 페이징 조회
-    public PagedStoredLetterResponse readStoredLetters(LetterReadCondition cond) {
-        return PagedStoredLetterResponse.of(letterRepository.findAllStoredLetter(cond));
-    }
 
-    // 3-2. 보관한 편지 보관 해제
-    @Transactional
-    public void deleteStoredLetter(CurrentMemberIdRequest request, Long letterId) {
-        Letter letter = letterRepository.findByIdAndReceiverId(letterId, request.getMemberId())
-                .orElseThrow(AccessDeniedLetterException::new);
-
-        letter.store(false);
-    }
-
-    // 4-1. 답장 받은 편지 전체 조회
+    // 답장 받은 편지 전체 조회
     public List<RepliedLetterResponse> readRepliedLetters(CurrentMemberIdRequest request) {
         return RepliedLetterResponse.toDtoList(
                 letterRepository.findAllBySenderIdAndHasRepliedTrue(request.getMemberId())
         );
     }
 
-    // 4-2. 단건 조회
+    // 답장 받은 단건 조회
     @Transactional
     public RepliedLetterResponse readRepliedLetter(CurrentMemberIdRequest request, Long letterId) {
         Letter letter = letterRepository.findByIdAndSenderIdAndHasRepliedTrue(letterId, request.getMemberId())
                 .orElseThrow(AccessDeniedLetterException::new);
         return RepliedLetterResponse.toDto(letter);
+    }
+
+    // 답장 받은 편지 보관
+    @Transactional
+    public void storeRepliedLetter(CurrentMemberIdRequest request, Long letterId) {
+        Letter letter = letterRepository.findByIdAndSenderIdAndHasRepliedTrue(letterId, request.getMemberId())
+                .orElseThrow(AccessDeniedLetterException::new);
+
+        letter.store(true);
+    }
+
+    // 보관한 편지 보관 해제
+    @Transactional
+    public void deleteStoredLetter(CurrentMemberIdRequest request, Long letterId) {
+        Letter letter = letterRepository.findByIdAndSenderIdAndHasRepliedTrue(letterId, request.getMemberId())
+                .orElseThrow(AccessDeniedLetterException::new);
+
+        letter.store(false);
+    }
+
+    // 보관한 편지 전체 페이징 조회
+    public PagedStoredLetterResponse readStoredLetters(LetterReadCondition cond) {
+        return PagedStoredLetterResponse.of(letterRepository.findAllStoredLetter(cond));
     }
 }
