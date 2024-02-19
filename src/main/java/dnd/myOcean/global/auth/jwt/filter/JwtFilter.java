@@ -34,7 +34,9 @@ public class JwtFilter extends OncePerRequestFilter {
         String accessToken = getTokenFromHeader(request, ACCESS_HEADER);
 
         if (!tokenProvider.validateExpire(accessToken) && tokenProvider.validate(accessToken)) {
-            response.sendRedirect("/api/exception/access-token-expired");
+            String redirectUrl =
+                    "https://" + request.getServerName() + "/api/exception/access-token-expired";
+            response.sendRedirect(redirectUrl);
             return;
         }
 

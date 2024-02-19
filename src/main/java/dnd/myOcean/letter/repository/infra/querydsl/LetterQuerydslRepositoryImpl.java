@@ -57,7 +57,7 @@ public class LetterQuerydslRepositoryImpl extends QuerydslRepositorySupport impl
                                 letter.sender.nickName,
                                 letter.content,
                                 letter.worryType,
-                                letterImage.imagePath.coalesce("이미지가 존재하지 않습니다.")))
+                                letterImage.imagePath))
                         .from(letter)
                         .leftJoin(letter.letterImage, letterImage)
                         .where(predicate)
@@ -94,7 +94,7 @@ public class LetterQuerydslRepositoryImpl extends QuerydslRepositorySupport impl
                                 letter.content,
                                 letter.replyContent,
                                 letter.worryType,
-                                letterImage.imagePath.coalesce("이미지가 존재하지 않습니다.")))
+                                letterImage.imagePath))
                         .from(letter)
                         .leftJoin(letter.letterImage, letterImage)
                         .where(predicate)
