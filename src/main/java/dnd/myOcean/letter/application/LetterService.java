@@ -149,8 +149,9 @@ public class LetterService {
         LetterImage letterImage;
 
         if (image != null) {
-            String imagePath = fileService.uploadImage(image);
-            letterImage = new LetterImage(imagePath, image.getOriginalFilename());
+            letterImage = new LetterImage(image.getOriginalFilename());
+            String imagePath = fileService.uploadImage(image, letterImage.getUniqueName());
+            letterImage.updateImagePath(imagePath);
             return letterImage;
         }
         return null;

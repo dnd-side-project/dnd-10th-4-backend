@@ -3,13 +3,16 @@ package dnd.myOcean.letterimage.domain;
 
 import dnd.myOcean.letterimage.exception.NoExtException;
 import dnd.myOcean.letterimage.exception.UnSupportExtException;
-import jakarta.persistence.*;
+import jakarta.persistence.Column;
+import jakarta.persistence.Entity;
+import jakarta.persistence.GeneratedValue;
+import jakarta.persistence.GenerationType;
+import jakarta.persistence.Id;
+import java.util.Arrays;
+import java.util.UUID;
 import lombok.AccessLevel;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
-
-import java.util.Arrays;
-import java.util.UUID;
 
 @Entity
 @Getter
@@ -32,10 +35,9 @@ public class LetterImage {
     @Column(nullable = false, updatable = false)
     private String imagePath;
 
-    public LetterImage(String imagePath, String originName) {
+    public LetterImage(String originName) {
         this.originName = originName;
         this.uniqueName = extractExtAndGenerateUniqueName(originName);
-        this.imagePath = imagePath;
     }
 
     private String extractExtAndGenerateUniqueName(String originName) {
@@ -61,5 +63,9 @@ public class LetterImage {
     private boolean supportFormat(String ext) {
         return Arrays.stream(extension)
                 .anyMatch(e -> e.equalsIgnoreCase(ext));
+    }
+
+    public void updateImagePath(String imagePath) {
+        this.imagePath = imagePath;
     }
 }

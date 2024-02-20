@@ -11,6 +11,7 @@ import dnd.myOcean.letter.domain.Letter;
 import dnd.myOcean.letter.domain.dto.response.SendLetterResponse;
 import dnd.myOcean.letter.domain.dto.response.StoredLetterResponse;
 import dnd.myOcean.letter.repository.infra.querydsl.dto.LetterReadCondition;
+import dnd.myOcean.letterimage.domain.QLetterImage;
 import java.util.List;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageImpl;
@@ -83,6 +84,11 @@ public class LetterQuerydslRepositoryImpl extends QuerydslRepositorySupport impl
     }
 
     private List<StoredLetterResponse> fetchAllStoredLetter(Predicate predicate, Pageable pageable) {
+        QLetterImage letterSendImage = new QLetterImage(
+                "sendLetterImage");
+        QLetterImage letterReplyImage = new QLetterImage(
+                "replyLetterImage");
+
         return getQuerydsl().applyPagination(
                 pageable,
                 query.select(constructor(StoredLetterResponse.class,
@@ -94,11 +100,11 @@ public class LetterQuerydslRepositoryImpl extends QuerydslRepositorySupport impl
                                 letter.content,
                                 letter.replyContent,
                                 letter.worryType,
-                                letter.sendletterImage.imagePath,
-                                letter.replyletterImage.imagePath))
+                                letterSendImage.imagePath,
+                                letterReplyImage.imagePath))
                         .from(letter)
-                        .leftJoin(letter.sendletterImage, letterImage)
-                        .leftJoin(letter.replyletterImage, letterImage)
+                        .leftJoin(letter.sendletterImage, letterSendImage)
+                        .leftJoin(letter.replyletterImage, letterReplyImage)
                         .where(predicate)
                         .orderBy(letter.createDate.asc())
         ).fetch();

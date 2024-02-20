@@ -2,16 +2,15 @@ package dnd.myOcean.letterimage.application;
 
 import com.amazonaws.services.s3.AmazonS3Client;
 import com.amazonaws.services.s3.model.ObjectMetadata;
+import java.io.ByteArrayInputStream;
+import java.io.ByteArrayOutputStream;
+import java.io.IOException;
 import lombok.RequiredArgsConstructor;
 import net.coobird.thumbnailator.Thumbnails;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.multipart.MultipartFile;
-
-import java.io.ByteArrayInputStream;
-import java.io.ByteArrayOutputStream;
-import java.io.IOException;
 
 @Service
 @RequiredArgsConstructor
@@ -26,14 +25,13 @@ public class FileService {
     private String bucketUrl;
 
     @Transactional
-    public String uploadImage(MultipartFile file) throws IOException {
+    public String uploadImage(MultipartFile file, String uniqueFileName) throws IOException {
         String folderName = "letter" + "/";
-        String imageName = file.getOriginalFilename();
         String fileName = folderName + file.getOriginalFilename();
 
         createResizeImage(bucket, fileName, file);
 
-        return bucketUrl + folderName + imageName;
+        return bucketUrl + folderName + uniqueFileName;
     }
 
     private void createResizeImage(String bucketName, String fileName, MultipartFile image) throws IOException {
