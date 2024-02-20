@@ -63,6 +63,9 @@ public class Member extends BaseEntity {
     @Column
     private Integer updateGenderCount;
 
+    @Column
+    private Integer letterCount;
+
     public void updateBirthday(final String birthday) {
         LocalDate birthDay = LocalDate.parse(birthday);
         this.birthDay = birthDay;
@@ -127,6 +130,7 @@ public class Member extends BaseEntity {
                 .gender(Gender.NONE)
                 .updateAgeCount(0)
                 .updateGenderCount(0)
+                .letterCount(5)
                 .build();
     }
 
@@ -135,5 +139,17 @@ public class Member extends BaseEntity {
         updateBirthday(request.getBirthday());
         updateGender(Gender.from(request.getGender()));
         updateWorries(worries);
+    }
+
+    public boolean exceedLetterLimit() {
+        return this.letterCount <= 0;
+    }
+
+    public void resetLetterCount() {
+        this.letterCount = 5;
+    }
+
+    public void updateLetterCount() {
+        this.letterCount--;
     }
 }

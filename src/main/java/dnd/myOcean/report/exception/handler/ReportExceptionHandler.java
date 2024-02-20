@@ -17,7 +17,7 @@ public class ReportExceptionHandler {
 
     @ExceptionHandler(AlreadyReportExistException.class)
     @ResponseStatus(HttpStatus.BAD_REQUEST)
-    public ResponseEntity alreadyReportExistException(AlreadyReportExistException e) {
+    public ResponseEntity alreadyReportExistException() {
         return new ResponseEntity("이미 신고한 편지입니다.", httpHeaders, HttpStatus.BAD_REQUEST);
     }
 }

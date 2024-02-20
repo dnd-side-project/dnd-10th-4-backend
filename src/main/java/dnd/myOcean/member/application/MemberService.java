@@ -4,7 +4,6 @@ package dnd.myOcean.member.application;
 import dnd.myOcean.global.auth.aop.dto.CurrentMemberIdRequest;
 import dnd.myOcean.member.domain.Gender;
 import dnd.myOcean.member.domain.Member;
-import dnd.myOcean.member.domain.MemberWorry;
 import dnd.myOcean.member.domain.Worry;
 import dnd.myOcean.member.domain.WorryType;
 import dnd.myOcean.member.domain.dto.request.BirthdayUpdateRequest;
@@ -55,6 +54,13 @@ public class MemberService {
                 .collect(Collectors.toList());
 
         member.updateInfo(request, worries);
+    }
+
+    public MemberInfoResponse getMyInfo(CurrentMemberIdRequest request) {
+        Member member = memberRepository.findById(request.getMemberId())
+                .orElseThrow(MemberNotFoundException::new);
+
+        return MemberInfoResponse.of(member);
     }
 
     @Transactional
@@ -113,26 +119,6 @@ public class MemberService {
         Member member = memberRepository.findById(request.getMemberId())
                 .orElseThrow(MemberNotFoundException::new);
         member.clearWorries();
-    }
-
-    public MemberInfoResponse getMyInfo(CurrentMemberIdRequest request) {
-        Member member = memberRepository.findById(request.getMemberId())
-                .orElseThrow(MemberNotFoundException::new);
-
-        List<MemberWorry> memberWorries = member.getWorries();
-
-        List<WorryType> worryTypes = memberWorries.stream()
-                .map(memberWorry -> memberWorry.getWorry().getWorryType())
-                .collect(Collectors.toList());
-
-        return new MemberInfoResponse(member.getId(),
-                member.getEmail(),
-                member.getNickName(),
-                worryTypes,
-                member.getGender().name(),
-                member.getBirthDay(),
-                member.getAge(),
-                member.getRole().name());
     }
 
     @Transactional

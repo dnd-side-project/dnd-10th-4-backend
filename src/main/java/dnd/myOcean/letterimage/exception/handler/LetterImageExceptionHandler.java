@@ -18,16 +18,16 @@ public class LetterImageExceptionHandler {
 
     @ExceptionHandler(UnSupportExtException.class)
     @ResponseStatus(HttpStatus.UNSUPPORTED_MEDIA_TYPE)
-    public ResponseEntity unSupportExtException(UnSupportExtException e) {
-        return new ResponseEntity("업로드 하신 이미지는 지원하지 않는 파일 형식입니다. 이미지가 png, jpg, jpeg, gif, bmp의 형식인지 확인해주세요.",
+    public ResponseEntity unSupportExtException() {
+        return new ResponseEntity("이미지가 png, jpg, jpeg, gif, bmp의 형식인지 확인해주세요.",
                 httpHeaders,
                 HttpStatus.UNSUPPORTED_MEDIA_TYPE);
     }
 
     @ExceptionHandler(NoExtException.class)
     @ResponseStatus(HttpStatus.UNSUPPORTED_MEDIA_TYPE)
-    public ResponseEntity noExtException(NoExtException e) {
-        return new ResponseEntity("업로드 하신 이미지에 확장자가 존재하지 않습니다. ",
+    public ResponseEntity noExtException() {
+        return new ResponseEntity("업로드 하신 이미지에 확장자가 존재하지 않습니다.",
                 httpHeaders,
                 HttpStatus.UNSUPPORTED_MEDIA_TYPE);
     }

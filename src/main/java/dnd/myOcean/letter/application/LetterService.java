@@ -1,6 +1,8 @@
 package dnd.myOcean.letter.application;
 
 
+import dnd.myOcean.global.auth.aop.dto.CurrentMemberIdRequest;
+import dnd.myOcean.global.exception.UnknownException;
 import dnd.myOcean.letter.alarm.event.LetterSendEvent;
 import dnd.myOcean.letter.domain.Letter;
 import dnd.myOcean.letter.domain.LetterTag;
@@ -20,10 +22,9 @@ import dnd.myOcean.letterimage.application.FileService;
 import dnd.myOcean.letterimage.domain.LetterImage;
 import dnd.myOcean.member.domain.Member;
 import dnd.myOcean.member.domain.WorryType;
+import dnd.myOcean.member.exception.ExceedSendLimitException;
 import dnd.myOcean.member.exception.MemberNotFoundException;
 import dnd.myOcean.member.repository.infra.jpa.MemberRepository;
-import dnd.myOcean.global.auth.aop.dto.CurrentMemberIdRequest;
-import dnd.myOcean.global.exception.UnknownException;
 import java.io.IOException;
 import java.util.Collections;
 import java.util.List;
@@ -55,6 +56,12 @@ public class LetterService {
     public void send(LetterSendRequest request) throws IOException {
         Member sender = memberRepository.findById(request.getMemberId())
                 .orElseThrow(MemberNotFoundException::new);
+
+        if (sender.exceedLetterLimit()) {
+            throw new ExceedSendLimitException();
+        }
+
+        sender.updateLetterCount();
 
         List<Member> receivers = filterReceiver(request, memberRepository, sender);
 

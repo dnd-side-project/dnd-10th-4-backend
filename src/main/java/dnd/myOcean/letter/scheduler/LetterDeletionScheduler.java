@@ -9,7 +9,7 @@ import org.springframework.transaction.annotation.Transactional;
 
 @Component
 @RequiredArgsConstructor
-public class LetterScheduler {
+public class LetterDeletionScheduler {
 
     private final LetterRepository letterRepository;
 
