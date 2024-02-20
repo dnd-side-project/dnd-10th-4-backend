@@ -16,7 +16,7 @@ public class LetterTagDto {
     private boolean equalGender;
 
     public static LetterTagDto toDto(LetterTag letterTag) {
-        return new LetterTagDto(letterTag.getAgeStart(),
+        return new LetterTagDto(letterTag.getAgeRangeStart(),
                 letterTag.getAgeRangeEnd(),
                 letterTag.isEqualGender());
     }

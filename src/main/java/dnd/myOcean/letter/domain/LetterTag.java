@@ -12,7 +12,7 @@ import lombok.NoArgsConstructor;
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 public class LetterTag {
 
-    private Integer ageStart;
+    private Integer ageRangeStart;
     private Integer ageRangeEnd;
     private boolean equalGender;
 
