@@ -15,8 +15,8 @@ public interface LetterRepository extends JpaRepository<Letter, Long>, LetterQue
     @Query("SELECT l FROM Letter l JOIN FETCH l.receiver lr WHERE lr.id = :receiverId AND l.hasReplied = false")
     List<Letter> findAllByReceiverIdAndHasRepliedFalse(@Param("receiverId") Long receiverId);
 
-    @Query("SELECT l FROM Letter l JOIN FETCH l.sender sr WHERE sr.id = :senderId AND l.hasReplied = true")
-    List<Letter> findAllBySenderIdAndHasRepliedTrue(@Param("senderId") Long senderId);
+    @Query("SELECT l FROM Letter l JOIN FETCH l.sender sr WHERE sr.id = :senderId AND l.hasReplied = true AND l.isStored = false")
+    List<Letter> findAllBySenderIdAndHasRepliedTrueAndStoredFalse(@Param("senderId") Long senderId);
 
     @Query("SELECT l FROM Letter l JOIN FETCH l.sender ls WHERE l.id = :id AND ls.id = :senderId")
     Optional<Letter> findByIdAndSenderId(@Param("id") Long id,

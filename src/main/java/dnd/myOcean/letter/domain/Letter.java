@@ -39,6 +39,8 @@ public class Letter extends BaseEntity {
     @Column(name = "letter_id")
     private Long id;
 
+    private String letterType;
+
     @Embedded
     private LetterTag letterTag;
 
@@ -80,6 +82,7 @@ public class Letter extends BaseEntity {
                                       LetterTag letterTag, LetterImage sendletterImage, String uuid) {
         return Letter.builder()
                 .sender(sender)
+                .letterType("Normal")
                 .content(content)
                 .receiver(receiver)
                 .worryType(worryType)

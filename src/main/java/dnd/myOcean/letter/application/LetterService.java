@@ -255,7 +255,7 @@ public class LetterService {
     // 답장 받은 편지 전체 조회
     public List<RepliedLetterResponse> readRepliedLetters(CurrentMemberIdRequest request) {
         return RepliedLetterResponse.toDtoList(
-                letterRepository.findAllBySenderIdAndHasRepliedTrue(request.getMemberId())
+                letterRepository.findAllBySenderIdAndHasRepliedTrueAndStoredFalse(request.getMemberId())
         );
     }
 
