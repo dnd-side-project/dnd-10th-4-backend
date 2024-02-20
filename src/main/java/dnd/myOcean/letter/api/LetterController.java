@@ -1,5 +1,7 @@
 package dnd.myOcean.letter.api;
 
+import dnd.myOcean.global.auth.aop.AssignCurrentMemberId;
+import dnd.myOcean.global.auth.aop.dto.CurrentMemberIdRequest;
 import dnd.myOcean.letter.application.LetterService;
 import dnd.myOcean.letter.domain.dto.request.LetterReplyRequest;
 import dnd.myOcean.letter.domain.dto.request.LetterSendRequest;
@@ -9,8 +11,6 @@ import dnd.myOcean.letter.domain.dto.response.SendLetterResponse;
 import dnd.myOcean.letter.repository.infra.querydsl.dto.LetterReadCondition;
 import dnd.myOcean.letter.repository.infra.querydsl.dto.PagedSendLettersResponse;
 import dnd.myOcean.letter.repository.infra.querydsl.dto.PagedStoredLetterResponse;
-import dnd.myOcean.global.auth.aop.AssignCurrentMemberId;
-import dnd.myOcean.global.auth.aop.dto.CurrentMemberIdRequest;
 import jakarta.validation.Valid;
 import java.io.IOException;
 import java.util.List;
@@ -22,7 +22,6 @@ import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.PatchMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
@@ -83,8 +82,8 @@ public class LetterController {
     // 받은 편지에 대한 답장 설정
     @PatchMapping("/reception/reply/{letterId}")
     @AssignCurrentMemberId
-    public ResponseEntity<Void> replyReceivedLetter(@RequestBody LetterReplyRequest request,
-                                                    @PathVariable("letterId") Long letterId) {
+    public ResponseEntity<Void> replyReceivedLetter(@ModelAttribute LetterReplyRequest request,
+                                                    @PathVariable("letterId") Long letterId) throws IOException {
         letterService.replyReceivedLetter(request, letterId);
         return new ResponseEntity<>(HttpStatus.OK);
     }

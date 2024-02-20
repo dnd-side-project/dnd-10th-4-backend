@@ -32,7 +32,9 @@ public class RepliedLetterResponse {
     private String content;
     private String repliedContent;
     private WorryType worryType;
-    private String imagePath;
+    private String sendImagePath;
+    private String replyImagePath;
+
 
     public static RepliedLetterResponse toDto(Letter letter) {
         return RepliedLetterResponse.builder()
@@ -45,7 +47,11 @@ public class RepliedLetterResponse {
                 .content(letter.getContent())
                 .repliedContent(letter.getReplyContent())
                 .worryType(letter.getWorryType())
-                .imagePath(letter.getLetterImage() == null ? "이미지가 존재하지 않습니다" : letter.getLetterImage().getImagePath())
+                .sendImagePath(letter.getSendletterImage() == null ?
+                        null : letter.getSendletterImage().getImagePath())
+                .sendImagePath(
+                        letter.getReplyletterImage() == null ?
+                                null : letter.getReplyletterImage().getImagePath())
                 .build();
     }
 

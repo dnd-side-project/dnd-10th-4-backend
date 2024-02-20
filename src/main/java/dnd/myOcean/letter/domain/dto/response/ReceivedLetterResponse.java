@@ -26,7 +26,7 @@ public class ReceivedLetterResponse {
     private String receiverNickname;
     private String content;
     private WorryType worryType;
-    private String imagePath;
+    private String sendImagePath;
 
     public static ReceivedLetterResponse toDto(Letter letter) {
         return ReceivedLetterResponse.builder()
@@ -37,7 +37,7 @@ public class ReceivedLetterResponse {
                 .senderNickname(letter.getSender().getNickName())
                 .content(letter.getContent())
                 .worryType(letter.getWorryType())
-                .imagePath(letter.getLetterImage() == null ? "이미지가 존재하지 않습니다" : letter.getLetterImage().getImagePath())
+                .sendImagePath(letter.getSendletterImage() == null ? null : letter.getSendletterImage().getImagePath())
                 .build();
     }
 }

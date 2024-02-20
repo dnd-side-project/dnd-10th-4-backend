@@ -1,10 +1,10 @@
 package dnd.myOcean.letter.domain;
 
 
+import dnd.myOcean.global.common.base.BaseEntity;
 import dnd.myOcean.letterimage.domain.LetterImage;
 import dnd.myOcean.member.domain.Member;
 import dnd.myOcean.member.domain.WorryType;
-import dnd.myOcean.global.common.base.BaseEntity;
 import jakarta.persistence.CascadeType;
 import jakarta.persistence.Column;
 import jakarta.persistence.Embedded;
@@ -17,6 +17,7 @@ import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
 import jakarta.persistence.JoinColumn;
 import jakarta.persistence.ManyToOne;
+import jakarta.persistence.OneToOne;
 import java.time.LocalDateTime;
 import lombok.AccessLevel;
 import lombok.AllArgsConstructor;
@@ -58,8 +59,12 @@ public class Letter extends BaseEntity {
     private WorryType worryType;
 
     @ManyToOne(fetch = FetchType.LAZY, cascade = CascadeType.ALL)
-    @JoinColumn(name = "letter_image_id")
-    private LetterImage letterImage;
+    @JoinColumn(name = "send_letter_image_id")
+    private LetterImage sendletterImage;
+
+    @OneToOne(fetch = FetchType.LAZY, cascade = CascadeType.ALL)
+    @JoinColumn(name = "reply_letter_image_id")
+    private LetterImage replyletterImage;
 
     private String uuid;
 
@@ -72,14 +77,14 @@ public class Letter extends BaseEntity {
     private boolean isStored;
 
     public static Letter createLetter(Member sender, String content, Member receiver, WorryType worryType,
-                                      LetterTag letterTag, LetterImage letterImage, String uuid) {
+                                      LetterTag letterTag, LetterImage sendletterImage, String uuid) {
         return Letter.builder()
                 .sender(sender)
                 .content(content)
                 .receiver(receiver)
                 .worryType(worryType)
                 .letterTag(letterTag)
-                .letterImage(letterImage)
+                .sendletterImage(sendletterImage)
                 .uuid(uuid)
                 .isDeleteBySender(false)
                 .hasReplied(false)
@@ -91,9 +96,10 @@ public class Letter extends BaseEntity {
         this.isDeleteBySender = true;
     }
 
-    public void reply(String replyContent) {
+    public void reply(String replyContent, LetterImage replyletterImage) {
         this.replyContent = replyContent;
         this.hasReplied = true;
+        this.replyletterImage = replyletterImage;
         this.repliedDate = LocalDateTime.now();
     }
 

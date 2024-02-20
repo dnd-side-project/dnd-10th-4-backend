@@ -9,17 +9,17 @@ spring:
 
   jpa:
     hibernate:
-      ddl-auto: validate
+      ddl-auto: create
     show-sql: false
     properties:
       hibernate:
         default_batch_fetch_size: 1000
         format_sql: true
-    defer-datasource-initialization: false
+    defer-datasource-initialization: true
 
   sql:
     init:
-      mode: never
+      mode: always
 
   datasource:
     driver-class-name: com.mysql.cj.jdbc.Driver

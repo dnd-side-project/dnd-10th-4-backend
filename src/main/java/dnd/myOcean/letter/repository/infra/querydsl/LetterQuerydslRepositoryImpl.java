@@ -59,7 +59,7 @@ public class LetterQuerydslRepositoryImpl extends QuerydslRepositorySupport impl
                                 letter.worryType,
                                 letterImage.imagePath))
                         .from(letter)
-                        .leftJoin(letter.letterImage, letterImage)
+                        .leftJoin(letter.sendletterImage, letterImage)
                         .where(predicate)
                         .orderBy(letter.createDate.asc())
         ).fetch();
@@ -94,9 +94,11 @@ public class LetterQuerydslRepositoryImpl extends QuerydslRepositorySupport impl
                                 letter.content,
                                 letter.replyContent,
                                 letter.worryType,
-                                letterImage.imagePath))
+                                letter.sendletterImage.imagePath,
+                                letter.replyletterImage.imagePath))
                         .from(letter)
-                        .leftJoin(letter.letterImage, letterImage)
+                        .leftJoin(letter.sendletterImage, letterImage)
+                        .leftJoin(letter.replyletterImage, letterImage)
                         .where(predicate)
                         .orderBy(letter.createDate.asc())
         ).fetch();

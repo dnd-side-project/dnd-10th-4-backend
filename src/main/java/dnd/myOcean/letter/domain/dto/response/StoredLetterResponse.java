@@ -1,7 +1,6 @@
 package dnd.myOcean.letter.domain.dto.response;
 
 import com.fasterxml.jackson.annotation.JsonFormat;
-import dnd.myOcean.letter.domain.Letter;
 import dnd.myOcean.letter.domain.LetterTag;
 import dnd.myOcean.member.domain.WorryType;
 import java.time.LocalDateTime;
@@ -27,20 +26,6 @@ public class StoredLetterResponse {
     private String content;
     private String repliedContent;
     private WorryType worryType;
-    private String imagePath;
-
-    // 보관한 편지 단건 조회 API 추가 시 사용 예정
-    public static StoredLetterResponse toDto(Letter letter) {
-        return StoredLetterResponse.builder()
-                .createdAt(letter.getCreateDate())
-                .letterId(letter.getId())
-                .letterTag(letter.getLetterTag())
-                .senderNickname(letter.getSender().getNickName())
-                .receiverNickname(letter.getReceiver().getNickName())
-                .content(letter.getContent())
-                .repliedContent(letter.getReplyContent())
-                .worryType(letter.getWorryType())
-                .imagePath(letter.getLetterImage() == null ? "이미지가 존재하지 않습니다" : letter.getLetterImage().getImagePath())
-                .build();
-    }
+    private String sendImagePath;
+    private String replyImagePath;
 }

@@ -198,7 +198,7 @@ public class LetterService {
 
     // 받은 편지에 대한 답장 설정
     @Transactional
-    public void replyReceivedLetter(LetterReplyRequest request, Long letterId) {
+    public void replyReceivedLetter(LetterReplyRequest request, Long letterId) throws IOException {
         Letter letter = letterRepository.findByIdAndReceiverId(letterId,
                         request.getMemberId())
                 .orElseThrow(AccessDeniedLetterException::new);
@@ -207,7 +207,9 @@ public class LetterService {
             throw new AlreadyReplyExistException();
         }
 
-        letter.reply(request.getReplyContent());
+        MultipartFile image = request.getImage();
+        LetterImage letterImage = getLetterImage(image);
+        letter.reply(request.getReplyContent(), letterImage);
     }
 
     // 받은 편지 답장하지 않고 다른 사람에게 전달
