@@ -203,7 +203,7 @@ public class LetterService {
                         request.getMemberId())
                 .orElseThrow(AccessDeniedLetterException::new);
 
-        if (!letter.getReplyContent().isEmpty()) {
+        if (letter.getReplyContent() != null) {
             throw new AlreadyReplyExistException();
         }
 
