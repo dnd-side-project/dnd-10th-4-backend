@@ -27,7 +27,7 @@ public class FileService {
     @Transactional
     public String uploadImage(MultipartFile file, String uniqueFileName) throws IOException {
         String folderName = "letter" + "/";
-        String fileName = folderName + file.getOriginalFilename();
+        String fileName = folderName + uniqueFileName;
 
         createResizeImage(bucket, fileName, file);
 
