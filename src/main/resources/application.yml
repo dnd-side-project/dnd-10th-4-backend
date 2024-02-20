@@ -15,7 +15,11 @@ spring:
       hibernate:
         default_batch_fetch_size: 1000
         format_sql: true
-    defer-datasource-initialization: true
+    defer-datasource-initialization: false
+
+  sql:
+    init:
+      mode: never
 
   datasource:
     driver-class-name: com.mysql.cj.jdbc.Driver
@@ -49,9 +53,6 @@ spring:
             token-uri: https://kauth.kakao.com/oauth/token
             user-info-uri: https://kapi.kakao.com/v2/user/me
             user-name-attribute: id
-  sql:
-    init:
-      mode: always
 
   mail:
     host: smtp.gmail.com

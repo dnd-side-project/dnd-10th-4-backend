@@ -1,5 +1,7 @@
 package dnd.myOcean.member.api;
 
+import dnd.myOcean.global.auth.aop.AssignCurrentMemberId;
+import dnd.myOcean.global.auth.aop.dto.CurrentMemberIdRequest;
 import dnd.myOcean.member.application.MemberService;
 import dnd.myOcean.member.domain.dto.request.BirthdayUpdateRequest;
 import dnd.myOcean.member.domain.dto.request.GenderUpdateRequest;
@@ -7,8 +9,6 @@ import dnd.myOcean.member.domain.dto.request.InfoUpdateRequest;
 import dnd.myOcean.member.domain.dto.request.NicknameUpdateRequest;
 import dnd.myOcean.member.domain.dto.request.WorryCreateRequest;
 import dnd.myOcean.member.domain.dto.response.MemberInfoResponse;
-import dnd.myOcean.global.auth.aop.AssignCurrentMemberId;
-import dnd.myOcean.global.auth.aop.dto.CurrentMemberIdRequest;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
