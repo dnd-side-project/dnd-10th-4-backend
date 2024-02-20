@@ -47,11 +47,9 @@ public class RepliedLetterResponse {
                 .content(letter.getContent())
                 .repliedContent(letter.getReplyContent())
                 .worryType(letter.getWorryType())
-                .sendImagePath(letter.getSendletterImage() == null ?
-                        null : letter.getSendletterImage().getImagePath())
-                .sendImagePath(
-                        letter.getReplyletterImage() == null ?
-                                null : letter.getReplyletterImage().getImagePath())
+                .sendImagePath(letter.getSendletterImage() == null ? null : letter.getSendletterImage().getImagePath())
+                .replyImagePath(
+                        letter.getReplyletterImage() == null ? null : letter.getReplyletterImage().getImagePath())
                 .build();
     }
 
