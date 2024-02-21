@@ -13,7 +13,7 @@ public interface MemberRepository extends JpaRepository<Member, Long> {
 
     Optional<Member> findByEmail(String email);
 
-    @Query("SELECT M FROM Member m WHERE m.nickName = '낯선 바다'")
+    @Query("SELECT m FROM Member m WHERE m.nickName = '낯선 바다'")
     Optional<Member> findRootUser();
 
     @Query("SELECT DISTINCT m FROM Member m "
