@@ -3,9 +3,6 @@ package dnd.myOcean.member.application;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
-import dnd.myOcean.member.domain.Member;
-import dnd.myOcean.member.domain.dto.request.KakaoLoginRequest;
-import dnd.myOcean.member.repository.infra.jpa.MemberRepository;
 import dnd.myOcean.global.auth.exception.auth.InvalidAuthCodeException;
 import dnd.myOcean.global.auth.exception.auth.ReissueFailException;
 import dnd.myOcean.global.auth.jwt.token.LoginResponse;
@@ -13,6 +10,15 @@ import dnd.myOcean.global.auth.jwt.token.TokenProvider;
 import dnd.myOcean.global.auth.jwt.token.TokenResponse;
 import dnd.myOcean.global.auth.jwt.token.repository.redis.RefreshTokenRedisRepository;
 import dnd.myOcean.global.common.auth.RefreshToken;
+import dnd.myOcean.letter.domain.Letter;
+import dnd.myOcean.letter.repository.infra.jpa.LetterRepository;
+import dnd.myOcean.letterimage.domain.LetterImage;
+import dnd.myOcean.letterimage.exception.LetterImageNotFoundException;
+import dnd.myOcean.letterimage.repository.infra.jpa.LetterImageRepository;
+import dnd.myOcean.member.domain.Member;
+import dnd.myOcean.member.domain.dto.request.KakaoLoginRequest;
+import dnd.myOcean.member.exception.MemberNotFoundException;
+import dnd.myOcean.member.repository.infra.jpa.MemberRepository;
 import jakarta.servlet.http.HttpServletRequest;
 import java.util.ArrayList;
 import java.util.List;
@@ -43,6 +49,8 @@ public class AuthService {
 
     private final TokenProvider tokenProvider;
     private final MemberRepository memberRepository;
+    private final LetterRepository letterRepository;
+    private final LetterImageRepository letterImageRepository;
     private final RefreshTokenRedisRepository refreshTokenRedisRepository;
 
     @Value("${kakao.client.id}")
@@ -80,6 +88,11 @@ public class AuthService {
         saveRefreshTokenOnRedis(member, tokenResponse);
 
         if (member.isFirstLogin()) {
+            Member root = memberRepository.findByEmail("oceanLetter").orElseThrow(MemberNotFoundException::new);
+            LetterImage letterImage = letterImageRepository.findOnboardingLetter()
+                    .orElseThrow(LetterImageNotFoundException::new);
+            letterRepository.save(Letter.createOnboardingLetter(root, member, letterImage));
+
             return LoginResponse.of(tokenResponse.getAccessToken(), tokenResponse.getRefreshToken(), true);
         }
 

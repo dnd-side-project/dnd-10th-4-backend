@@ -95,6 +95,19 @@ public class Letter extends BaseEntity {
                 .build();
     }
 
+    public static Letter createOnboardingLetter(Member sender, Member receiver, LetterImage sendletterImage) {
+        return Letter.builder()
+                .sender(sender)
+                .letterType("Onboarding")
+                .content("${letter.letter}")
+                .receiver(receiver)
+                .sendletterImage(sendletterImage)
+                .isDeleteBySender(false)
+                .hasReplied(false)
+                .isStored(false)
+                .build();
+    }
+
     public void deleteBySender() {
         this.isDeleteBySender = true;
     }
