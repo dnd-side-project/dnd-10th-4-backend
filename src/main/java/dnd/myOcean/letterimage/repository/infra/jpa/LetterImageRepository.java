@@ -7,6 +7,6 @@ import org.springframework.data.jpa.repository.Query;
 
 public interface LetterImageRepository extends JpaRepository<LetterImage, Long> {
 
-    @Query("SELECT li FROM LetterImage li WHERE li.originName = 'oceanLetter.jpeg'")
+    @Query("SELECT li FROM LetterImage li WHERE li.originName = 'oceanImage.jpeg'")
     Optional<LetterImage> findOnboardingLetter();
 }

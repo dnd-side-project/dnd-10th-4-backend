@@ -13,7 +13,8 @@ public interface MemberRepository extends JpaRepository<Member, Long> {
 
     Optional<Member> findByEmail(String email);
 
-    Optional<Member> findByNickName(String nickName);
+    @Query("SELECT M FROM Member m WHERE m.nickName = '낯선 바다'")
+    Optional<Member> findRootUser();
 
     @Query("SELECT DISTINCT m FROM Member m "
             + "JOIN FETCH m.worries memberworry "
@@ -39,8 +40,4 @@ public interface MemberRepository extends JpaRepository<Member, Long> {
 
     @Query(value = "SELECT m FROM Member m WHERE m.id != :id ORDER BY RAND() LIMIT :n", nativeQuery = false)
     List<Member> findRandomMembers(@Param("id") Long id, @Param("n") int n);
-
-    boolean existsByNickName(String nickname);
-
-    List<Member> findAllByIdNot(@Param("id") Long id);
 }

@@ -95,11 +95,12 @@ public class Letter extends BaseEntity {
                 .build();
     }
 
-    public static Letter createOnboardingLetter(Member sender, Member receiver, LetterImage sendletterImage) {
+    public static Letter createOnboardingLetter(Member sender, Member receiver, LetterImage sendletterImage,
+                                                String content) {
         return Letter.builder()
                 .sender(sender)
                 .letterType("Onboarding")
-                .content("${letter.letter}")
+                .content(content)
                 .receiver(receiver)
                 .sendletterImage(sendletterImage)
                 .isDeleteBySender(false)

@@ -47,6 +47,9 @@ public class AuthService {
     private static final String REFRESH_HEADER = "RefreshToken";
     private static final String PREFIX = "낯선 ";
 
+    @Value("${letter.onboarding.content}")
+    private String onboardingContent;
+
     private final TokenProvider tokenProvider;
     private final MemberRepository memberRepository;
     private final LetterRepository letterRepository;
@@ -88,10 +91,10 @@ public class AuthService {
         saveRefreshTokenOnRedis(member, tokenResponse);
 
         if (member.isFirstLogin()) {
-            Member root = memberRepository.findByEmail("oceanLetter").orElseThrow(MemberNotFoundException::new);
+            Member rootMember = memberRepository.findRootUser().orElseThrow(MemberNotFoundException::new);
             LetterImage letterImage = letterImageRepository.findOnboardingLetter()
                     .orElseThrow(LetterImageNotFoundException::new);
-            letterRepository.save(Letter.createOnboardingLetter(root, member, letterImage));
+            letterRepository.save(Letter.createOnboardingLetter(rootMember, member, letterImage, onboardingContent));
 
             return LoginResponse.of(tokenResponse.getAccessToken(), tokenResponse.getRefreshToken(), true);
         }

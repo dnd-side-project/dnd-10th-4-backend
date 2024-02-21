@@ -82,3 +82,6 @@ cloud:
       accessKey: '${cloud.aws.s3.credentials.accessKey}'
       secretKey: '${cloud.aws.s3.credentials.secretKey}'
 
+letter:
+  onboarding:
+    content: 'hi'
