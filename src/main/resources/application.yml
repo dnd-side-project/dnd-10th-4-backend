@@ -84,4 +84,4 @@ cloud:
 
 letter:
   onboarding:
-    content: 'hi'
+    content: '${onboarding.content}'

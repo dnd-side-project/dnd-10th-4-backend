@@ -21,6 +21,7 @@ public class ReceivedLetterResponse {
     private LocalDateTime createdAt;
 
     private Long letterId;
+    private String letterType;
     private LetterTag letterTag;
     private String senderNickname;
     private String receiverNickname;
@@ -32,6 +33,7 @@ public class ReceivedLetterResponse {
         return ReceivedLetterResponse.builder()
                 .createdAt(letter.getCreateDate())
                 .letterId(letter.getId())
+                .letterType(letter.getLetterType())
                 .letterTag(letter.getLetterTag())
                 .receiverNickname(letter.getReceiver().getNickName())
                 .senderNickname(letter.getSender().getNickName())

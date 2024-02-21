@@ -82,7 +82,6 @@ public class Letter extends BaseEntity {
                                       LetterTag letterTag, LetterImage sendletterImage, String uuid) {
         return Letter.builder()
                 .sender(sender)
-                .letterType("Normal")
                 .content(content)
                 .receiver(receiver)
                 .worryType(worryType)

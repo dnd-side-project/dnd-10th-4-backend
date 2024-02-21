@@ -45,10 +45,7 @@ import org.springframework.web.client.RestTemplate;
 public class AuthService {
 
     private static final String REFRESH_HEADER = "RefreshToken";
-    private static final String PREFIX = "낯선 ";
 
-    @Value("${letter.onboarding.content}")
-    private String onboardingContent;
 
     private final TokenProvider tokenProvider;
     private final MemberRepository memberRepository;
@@ -56,6 +53,9 @@ public class AuthService {
     private final LetterImageRepository letterImageRepository;
     private final RefreshTokenRedisRepository refreshTokenRedisRepository;
 
+    @Value("${letter.onboarding.content}")
+    private String onboardingContent;
+    
     @Value("${kakao.client.id}")
     private String kakaoClientId;
 

@@ -1,5 +1,6 @@
 package dnd.myOcean.letterimage.exception.handler;
 
+import dnd.myOcean.letterimage.exception.LetterImageNotFoundException;
 import dnd.myOcean.letterimage.exception.NoExtException;
 import dnd.myOcean.letterimage.exception.UnSupportExtException;
 import lombok.RequiredArgsConstructor;
@@ -30,5 +31,13 @@ public class LetterImageExceptionHandler {
         return new ResponseEntity("업로드 하신 이미지에 확장자가 존재하지 않습니다.",
                 httpHeaders,
                 HttpStatus.UNSUPPORTED_MEDIA_TYPE);
+    }
+
+    @ExceptionHandler(LetterImageNotFoundException.class)
+    @ResponseStatus(HttpStatus.NOT_FOUND)
+    public ResponseEntity letterImageNotFoundException() {
+        return new ResponseEntity("존재하지 않는 이미지입니다.",
+                httpHeaders,
+                HttpStatus.NOT_FOUND);
     }
 }
