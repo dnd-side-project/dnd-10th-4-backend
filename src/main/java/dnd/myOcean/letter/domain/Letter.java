@@ -44,7 +44,7 @@ public class Letter extends BaseEntity {
     @Embedded
     private LetterTag letterTag;
 
-    @Column(updatable = false)
+    @Column(updatable = false, length = 1000)
     private String content;
 
     @ManyToOne(fetch = FetchType.LAZY)
