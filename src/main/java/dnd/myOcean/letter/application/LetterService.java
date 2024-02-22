@@ -262,7 +262,9 @@ public class LetterService {
     // 답장 받은 단건 조회
     @Transactional
     public RepliedLetterResponse readRepliedLetter(CurrentMemberIdRequest request, Long letterId) {
-        Letter letter = letterRepository.findByIdAndSenderIdAndHasRepliedTrue(letterId, request.getMemberId())
+        Letter letter = letterRepository.findByIdAndSenderIdAndHasRepliedTrueAndStoredFalse(
+                        letterId,
+                        request.getMemberId())
                 .orElseThrow(AccessDeniedLetterException::new);
         return RepliedLetterResponse.toDto(letter);
     }
@@ -270,7 +272,8 @@ public class LetterService {
     // 답장 받은 편지 보관
     @Transactional
     public void storeRepliedLetter(CurrentMemberIdRequest request, Long letterId) {
-        Letter letter = letterRepository.findByIdAndSenderIdAndHasRepliedTrue(letterId, request.getMemberId())
+        Letter letter = letterRepository.findByIdAndSenderIdAndHasRepliedTrueAndStoredFalse(letterId,
+                        request.getMemberId())
                 .orElseThrow(AccessDeniedLetterException::new);
 
         letter.store(true);
@@ -279,7 +282,8 @@ public class LetterService {
     // 보관한 편지 보관 해제
     @Transactional
     public void deleteStoredLetter(CurrentMemberIdRequest request, Long letterId) {
-        Letter letter = letterRepository.findByIdAndSenderIdAndHasRepliedTrue(letterId, request.getMemberId())
+        Letter letter = letterRepository.findByIdAndSenderIdAndHasRepliedTrueAndStoredTrue(letterId,
+                        request.getMemberId())
                 .orElseThrow(AccessDeniedLetterException::new);
 
         letter.store(false);
