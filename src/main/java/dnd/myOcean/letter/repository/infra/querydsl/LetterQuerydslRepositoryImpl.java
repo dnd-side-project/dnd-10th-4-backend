@@ -100,6 +100,7 @@ public class LetterQuerydslRepositoryImpl extends QuerydslRepositorySupport impl
                                 letter.createDate,
                                 letter.repliedDate,
                                 letter.id,
+                                letter.letterType,
                                 letter.letterTag,
                                 letter.sender.nickName,
                                 letter.receiver.nickName,

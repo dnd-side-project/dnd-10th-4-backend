@@ -23,6 +23,7 @@ public class StoredLetterResponse {
     private LocalDateTime repliedAt;
 
     private Long letterId;
+    private String letterType;
     private LetterTag letterTag;
     private String senderNickname;
     private String receiverNickname;
