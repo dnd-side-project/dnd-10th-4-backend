@@ -190,7 +190,8 @@ public class LetterService {
 
     // 받은 편지 전체 조회
     public List<ReceivedLetterResponse> readReceivedLetters(CurrentMemberIdRequest request) {
-        List<Letter> letters = letterRepository.findAllByReceiverIdAndHasRepliedFalse(request.getMemberId());
+        List<Letter> letters = letterRepository.findAllByReceiverIdAndHasRepliedFalseAndStoredFalse(
+                request.getMemberId());
 
         return letters.stream()
                 .map(letter -> ReceivedLetterResponse.toDto(letter))
