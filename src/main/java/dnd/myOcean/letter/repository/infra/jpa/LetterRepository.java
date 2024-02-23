@@ -12,8 +12,8 @@ import org.springframework.data.repository.query.Param;
 
 public interface LetterRepository extends JpaRepository<Letter, Long>, LetterQuerydslRepository {
 
-    @Query("SELECT l FROM Letter l JOIN FETCH l.receiver lr WHERE lr.id = :receiverId AND l.hasReplied = false")
-    List<Letter> findAllByReceiverIdAndHasRepliedFalse(@Param("receiverId") Long receiverId);
+    @Query("SELECT l FROM Letter l JOIN FETCH l.receiver lr WHERE lr.id = :receiverId AND l.hasReplied = false AND l.isStored = false")
+    List<Letter> findAllByReceiverIdAndHasRepliedFalseAndStoredFalse(@Param("receiverId") Long receiverId);
 
     @Query("SELECT l FROM Letter l JOIN FETCH l.sender sr WHERE sr.id = :senderId AND l.hasReplied = true AND l.isStored = false")
     List<Letter> findAllBySenderIdAndHasRepliedTrueAndStoredFalse(@Param("senderId") Long senderId);
