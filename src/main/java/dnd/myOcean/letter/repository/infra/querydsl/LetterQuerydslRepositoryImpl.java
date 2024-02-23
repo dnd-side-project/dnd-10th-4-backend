@@ -13,6 +13,8 @@ import dnd.myOcean.letter.domain.dto.response.StoredLetterResponse;
 import dnd.myOcean.letter.repository.infra.querydsl.dto.LetterReadCondition;
 import dnd.myOcean.letterimage.domain.QLetterImage;
 import java.util.List;
+import java.util.function.Function;
+import java.util.stream.Collectors;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageImpl;
 import org.springframework.data.domain.PageRequest;
@@ -35,7 +37,17 @@ public class LetterQuerydslRepositoryImpl extends QuerydslRepositorySupport impl
     public Page<SendLetterResponse> findAllSendLetter(LetterReadCondition cond) {
         Pageable pageable = PageRequest.of(cond.getPage(), cond.getSize());
         Predicate predicate = createPredicateByCurrentMemberSend(cond);
-        return new PageImpl<>(fetchAllSendLetter(predicate, pageable), pageable, fetchCount(predicate));
+        List<SendLetterResponse> sendLetterResponses = fetchAllSendLetter(predicate, pageable);
+
+        // uuid 기준 중복 제거
+        List<SendLetterResponse> distinctSendLetterResponses = sendLetterResponses.stream()
+                .collect(Collectors.toMap(SendLetterResponse::getUuid, Function.identity(),
+                        (existing, replacement) -> existing))
+                .values()
+                .stream()
+                .collect(Collectors.toList());
+
+        return new PageImpl<>(distinctSendLetterResponses, pageable, fetchCount(predicate));
     }
 
     private Predicate createPredicateByCurrentMemberSend(LetterReadCondition cond) {
@@ -54,6 +66,7 @@ public class LetterQuerydslRepositoryImpl extends QuerydslRepositorySupport impl
                 query.select(constructor(SendLetterResponse.class,
                                 letter.createDate,
                                 letter.id,
+                                letter.uuid,
                                 letter.letterTag,
                                 letter.sender.nickName,
                                 letter.content,

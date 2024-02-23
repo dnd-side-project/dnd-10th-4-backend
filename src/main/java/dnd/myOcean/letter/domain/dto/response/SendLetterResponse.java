@@ -20,6 +20,7 @@ public class SendLetterResponse {
     @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd'T'HH:mm:ss", timezone = "Asia/Seoul")
     private LocalDateTime createdAt;
     private Long letterId;
+    private String uuid;
     private LetterTag letterTag;
     private String senderNickname;
     private String content;
@@ -31,6 +32,7 @@ public class SendLetterResponse {
                 .createdAt(letter.getCreateDate())
                 .letterTag(letter.getLetterTag())
                 .letterId(letter.getId())
+                .uuid(letter.getUuid())
                 .senderNickname(letter.getSender().getNickName())
                 .content(letter.getContent())
                 .worryType(letter.getWorryType())
