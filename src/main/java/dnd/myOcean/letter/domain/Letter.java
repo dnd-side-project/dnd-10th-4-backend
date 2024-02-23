@@ -100,6 +100,7 @@ public class Letter extends BaseEntity {
                 .sender(sender)
                 .letterType("Onboarding")
                 .content(content)
+                .replyContent("온보딩 편지에 대한 답장")
                 .receiver(receiver)
                 .sendletterImage(sendletterImage)
                 .isDeleteBySender(false)
