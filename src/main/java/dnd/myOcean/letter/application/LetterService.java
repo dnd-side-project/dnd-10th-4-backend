@@ -272,7 +272,8 @@ public class LetterService {
     // 답장 받은 편지 보관
     @Transactional
     public void storeRepliedLetter(CurrentMemberIdRequest request, Long letterId) {
-        Letter letter = letterRepository.findByIdAndSenderIdAndHasRepliedTrueAndStoredFalse(letterId,
+        Letter letter = letterRepository.findByIdAndSenderIdAndHasRepliedTrueAndStoredFalse(
+                        letterId,
                         request.getMemberId())
                 .orElseThrow(AccessDeniedLetterException::new);
 
@@ -292,5 +293,21 @@ public class LetterService {
     // 보관한 편지 전체 페이징 조회
     public PagedStoredLetterResponse readStoredLetters(LetterReadCondition cond) {
         return PagedStoredLetterResponse.of(letterRepository.findAllStoredLetter(cond));
+    }
+
+    // 온보딩 편지 보관
+    @Transactional
+    public void storeOnboardingLetter(CurrentMemberIdRequest request, Long letterId) {
+        Letter letter = letterRepository.findByIdAndReceiverIdAndOnboardingLetter(
+                        letterId,
+                        request.getMemberId())
+                .orElseThrow(AccessDeniedLetterException::new);
+
+        if (letter.isStored()) {
+            letter.store(false);
+            return;
+        }
+
+        letter.store(true);
     }
 }

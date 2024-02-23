@@ -136,4 +136,13 @@ public class LetterController {
         letterService.deleteStoredLetter(request, letterId);
         return new ResponseEntity<>(HttpStatus.OK);
     }
+
+    // 온보딩 편지 보관하기
+    @PatchMapping("/onboarding/storage/{letterId}")
+    @AssignCurrentMemberId
+    public ResponseEntity<Void> storeOnboardingLetter(CurrentMemberIdRequest request,
+                                                      @PathVariable("letterId") Long letterId) {
+        letterService.storeOnboardingLetter(request, letterId);
+        return new ResponseEntity<>(HttpStatus.OK);
+    }
 }

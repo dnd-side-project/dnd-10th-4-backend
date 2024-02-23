@@ -76,8 +76,13 @@ public class LetterQuerydslRepositoryImpl extends QuerydslRepositorySupport impl
     private Predicate createPredicateByCurrentMemberStored(LetterReadCondition cond) {
         BooleanBuilder builder = new BooleanBuilder();
         if (!String.valueOf(cond.getMemberId()).isEmpty()) {
-            builder.and(letter.sender.id.eq(cond.getMemberId()));
-            builder.and(letter.isStored.isTrue());
+            builder.and(letter.sender.id.eq(cond.getMemberId()))
+                    .and(letter.isStored.isTrue());
+
+            builder.or(letter.receiver.id.eq(cond.getMemberId()))
+                    .and(letter.letterType.eq("Onboarding"))
+                    .and(letter.isStored.isTrue());
+
             return builder;
         }
         return builder;
