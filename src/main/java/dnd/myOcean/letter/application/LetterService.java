@@ -173,7 +173,9 @@ public class LetterService {
     public void deleteSendLetter(CurrentMemberIdRequest request, Long letterId) {
         Letter letter = letterRepository.findByIdAndSenderId(letterId, request.getMemberId())
                 .orElseThrow(AccessDeniedLetterException::new);
-        letter.deleteBySender();
+
+        List<Letter> sendLetters = letterRepository.findAllByUuid(letter.getUuid());
+        sendLetters.forEach(l -> l.deleteBySender());
     }
 
     // 보낸 편지 페이징 조회 (삭제하지 않은 메시지만 페이징)
