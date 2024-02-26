@@ -22,7 +22,7 @@ public class AlarmService {
                 "\n" +
                 "자세한 내용은 내 마음속 바다에서 확인해주세요\n" +
                 "\n" +
-                "\uD83D\uDC49 <a href=\"https://sea-of-my-heart.vercel.app/\">내 마음 속 바다 바로가기</a>";
+                "\uD83D\uDC49 <a href=\"https://sea-of-my-heart.vercel.app/\"> 내 마음 속 바다 바로가기 </a>";
         message.setText(msg);
 
         receiversEmail.forEach(receiverEmail -> {
