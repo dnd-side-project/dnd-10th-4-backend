@@ -9,8 +9,7 @@ import org.springframework.scheduling.concurrent.ThreadPoolTaskExecutor;
 @Configuration
 @EnableAsync
 public class AlarmAsyncConfig implements AsyncConfigurer {
-
-    //    @Bean(name = "alarmSender")
+    
     @Override
     public Executor getAsyncExecutor() {
         ThreadPoolTaskExecutor executor = new ThreadPoolTaskExecutor();
