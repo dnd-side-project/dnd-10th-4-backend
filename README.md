@@ -100,7 +100,17 @@ https://github.com/dnd-side-project/dnd-10th-4-frontend/assets/50488780/c40ebba9
     <img width=800" src="https://github.com/dnd-side-project/dnd-10th-4-frontend/assets/98106371/6cd41355-c863-4212-a5cb-1c20735052eb" />
 </p>
 
-<br/>
+- 패키지 매니저: npm (최신 LTS 버전)
+- 개발 언어: TypeScript
+- 번들러: Vite
+- 라이브러리: React 18
+- 상태 관리 : Zustand
+- 스타일 라이브러리: Emotion
+- 데이터 패칭: axios, TanStack Query
+- Form 관리: React Hook Form, zod
+- 배포: Vercel, Chromatic
+- UI 문서화: Storybook
+  <br/>
 
 ## 팀 소개
 
