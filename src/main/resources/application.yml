@@ -9,17 +9,17 @@ spring:
 
   jpa:
     hibernate:
-      ddl-auto: validate
+      ddl-auto: create
     show-sql: false
     properties:
       hibernate:
         default_batch_fetch_size: 1000
         format_sql: true
-    defer-datasource-initialization: false
+    defer-datasource-initialization: true
 
   sql:
     init:
-      mode: never
+      mode: always
 
   datasource:
     driver-class-name: com.mysql.cj.jdbc.Driver
@@ -68,7 +68,7 @@ spring:
 
 jwt:
   secret_key: ${jwt.secret.secret_key}
-  access-token-validity-in-seconds: 86400 # (배포 시 30분 -> 1800 설정)
+  access-token-validity-in-seconds: 1800 # (배포 시 30분 -> 1800 설정)
   refresh-token-validity-in-seconds: 86400 # (배포 시 1일 -> 86400설정)
 
 cloud:

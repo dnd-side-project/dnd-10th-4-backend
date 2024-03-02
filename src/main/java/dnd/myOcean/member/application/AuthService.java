@@ -46,7 +46,6 @@ public class AuthService {
 
     private static final String REFRESH_HEADER = "RefreshToken";
 
-
     private final TokenProvider tokenProvider;
     private final MemberRepository memberRepository;
     private final LetterRepository letterRepository;
@@ -55,7 +54,7 @@ public class AuthService {
 
     @Value("${letter.onboarding.content}")
     private String onboardingContent;
-    
+
     @Value("${kakao.client.id}")
     private String kakaoClientId;
 
@@ -71,12 +70,16 @@ public class AuthService {
          * // 포스트맨이 아닌 실제 배포 시에는 getKakaoUserInfo(code) -> getKakaoUserInfo(getToken(code)) 으로 변경해주어야 할 듯.
          */
         String token = getToken(code);
+
+        System.out.println(token);
         KakaoLoginRequest request = getKakaoUserInfo(token);
 
         /**
          * 2. 받아온 사용자 정보가 데이터베이스에 없다면 가입 후 리턴, 있으면 리턴
          */
         Member member = saveIfNonExist(request);
+
+        System.out.println(member.getEmail());
 
         /**
          * 3. JWT 생성
@@ -111,6 +114,8 @@ public class AuthService {
          * 2. 받아온 사용자 정보가 데이터베이스에 없다면 가입 후 리턴, 있으면 리턴
          */
         Member member = saveIfNonExist(request);
+
+        System.out.println(member.getEmail());
 
         /**
          * 3. JWT 생성
