@@ -8,12 +8,10 @@ VALUES ('WORK'),
        ('FAMILY'),
        ('ETC');
 
--- INSERT INTO member(create_Date, update_age_count, update_gender_count, email, nick_name, gender, role, age, birth_day,
---                    letter_count)
--- VALUES (now(), 1, 1, 'oceanLetter', '낯선 바다', 'MALE', 'USER', 26, '1999-04-22', 5),
---        (now(), 1, 1, 'kdo0422@nate.com', '낯선 김동웅', 'MALE', 'USER', 26, '1999-04-22', 5),
---        (now(), 1, 1, 'aodem@naver.com', '낯선 상훈님', 'MALE', 'USER', 27, '1998-12-02', 5);
---
+INSERT INTO member(create_Date, update_age_count, update_gender_count, email, nick_name, gender, role, age, birth_day,
+                   letter_count)
+VALUES (now(), 1, 1, 'oceanLetter', '낯선 바다', 'MALE', 'USER', 26, '1999-04-22', 5);
+
 --
 -- INSERT INTO letter(uuid, letter_type, sender_id, receiver_id, content, create_date, worry_type,
 --                    has_replied, is_delete_by_sender, is_stored, reply_content, equal_gender, age_range_start,
