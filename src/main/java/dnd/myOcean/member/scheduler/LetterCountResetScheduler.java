@@ -15,7 +15,7 @@ public class LetterCountResetScheduler {
     private final MemberRepository memberRepository;
 
     @Transactional
-    @Scheduled(cron = "0 0 0 * * ?") // 매일 자정에 실행
+    @Scheduled(cron = "0 0 0 * * ?")
     public void resetLetterCount() {
         List<Member> members = memberRepository.findAll();
         members.forEach(member -> member.resetLetterCount());
