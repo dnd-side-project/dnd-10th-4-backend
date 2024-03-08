@@ -78,8 +78,9 @@ public class Letter extends BaseEntity {
 
     private boolean isStored;
 
-    public static Letter createLetter(Member sender, String content, Member receiver, WorryType worryType,
-                                      LetterTag letterTag, LetterImage sendletterImage, String uuid) {
+    public static Letter createLetter(final Member sender, final String content, final Member receiver,
+                                      final WorryType worryType,
+                                      final LetterTag letterTag, final LetterImage sendletterImage, final String uuid) {
         return Letter.builder()
                 .sender(sender)
                 .content(content)
@@ -94,8 +95,9 @@ public class Letter extends BaseEntity {
                 .build();
     }
 
-    public static Letter createOnboardingLetter(Member sender, Member receiver, LetterImage sendletterImage,
-                                                String content) {
+    public static Letter createOnboardingLetter(final Member sender, final Member receiver,
+                                                final LetterImage sendletterImage,
+                                                final String content) {
         return Letter.builder()
                 .sender(sender)
                 .letterType("Onboarding")
@@ -113,18 +115,18 @@ public class Letter extends BaseEntity {
         this.isDeleteBySender = true;
     }
 
-    public void reply(String replyContent, LetterImage replyletterImage) {
+    public void reply(final String replyContent, final LetterImage replyletterImage) {
         this.replyContent = replyContent;
         this.hasReplied = true;
         this.replyletterImage = replyletterImage;
         this.repliedDate = LocalDateTime.now();
     }
 
-    public void store(boolean isStored) {
+    public void store(final boolean isStored) {
         this.isStored = isStored;
     }
 
-    public void updateReceiver(Member receiver) {
+    public void updateReceiver(final Member receiver) {
         this.receiver = receiver;
     }
 }

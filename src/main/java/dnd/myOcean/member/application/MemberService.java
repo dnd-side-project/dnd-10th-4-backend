@@ -44,9 +44,7 @@ public class MemberService {
         }
 
         List<WorryType> worryTypes = request.getWorries();
-        if (worryTypes.size() < 1 || worryTypes.size() > 3) {
-            throw new WorrySelectionRangeLimitException();
-        }
+        validateWorryTypeSize(worryTypes, 1, 3);
 
         List<Worry> worries = worryTypes.stream()
                 .map(worryType -> worryRepository.findByWorryType(worryType)
@@ -102,9 +100,7 @@ public class MemberService {
 
         List<WorryType> worryTypes = request.getWorries();
 
-        if (worryTypes.size() < 1 || worryTypes.size() > 3) {
-            throw new WorrySelectionRangeLimitException();
-        }
+        validateWorryTypeSize(worryTypes, 1, 3);
 
         List<Worry> worries = worryTypes.stream()
                 .map(worryType -> worryRepository.findByWorryType(worryType)
@@ -113,6 +109,7 @@ public class MemberService {
 
         member.updateWorries(worries);
     }
+
 
     @Transactional
     public void deleteAllWorry(CurrentMemberIdRequest request) {
@@ -124,5 +121,11 @@ public class MemberService {
     @Transactional
     public void deleteMember(CurrentMemberIdRequest request) {
         memberRepository.deleteById(request.getMemberId());
+    }
+    
+    private static void validateWorryTypeSize(List<WorryType> worryTypes, int minSize, int maxSize) {
+        if (worryTypes.size() < minSize || worryTypes.size() > maxSize) {
+            throw new WorrySelectionRangeLimitException();
+        }
     }
 }

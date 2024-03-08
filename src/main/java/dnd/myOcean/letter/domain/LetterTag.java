@@ -16,7 +16,7 @@ public class LetterTag {
     private Integer ageRangeEnd;
     private boolean equalGender;
 
-    public static LetterTag of(Integer ageRangeStart, Integer ageRangeEnd, boolean equalGender) {
+    public static LetterTag of(final Integer ageRangeStart, final Integer ageRangeEnd, final boolean equalGender) {
         return new LetterTag(ageRangeStart, ageRangeEnd, equalGender);
     }
 }

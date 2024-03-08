@@ -72,13 +72,13 @@ public class Member extends BaseEntity {
         updateAge(birthDay);
     }
 
-    private void updateAge(LocalDate birthDay) {
+    private void updateAge(final LocalDate birthDay) {
         LocalDate now = LocalDate.now();
         this.age = calculateAge(birthDay, now);
         this.updateAgeCount++;
     }
 
-    private static Integer calculateAge(LocalDate birthday, LocalDate currentDate) {
+    private static Integer calculateAge(final LocalDate birthday, final LocalDate currentDate) {
         Period period = Period.between(birthday, currentDate);
         int age = period.getYears();
         if (currentDate.isBefore(birthday.plusYears(age))) {
@@ -104,7 +104,7 @@ public class Member extends BaseEntity {
         return updateGenderCount >= 2;
     }
 
-    public void updateWorries(List<Worry> worries) {
+    public void updateWorries(final List<Worry> worries) {
         this.worries.clear();
         List<MemberWorry> memberWorries = worries.stream()
                 .map(worry -> new MemberWorry(this, worry))
@@ -123,7 +123,7 @@ public class Member extends BaseEntity {
                 updateGenderCount.equals(0);
     }
 
-    public static Member createFirstLoginMember(String email) {
+    public static Member createFirstLoginMember(final String email) {
         return Member.builder()
                 .email(email)
                 .role(Role.USER)
@@ -134,7 +134,7 @@ public class Member extends BaseEntity {
                 .build();
     }
 
-    public void updateInfo(InfoUpdateRequest request, List<Worry> worries) {
+    public void updateInfo(final InfoUpdateRequest request, final List<Worry> worries) {
         updateNickname(request.getNickname());
         updateBirthday(request.getBirthday());
         updateGender(Gender.from(request.getGender()));

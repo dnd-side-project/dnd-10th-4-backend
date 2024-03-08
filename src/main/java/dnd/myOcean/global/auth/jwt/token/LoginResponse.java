@@ -7,7 +7,7 @@ public class LoginResponse extends TokenResponse {
 
     private final boolean isFirstLogin;
 
-    private LoginResponse(String accessToken, String refreshToken, boolean isFirstLogin) {
+    private LoginResponse(final String accessToken, final String refreshToken, boolean isFirstLogin) {
         super(accessToken, refreshToken);
         this.isFirstLogin = isFirstLogin;
     }

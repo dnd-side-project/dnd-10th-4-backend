@@ -62,7 +62,7 @@ public class AuthService {
     private String redirect_uri;
 
     @Transactional
-    public LoginResponse kakaoLogin(String code) throws JsonProcessingException {
+    public LoginResponse kakaoLogin(final String code) throws JsonProcessingException {
         String token = getToken(code);
         KakaoLoginRequest request = getKakaoUserInfo(token);
 
@@ -87,7 +87,7 @@ public class AuthService {
     }
 
     @Transactional
-    public LoginResponse kakaoLoginForPostman(String code) throws JsonProcessingException {
+    public LoginResponse kakaoLoginForPostman(final String code) throws JsonProcessingException {
         KakaoLoginRequest request = getKakaoUserInfo(code);
         Member member = saveIfNonExist(request);
 
@@ -104,7 +104,7 @@ public class AuthService {
         return LoginResponse.of(tokenResponse.getAccessToken(), tokenResponse.getRefreshToken(), false);
     }
 
-    private void saveRefreshTokenOnRedis(Member member, TokenResponse response) {
+    private void saveRefreshTokenOnRedis(final Member member, final TokenResponse response) {
         List<SimpleGrantedAuthority> simpleGrantedAuthorities = new ArrayList<>();
         simpleGrantedAuthorities.add(new SimpleGrantedAuthority(member.getRole().name()));
         refreshTokenRedisRepository.save(RefreshToken.builder()
@@ -116,7 +116,7 @@ public class AuthService {
     }
 
     @Transactional
-    public Member saveIfNonExist(KakaoLoginRequest request) {
+    public Member saveIfNonExist(final KakaoLoginRequest request) {
         return memberRepository.findByEmail(request.getEmail())
                 .orElseGet(() ->
                         memberRepository.save(
@@ -125,7 +125,7 @@ public class AuthService {
                 );
     }
 
-    private String getToken(String code) throws JsonProcessingException {
+    private String getToken(final String code) throws JsonProcessingException {
         // HTTP 헤더 생성
         HttpHeaders headers = new HttpHeaders();
         headers.add("Content-type", "application/x-www-form-urlencoded;charset=utf-8");
@@ -156,7 +156,7 @@ public class AuthService {
         return jsonNode.get("access_token").asText();
     }
 
-    private KakaoLoginRequest getKakaoUserInfo(String token) throws JsonProcessingException {
+    private KakaoLoginRequest getKakaoUserInfo(final String token) throws JsonProcessingException {
         HttpHeaders headers = new HttpHeaders();
 
         headers.add("Authorization", "Bearer " + token);
@@ -209,7 +209,7 @@ public class AuthService {
         return tokenResponse;
     }
 
-    private String getTokenFromHeader(HttpServletRequest request, String headerName) {
+    private String getTokenFromHeader(final HttpServletRequest request, final String headerName) {
         String token = request.getHeader(headerName);
         if (StringUtils.hasText(token)) {
             return token;

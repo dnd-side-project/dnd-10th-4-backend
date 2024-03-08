@@ -2,7 +2,6 @@ package dnd.myOcean.letter.application;
 
 
 import dnd.myOcean.global.auth.aop.dto.CurrentMemberIdRequest;
-import dnd.myOcean.global.exception.UnknownException;
 import dnd.myOcean.letter.alarm.event.LetterSendEvent;
 import dnd.myOcean.letter.domain.Letter;
 import dnd.myOcean.letter.domain.LetterTag;
@@ -51,9 +50,8 @@ public class LetterService {
     private final MemberRepository memberRepository;
     private final LetterRepository letterRepository;
 
-    // 편지 전송
     @Transactional
-    public void send(LetterSendRequest request) throws IOException {
+    public void send(final LetterSendRequest request) throws IOException {
         Member sender = memberRepository.findById(request.getMemberId())
                 .orElseThrow(MemberNotFoundException::new);
 
@@ -78,7 +76,8 @@ public class LetterService {
         sendLetterUptoMaxCount(receivers, request, sender);
     }
 
-    private List<Member> filterReceiver(LetterSendRequest request, MemberRepository memberRepository, Member sender) {
+    private List<Member> filterReceiver(final LetterSendRequest request, final MemberRepository memberRepository,
+                                        final Member sender) {
         if (request.isEqualGender()) {
             return memberRepository.findFilteredAndSameGenderMember(
                     request.getAgeRangeStart(),
@@ -96,7 +95,8 @@ public class LetterService {
                 WorryType.from(request.getWorryType()));
     }
 
-    private void sendLetterWithoutFilterUpToMaxLetter(LetterSendRequest request, Member sender) throws IOException {
+    private void sendLetterWithoutFilterUpToMaxLetter(final LetterSendRequest request, final Member sender)
+            throws IOException {
         List<Member> randomReceivers = memberRepository.findRandomMembers(request.getMemberId(), MAX_LETTER);
         List<Letter> letters = createLetters(request, randomReceivers, sender, randomReceivers.size());
         letterRepository.saveAll(letters);
@@ -104,8 +104,8 @@ public class LetterService {
         eventPublisher.publishEvent(new LetterSendEvent(this, letters));
     }
 
-    private void sendLetterUpToReceiversCount(LetterSendRequest request, List<Member> receivers,
-                                              Member sender) throws IOException {
+    private void sendLetterUpToReceiversCount(final LetterSendRequest request, final List<Member> receivers,
+                                              final Member sender) throws IOException {
         int letterCount = generateRandomReceiverCount(receivers.size());
         Collections.shuffle(receivers);
         List<Letter> letters = createLetters(request, receivers, sender, letterCount);
@@ -114,8 +114,8 @@ public class LetterService {
         eventPublisher.publishEvent(new LetterSendEvent(this, letters));
     }
 
-    private void sendLetterUptoMaxCount(List<Member> receivers, LetterSendRequest request,
-                                        Member sender) throws IOException {
+    private void sendLetterUptoMaxCount(final List<Member> receivers, final LetterSendRequest request,
+                                        final Member sender) throws IOException {
         Collections.shuffle(receivers);
         List<Letter> letters = createLetters(request, receivers, sender, MAX_LETTER);
         letterRepository.saveAll(letters);
@@ -123,8 +123,8 @@ public class LetterService {
         eventPublisher.publishEvent(new LetterSendEvent(this, letters));
     }
 
-    private List<Letter> createLetters(LetterSendRequest request, List<Member> receivers, Member sender,
-                                       int letterCount) throws IOException {
+    private List<Letter> createLetters(final LetterSendRequest request, final List<Member> receivers,
+                                       final Member sender, int letterCount) throws IOException {
         MultipartFile image = request.getImage();
         LetterImage letterImage = getLetterImage(image);
 
@@ -145,7 +145,7 @@ public class LetterService {
                 .collect(Collectors.toList());
     }
 
-    private LetterImage getLetterImage(MultipartFile image) throws IOException {
+    private LetterImage getLetterImage(final MultipartFile image) throws IOException {
         LetterImage letterImage;
 
         if (image != null) {
@@ -157,20 +157,18 @@ public class LetterService {
         return null;
     }
 
-    private int generateRandomReceiverCount(Integer maxCount) {
+    private int generateRandomReceiverCount(final Integer maxCount) {
         return new Random().nextInt(maxCount) + 1;
     }
 
-    // 보낸 편지 단건 조회
-    public SendLetterResponse readSendLetter(CurrentMemberIdRequest request, Long letterId) {
+    public SendLetterResponse readSendLetter(final CurrentMemberIdRequest request, final Long letterId) {
         Letter letter = letterRepository.findByIdAndSenderIdAndIsDeleteBySenderFalse(letterId, request.getMemberId())
                 .orElseThrow(AccessDeniedLetterException::new);
         return SendLetterResponse.toDto(letter);
     }
 
-    // 보낸 편지 삭제 (실제 삭제 X, 프로퍼티 값 변경)
     @Transactional
-    public void deleteSendLetter(CurrentMemberIdRequest request, Long letterId) {
+    public void deleteSendLetter(final CurrentMemberIdRequest request, final Long letterId) {
         Letter letter = letterRepository.findByIdAndSenderId(letterId, request.getMemberId())
                 .orElseThrow(AccessDeniedLetterException::new);
 
@@ -178,20 +176,17 @@ public class LetterService {
         sendLetters.forEach(l -> l.deleteBySender());
     }
 
-    // 보낸 편지 페이징 조회 (삭제하지 않은 메시지만 페이징)
-    public PagedSendLettersResponse readSendLetters(LetterReadCondition cond) {
+    public PagedSendLettersResponse readSendLetters(final LetterReadCondition cond) {
         return PagedSendLettersResponse.of(letterRepository.findAllSendLetter(cond));
     }
 
-    // 받은 편지 단건 조회
-    public ReceivedLetterResponse readReceivedLetter(CurrentMemberIdRequest request, Long letterId) {
+    public ReceivedLetterResponse readReceivedLetter(final CurrentMemberIdRequest request, final Long letterId) {
         Letter letter = letterRepository.findByIdAndReceiverIdAndHasRepliedIsFalse(letterId, request.getMemberId())
                 .orElseThrow(AccessDeniedLetterException::new);
         return ReceivedLetterResponse.toDto(letter);
     }
 
-    // 받은 편지 전체 조회
-    public List<ReceivedLetterResponse> readReceivedLetters(CurrentMemberIdRequest request) {
+    public List<ReceivedLetterResponse> readReceivedLetters(final CurrentMemberIdRequest request) {
         List<Letter> letters = letterRepository.findAllByReceiverIdAndHasRepliedFalseAndStoredFalse(
                 request.getMemberId());
 
@@ -200,9 +195,8 @@ public class LetterService {
                 .collect(Collectors.toList());
     }
 
-    // 받은 편지에 대한 답장 설정
     @Transactional
-    public void replyReceivedLetter(LetterReplyRequest request, Long letterId) throws IOException {
+    public void replyReceivedLetter(final LetterReplyRequest request, final Long letterId) throws IOException {
         Letter letter = letterRepository.findByIdAndReceiverId(letterId,
                         request.getMemberId())
                 .orElseThrow(AccessDeniedLetterException::new);
@@ -216,9 +210,8 @@ public class LetterService {
         letter.reply(request.getReplyContent(), letterImage);
     }
 
-    // 받은 편지 답장하지 않고 다른 사람에게 전달
     @Transactional
-    public void passReceivedLetter(CurrentMemberIdRequest request, Long letterId) {
+    public void passReceivedLetter(final CurrentMemberIdRequest request, final Long letterId) {
         Letter letter = letterRepository.findByIdAndReceiverId(letterId, request.getMemberId())
                 .orElseThrow(AccessDeniedLetterException::new);
 
@@ -226,22 +219,19 @@ public class LetterService {
             throw new RepliedLetterPassException();
         }
 
-        // 전체 회원 id를 가져옴
         List<Long> memberIds = getAllMemberIds();
 
-        // 해당 편지를 받은 사람의 id를 가져온다.
         List<Long> receiverIds = letterRepository.findAllByUuid(letter.getUuid())
                 .stream()
                 .map(l -> l.getReceiver().getId())
                 .collect(Collectors.toList());
 
-        // 전체 회원 id에서 해당 편지를 받은 사람과 해당 편지를 보낸 사람 제거
         memberIds.removeAll(receiverIds);
         memberIds.remove(letter.getReceiver().getId());
 
         Collections.shuffle(memberIds);
         Member newReceiver = memberRepository.findById(memberIds.get(0))
-                .orElseThrow(UnknownException::new);
+                .orElseThrow(MemberNotFoundException::new);
 
         letter.updateReceiver(newReceiver);
     }
@@ -255,16 +245,14 @@ public class LetterService {
     }
 
 
-    // 답장 받은 편지 전체 조회
-    public List<RepliedLetterResponse> readRepliedLetters(CurrentMemberIdRequest request) {
+    public List<RepliedLetterResponse> readRepliedLetters(final CurrentMemberIdRequest request) {
         return RepliedLetterResponse.toDtoList(
                 letterRepository.findAllBySenderIdAndHasRepliedTrueAndStoredFalse(request.getMemberId())
         );
     }
 
-    // 답장 받은 단건 조회
     @Transactional
-    public RepliedLetterResponse readRepliedLetter(CurrentMemberIdRequest request, Long letterId) {
+    public RepliedLetterResponse readRepliedLetter(final CurrentMemberIdRequest request, final Long letterId) {
         Letter letter = letterRepository.findByIdAndSenderIdAndHasRepliedTrueAndStoredFalse(
                         letterId,
                         request.getMemberId())
@@ -272,9 +260,8 @@ public class LetterService {
         return RepliedLetterResponse.toDto(letter);
     }
 
-    // 답장 받은 편지 보관
     @Transactional
-    public void storeRepliedLetter(CurrentMemberIdRequest request, Long letterId) {
+    public void storeRepliedLetter(final CurrentMemberIdRequest request, final Long letterId) {
         Letter letter = letterRepository.findByIdAndSenderIdAndHasRepliedTrueAndStoredFalse(
                         letterId,
                         request.getMemberId())
@@ -283,9 +270,8 @@ public class LetterService {
         letter.store(true);
     }
 
-    // 보관한 편지 보관 해제
     @Transactional
-    public void deleteStoredLetter(CurrentMemberIdRequest request, Long letterId) {
+    public void deleteStoredLetter(final CurrentMemberIdRequest request, final Long letterId) {
         Letter letter = letterRepository.findByIdAndSenderIdAndHasRepliedTrueAndStoredTrue(letterId,
                         request.getMemberId())
                 .orElseThrow(AccessDeniedLetterException::new);
@@ -293,14 +279,12 @@ public class LetterService {
         letter.store(false);
     }
 
-    // 보관한 편지 전체 페이징 조회
-    public PagedStoredLetterResponse readStoredLetters(LetterReadCondition cond) {
+    public PagedStoredLetterResponse readStoredLetters(final LetterReadCondition cond) {
         return PagedStoredLetterResponse.of(letterRepository.findAllStoredLetter(cond));
     }
 
-    // 온보딩 편지 보관
     @Transactional
-    public void storeOnboardingLetter(CurrentMemberIdRequest request, Long letterId) {
+    public void storeOnboardingLetter(final CurrentMemberIdRequest request, final Long letterId) {
         Letter letter = letterRepository.findByIdAndReceiverIdAndOnboardingLetter(
                         letterId,
                         request.getMemberId())
