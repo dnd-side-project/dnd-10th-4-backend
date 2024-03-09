@@ -59,7 +59,7 @@ public class LetterService {
             throw new ExceedSendLimitException();
         }
 
-        sender.updateLetterCount();
+        sender.reduceLetterCount();
 
         List<Member> receivers = filterReceiver(request, memberRepository, sender);
 
@@ -76,7 +76,8 @@ public class LetterService {
         sendLetterUptoMaxCount(receivers, request, sender);
     }
 
-    private List<Member> filterReceiver(final LetterSendRequest request, final MemberRepository memberRepository,
+    private List<Member> filterReceiver(final LetterSendRequest request,
+                                        final MemberRepository memberRepository,
                                         final Member sender) {
         if (request.isEqualGender()) {
             return memberRepository.findFilteredAndSameGenderMember(
@@ -104,17 +105,18 @@ public class LetterService {
         eventPublisher.publishEvent(new LetterSendEvent(this, letters));
     }
 
-    private void sendLetterUpToReceiversCount(final LetterSendRequest request, final List<Member> receivers,
+    private void sendLetterUpToReceiversCount(final LetterSendRequest request,
+                                              final List<Member> receivers,
                                               final Member sender) throws IOException {
-        int letterCount = generateRandomReceiverCount(receivers.size());
         Collections.shuffle(receivers);
-        List<Letter> letters = createLetters(request, receivers, sender, letterCount);
+        List<Letter> letters = createLetters(request, receivers, sender, generateRandomReceiverCount(receivers.size()));
         letterRepository.saveAll(letters);
 
         eventPublisher.publishEvent(new LetterSendEvent(this, letters));
     }
 
-    private void sendLetterUptoMaxCount(final List<Member> receivers, final LetterSendRequest request,
+    private void sendLetterUptoMaxCount(final List<Member> receivers,
+                                        final LetterSendRequest request,
                                         final Member sender) throws IOException {
         Collections.shuffle(receivers);
         List<Letter> letters = createLetters(request, receivers, sender, MAX_LETTER);
@@ -128,9 +130,11 @@ public class LetterService {
         MultipartFile image = request.getImage();
         LetterImage letterImage = getLetterImage(image);
 
-        LetterTag letterTag = LetterTag.of(request.getAgeRangeStart(),
+        LetterTag letterTag = LetterTag.of(
+                request.getAgeRangeStart(),
                 request.getAgeRangeEnd(),
-                request.isEqualGender());
+                request.isEqualGender()
+        );
 
         String letterUuid = String.valueOf(UUID.randomUUID());
         return IntStream.range(0, letterCount)

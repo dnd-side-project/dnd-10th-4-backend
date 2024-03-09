@@ -54,7 +54,7 @@ public class MemberService {
         member.updateInfo(request, worries);
     }
 
-    public MemberInfoResponse getMyInfo(CurrentMemberIdRequest request) {
+    public MemberInfoResponse getMyInfo(final CurrentMemberIdRequest request) {
         Member member = memberRepository.findById(request.getMemberId())
                 .orElseThrow(MemberNotFoundException::new);
 
@@ -110,20 +110,21 @@ public class MemberService {
         member.updateWorries(worries);
     }
 
-
     @Transactional
-    public void deleteAllWorry(CurrentMemberIdRequest request) {
+    public void deleteAllWorry(final CurrentMemberIdRequest request) {
         Member member = memberRepository.findById(request.getMemberId())
                 .orElseThrow(MemberNotFoundException::new);
         member.clearWorries();
     }
 
     @Transactional
-    public void deleteMember(CurrentMemberIdRequest request) {
+    public void deleteMember(final CurrentMemberIdRequest request) {
         memberRepository.deleteById(request.getMemberId());
     }
-    
-    private static void validateWorryTypeSize(List<WorryType> worryTypes, int minSize, int maxSize) {
+
+    private static void validateWorryTypeSize(final List<WorryType> worryTypes,
+                                              final int minSize,
+                                              final int maxSize) {
         if (worryTypes.size() < minSize || worryTypes.size() > maxSize) {
             throw new WorrySelectionRangeLimitException();
         }

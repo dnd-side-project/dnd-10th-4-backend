@@ -182,7 +182,7 @@ public class AuthService {
         }
     }
 
-    public TokenResponse reissueAccessToken(HttpServletRequest request) {
+    public TokenResponse reissueAccessToken(final HttpServletRequest request) {
         String refreshToken = getTokenFromHeader(request, REFRESH_HEADER);
 
         if (!tokenProvider.validate(refreshToken) || !tokenProvider.validateExpire(refreshToken)) {

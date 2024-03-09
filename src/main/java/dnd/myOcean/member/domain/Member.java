@@ -53,7 +53,6 @@ public class Member extends BaseEntity {
     @Enumerated(EnumType.STRING)
     private Gender gender;
 
-    @Builder.Default
     @OneToMany(fetch = FetchType.EAGER, mappedBy = "member", cascade = CascadeType.PERSIST, orphanRemoval = true)
     private List<MemberWorry> worries = new ArrayList<>();
 
@@ -93,7 +92,7 @@ public class Member extends BaseEntity {
     }
 
     public void updateNickname(final String nickname) {
-        this.nickName = "낯선 " + nickname + " " + this.id;
+        this.nickName = String.format("낯선 %s %d", nickname, this.id);
     }
 
     public boolean isBirthDayChangeLimitExceeded() {
@@ -145,11 +144,11 @@ public class Member extends BaseEntity {
         return this.letterCount <= 0;
     }
 
-    public void resetLetterCount() {
-        this.letterCount = 5;
+    public void resetLetterCount(int letterCount) {
+        this.letterCount = letterCount;
     }
 
-    public void updateLetterCount() {
+    public void reduceLetterCount() {
         this.letterCount--;
     }
 }

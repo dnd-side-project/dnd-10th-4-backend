@@ -18,6 +18,6 @@ public class LetterCountResetScheduler {
     @Scheduled(cron = "0 0 0 * * ?")
     public void resetLetterCount() {
         List<Member> members = memberRepository.findAll();
-        members.forEach(member -> member.resetLetterCount());
+        members.forEach(member -> member.resetLetterCount(5));
     }
 }
