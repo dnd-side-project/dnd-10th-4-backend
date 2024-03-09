@@ -23,7 +23,7 @@ public class ReportService {
     private final LetterRepository letterRepository;
 
     @Transactional
-    public void report(ReportSendRequest request) {
+    public void report(final ReportSendRequest request) {
         Member reporter = memberRepository.findById(request.getMemberId())
                 .orElseThrow(MemberNotFoundException::new);
 
@@ -42,7 +42,7 @@ public class ReportService {
                 .build());
     }
 
-    private boolean alreadyReported(ReportSendRequest request, Letter letter) {
+    private boolean alreadyReported(final ReportSendRequest request, final Letter letter) {
         return reportRepository.existsByLetterIdAndReporterId(letter.getId(), request.getMemberId());
     }
 }

@@ -14,7 +14,7 @@ public class LetterDeletionScheduler {
     private final LetterRepository letterRepository;
 
     @Transactional
-    @Scheduled(fixedRate = 600000) // 600000 mill second = 10 min
+    @Scheduled(fixedRate = 60000)
     public void deleteDiscardedLetters() {
         LocalDateTime expiredDate = LocalDateTime.now().minusHours(48);
         letterRepository.deleteDiscardedLetters(expiredDate);

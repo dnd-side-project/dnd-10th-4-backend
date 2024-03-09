@@ -11,13 +11,13 @@ public class KakaoUserInfo {
 
     private Map<String, Object> attributes;
 
-    public KakaoUserInfo(Map<String, Object> attributes) {
+    public KakaoUserInfo(final Map<String, Object> attributes) {
         this.attributes = attributes;
     }
 
     public String getEmail() {
         ObjectMapper objectMapper = new ObjectMapper();
-        TypeReference<Map<String, Object>> typeReferencer = new TypeReference<Map<String, Object>>() {
+        TypeReference<Map<String, Object>> typeReferencer = new TypeReference<>() {
         };
 
         Object kakaoAccount = attributes.get(KAKAO_ACCOUNT);

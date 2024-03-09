@@ -62,35 +62,16 @@ public class AuthService {
     private String redirect_uri;
 
     @Transactional
-    public LoginResponse kakaoLogin(String code) throws JsonProcessingException {
-
-        /**
-         * 1. code로 사용자 정보 받기 (원래는 받은 code를 가지고 토큰 발급 -> 토큰으로 사용자 정보 요청 Flow인데,
-         *    포스트맨 내부적으로 code로 token 요청하고, token으로 사용자정보를 받아오는 거 같음.
-         * // 포스트맨이 아닌 실제 배포 시에는 getKakaoUserInfo(code) -> getKakaoUserInfo(getToken(code)) 으로 변경해주어야 할 듯.
-         */
+    public LoginResponse kakaoLogin(final String code) throws JsonProcessingException {
         String token = getToken(code);
-
-        System.out.println(token);
         KakaoLoginRequest request = getKakaoUserInfo(token);
 
-        /**
-         * 2. 받아온 사용자 정보가 데이터베이스에 없다면 가입 후 리턴, 있으면 리턴
-         */
         Member member = saveIfNonExist(request);
 
-        System.out.println(member.getEmail());
-
-        /**
-         * 3. JWT 생성
-         */
         TokenResponse tokenResponse = tokenProvider.createToken(String.valueOf(member.getId()),
                 member.getEmail(),
                 member.getRole().name());
 
-        /**
-         * 4. Redis에 RefreshToken 저장
-         */
         saveRefreshTokenOnRedis(member, tokenResponse);
 
         if (member.isFirstLogin()) {
@@ -106,27 +87,14 @@ public class AuthService {
     }
 
     @Transactional
-    public LoginResponse kakaoLoginForPostman(String code) throws JsonProcessingException {
-
+    public LoginResponse kakaoLoginForPostman(final String code) throws JsonProcessingException {
         KakaoLoginRequest request = getKakaoUserInfo(code);
-
-        /**
-         * 2. 받아온 사용자 정보가 데이터베이스에 없다면 가입 후 리턴, 있으면 리턴
-         */
         Member member = saveIfNonExist(request);
 
-        System.out.println(member.getEmail());
-
-        /**
-         * 3. JWT 생성
-         */
         TokenResponse tokenResponse = tokenProvider.createToken(String.valueOf(member.getId()),
                 member.getEmail(),
                 member.getRole().name());
 
-        /**
-         * 4. Redis에 RefreshToken 저장
-         */
         saveRefreshTokenOnRedis(member, tokenResponse);
 
         if (member.isFirstLogin()) {
@@ -136,7 +104,7 @@ public class AuthService {
         return LoginResponse.of(tokenResponse.getAccessToken(), tokenResponse.getRefreshToken(), false);
     }
 
-    private void saveRefreshTokenOnRedis(Member member, TokenResponse response) {
+    private void saveRefreshTokenOnRedis(final Member member, final TokenResponse response) {
         List<SimpleGrantedAuthority> simpleGrantedAuthorities = new ArrayList<>();
         simpleGrantedAuthorities.add(new SimpleGrantedAuthority(member.getRole().name()));
         refreshTokenRedisRepository.save(RefreshToken.builder()
@@ -148,7 +116,7 @@ public class AuthService {
     }
 
     @Transactional
-    public Member saveIfNonExist(KakaoLoginRequest request) {
+    public Member saveIfNonExist(final KakaoLoginRequest request) {
         return memberRepository.findByEmail(request.getEmail())
                 .orElseGet(() ->
                         memberRepository.save(
@@ -157,7 +125,7 @@ public class AuthService {
                 );
     }
 
-    private String getToken(String code) throws JsonProcessingException {
+    private String getToken(final String code) throws JsonProcessingException {
         // HTTP 헤더 생성
         HttpHeaders headers = new HttpHeaders();
         headers.add("Content-type", "application/x-www-form-urlencoded;charset=utf-8");
@@ -188,14 +156,12 @@ public class AuthService {
         return jsonNode.get("access_token").asText();
     }
 
-    private KakaoLoginRequest getKakaoUserInfo(String token) throws JsonProcessingException {
+    private KakaoLoginRequest getKakaoUserInfo(final String token) throws JsonProcessingException {
         HttpHeaders headers = new HttpHeaders();
 
-        // HTTP 헤더 생성
         headers.add("Authorization", "Bearer " + token);
         headers.add("Content-type", "application/x-www-form-urlencoded;charset=utf-8");
 
-        // HTTP 요청 보내기
         HttpEntity<MultiValueMap<String, String>> kakaoTokenRequest = new HttpEntity<>(headers);
 
         try {
@@ -216,7 +182,7 @@ public class AuthService {
         }
     }
 
-    public TokenResponse reissueAccessToken(HttpServletRequest request) {
+    public TokenResponse reissueAccessToken(final HttpServletRequest request) {
         String refreshToken = getTokenFromHeader(request, REFRESH_HEADER);
 
         if (!tokenProvider.validate(refreshToken) || !tokenProvider.validateExpire(refreshToken)) {
@@ -243,7 +209,7 @@ public class AuthService {
         return tokenResponse;
     }
 
-    private String getTokenFromHeader(HttpServletRequest request, String headerName) {
+    private String getTokenFromHeader(final HttpServletRequest request, final String headerName) {
         String token = request.getHeader(headerName);
         if (StringUtils.hasText(token)) {
             return token;

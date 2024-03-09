@@ -35,17 +35,17 @@ public class LetterImage {
     @Column(nullable = false, updatable = false)
     private String imagePath;
 
-    public LetterImage(String originName) {
+    public LetterImage(final String originName) {
         this.originName = originName;
         this.uniqueName = extractExtAndGenerateUniqueName(originName);
     }
 
-    private String extractExtAndGenerateUniqueName(String originName) {
+    private String extractExtAndGenerateUniqueName(final String originName) {
         String ext = getExt(originName);
         return UUID.randomUUID() + "." + ext;
     }
 
-    private String getExt(String originName) {
+    private String getExt(final String originName) {
         try {
             String ext = originName.substring(originName.lastIndexOf(".") + 1);
             if (supportFormat(ext)) {
@@ -60,12 +60,12 @@ public class LetterImage {
         }
     }
 
-    private boolean supportFormat(String ext) {
+    private boolean supportFormat(final String ext) {
         return Arrays.stream(extension)
                 .anyMatch(e -> e.equalsIgnoreCase(ext));
     }
 
-    public void updateImagePath(String imagePath) {
+    public void updateImagePath(final String imagePath) {
         this.imagePath = imagePath;
     }
 }

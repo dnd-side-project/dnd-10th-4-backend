@@ -20,7 +20,7 @@ public class KakaoMemberDetailsService extends DefaultOAuth2UserService {
 
     @Transactional
     @Override
-    public OAuth2User loadUser(OAuth2UserRequest userRequest) throws OAuth2AuthenticationException {
+    public OAuth2User loadUser(final OAuth2UserRequest userRequest) throws OAuth2AuthenticationException {
         OAuth2User oAuth2User = super.loadUser(userRequest);
         KakaoUserInfo kakaoUserInfo = new KakaoUserInfo(oAuth2User.getAttributes());
 

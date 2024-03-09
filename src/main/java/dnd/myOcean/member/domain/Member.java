@@ -53,7 +53,6 @@ public class Member extends BaseEntity {
     @Enumerated(EnumType.STRING)
     private Gender gender;
 
-    @Builder.Default
     @OneToMany(fetch = FetchType.EAGER, mappedBy = "member", cascade = CascadeType.PERSIST, orphanRemoval = true)
     private List<MemberWorry> worries = new ArrayList<>();
 
@@ -72,13 +71,13 @@ public class Member extends BaseEntity {
         updateAge(birthDay);
     }
 
-    private void updateAge(LocalDate birthDay) {
+    private void updateAge(final LocalDate birthDay) {
         LocalDate now = LocalDate.now();
         this.age = calculateAge(birthDay, now);
         this.updateAgeCount++;
     }
 
-    private static Integer calculateAge(LocalDate birthday, LocalDate currentDate) {
+    private static Integer calculateAge(final LocalDate birthday, final LocalDate currentDate) {
         Period period = Period.between(birthday, currentDate);
         int age = period.getYears();
         if (currentDate.isBefore(birthday.plusYears(age))) {
@@ -93,7 +92,7 @@ public class Member extends BaseEntity {
     }
 
     public void updateNickname(final String nickname) {
-        this.nickName = "낯선 " + nickname + " " + this.id;
+        this.nickName = String.format("낯선 %s %d", nickname, this.id);
     }
 
     public boolean isBirthDayChangeLimitExceeded() {
@@ -104,7 +103,7 @@ public class Member extends BaseEntity {
         return updateGenderCount >= 2;
     }
 
-    public void updateWorries(List<Worry> worries) {
+    public void updateWorries(final List<Worry> worries) {
         this.worries.clear();
         List<MemberWorry> memberWorries = worries.stream()
                 .map(worry -> new MemberWorry(this, worry))
@@ -123,7 +122,7 @@ public class Member extends BaseEntity {
                 updateGenderCount.equals(0);
     }
 
-    public static Member createFirstLoginMember(String email) {
+    public static Member createFirstLoginMember(final String email) {
         return Member.builder()
                 .email(email)
                 .role(Role.USER)
@@ -134,7 +133,7 @@ public class Member extends BaseEntity {
                 .build();
     }
 
-    public void updateInfo(InfoUpdateRequest request, List<Worry> worries) {
+    public void updateInfo(final InfoUpdateRequest request, final List<Worry> worries) {
         updateNickname(request.getNickname());
         updateBirthday(request.getBirthday());
         updateGender(Gender.from(request.getGender()));
@@ -145,11 +144,11 @@ public class Member extends BaseEntity {
         return this.letterCount <= 0;
     }
 
-    public void resetLetterCount() {
-        this.letterCount = 5;
+    public void resetLetterCount(int letterCount) {
+        this.letterCount = letterCount;
     }
 
-    public void updateLetterCount() {
+    public void reduceLetterCount() {
         this.letterCount--;
     }
 }

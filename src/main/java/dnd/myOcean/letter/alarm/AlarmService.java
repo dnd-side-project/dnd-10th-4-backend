@@ -14,7 +14,7 @@ public class AlarmService {
 
     private final JavaMailSender javaMailSender;
 
-    public void alarmLetterReceived(List<String> receiversEmail) throws MessagingException {
+    public void alarmLetterReceived(final List<String> receiversEmail) throws MessagingException {
         for (String receiverEmail : receiversEmail) {
             MimeMessage message = javaMailSender.createMimeMessage();
             MimeMessageHelper helper = new MimeMessageHelper(message, "UTF-8");
