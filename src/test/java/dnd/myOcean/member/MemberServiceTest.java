@@ -1,12 +1,22 @@
 package dnd.myOcean.member;
 
+import static org.assertj.core.api.BDDAssertions.then;
+import static org.mockito.BDDMockito.given;
+
 import dnd.myOcean.global.auth.aop.dto.CurrentMemberIdRequest;
 import dnd.myOcean.member.application.MemberService;
-import dnd.myOcean.member.domain.*;
+import dnd.myOcean.member.domain.Gender;
+import dnd.myOcean.member.domain.Member;
+import dnd.myOcean.member.domain.Role;
+import dnd.myOcean.member.domain.Worry;
+import dnd.myOcean.member.domain.WorryType;
 import dnd.myOcean.member.domain.dto.request.InfoUpdateRequest;
 import dnd.myOcean.member.domain.dto.response.MemberInfoResponse;
 import dnd.myOcean.member.repository.infra.jpa.MemberRepository;
 import dnd.myOcean.member.repository.infra.jpa.WorryRepository;
+import java.time.LocalDate;
+import java.util.List;
+import java.util.Optional;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
@@ -14,13 +24,6 @@ import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
-
-import java.time.LocalDate;
-import java.util.List;
-import java.util.Optional;
-
-import static org.assertj.core.api.BDDAssertions.then;
-import static org.mockito.BDDMockito.given;
 
 @ExtendWith(MockitoExtension.class)
 public class MemberServiceTest {
@@ -55,9 +58,9 @@ public class MemberServiceTest {
 
     @BeforeEach
     void initWorry() {
-        worry = Worry.builder()
-                .worryType(WorryType.WORK)
-                .build();
+//        worry = Worry.builder()
+//                .worryType(WorryType.WORK)
+//                .build();
     }
 
     @Test
