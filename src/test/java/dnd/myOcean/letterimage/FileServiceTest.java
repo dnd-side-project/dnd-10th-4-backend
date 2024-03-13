@@ -2,6 +2,7 @@ package dnd.myOcean.letterimage;
 
 import com.amazonaws.services.s3.AmazonS3Client;
 import dnd.myOcean.letterimage.application.FileService;
+import net.coobird.thumbnailator.tasks.UnsupportedFormatException;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
@@ -23,6 +24,7 @@ import java.io.IOException;
 import java.io.InputStream;
 
 import static org.assertj.core.api.Assertions.assertThat;
+import static org.junit.jupiter.api.Assertions.assertThrows;
 
 @ExtendWith({SpringExtension.class, MockitoExtension.class})
 @TestPropertySource(locations = "classpath:application-secret.yml")
@@ -66,5 +68,16 @@ class FileServiceTest {
         String result = fileService.uploadImage(multipartFile, uniqueFileName);
 
         assertThat(compareImageBucket).isEqualTo(result);
+    }
+
+    @Test
+    @DisplayName("파일 형식 예외 테스트")
+    public void upload_image_type_exception() {
+        String uniqueFileName = "hello.txt";
+        MultipartFile emptyFile = new MockMultipartFile("hello.txt", new byte[0]);
+
+        assertThrows(UnsupportedFormatException.class, () -> {
+            fileService.uploadImage(emptyFile, uniqueFileName);
+        });
     }
 }
