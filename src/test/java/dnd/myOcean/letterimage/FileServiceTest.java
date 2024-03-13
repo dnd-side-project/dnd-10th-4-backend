@@ -72,12 +72,12 @@ class FileServiceTest {
 
     @Test
     @DisplayName("파일 형식 예외 테스트")
-    public void upload_image_type_exception() {
+    void upload_image_type_exception() {
         String uniqueFileName = "hello.txt";
-        MultipartFile emptyFile = new MockMultipartFile("hello.txt", new byte[0]);
+        MultipartFile helloTxtFile = new MockMultipartFile("hello.txt", new byte[0]);
 
         assertThrows(UnsupportedFormatException.class, () -> {
-            fileService.uploadImage(emptyFile, uniqueFileName);
+            fileService.uploadImage(helloTxtFile, uniqueFileName);
         });
     }
 }
