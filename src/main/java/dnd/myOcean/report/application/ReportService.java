@@ -30,7 +30,7 @@ public class ReportService {
         Letter letter = letterRepository.findByIdAndReceiverId(request.getLetterId(), request.getMemberId())
                 .orElseThrow(AccessDeniedLetterException::new);
 
-        if (alreadyReported(request, letter)) {
+        if (alreadyReported(request.getMemberId(), letter)) {
             throw new AlreadyReportExistException();
         }
 
@@ -42,7 +42,7 @@ public class ReportService {
                 .build());
     }
 
-    private boolean alreadyReported(final ReportSendRequest request, final Letter letter) {
-        return reportRepository.existsByLetterIdAndReporterId(letter.getId(), request.getMemberId());
+    private boolean alreadyReported(final Long reporterId, final Letter letter) {
+        return reportRepository.existsByLetterIdAndReporterId(letter.getId(), reporterId);
     }
 }
