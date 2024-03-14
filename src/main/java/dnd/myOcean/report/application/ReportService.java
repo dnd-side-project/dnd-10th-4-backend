@@ -7,6 +7,7 @@ import dnd.myOcean.member.domain.Member;
 import dnd.myOcean.member.exception.MemberNotFoundException;
 import dnd.myOcean.member.repository.infra.jpa.MemberRepository;
 import dnd.myOcean.report.domain.Report;
+import dnd.myOcean.report.domain.ReportType;
 import dnd.myOcean.report.dto.request.ReportSendRequest;
 import dnd.myOcean.report.exception.AlreadyReportExistException;
 import dnd.myOcean.report.repository.ReportRepository;
@@ -38,6 +39,7 @@ public class ReportService {
                 .reporter(reporter)
                 .reported(letter.getSender())
                 .letter(letter)
+                .reportType(ReportType.valueOf(request.getReportType()))
                 .content(request.getReportContent())
                 .build());
     }
