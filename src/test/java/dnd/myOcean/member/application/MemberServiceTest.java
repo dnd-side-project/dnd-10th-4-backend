@@ -1,4 +1,4 @@
-package dnd.myOcean.member;
+package dnd.myOcean.member.application;
 
 import dnd.myOcean.global.auth.aop.dto.CurrentMemberIdRequest;
 import dnd.myOcean.member.application.MemberService;

@@ -1,4 +1,4 @@
-package dnd.myOcean.letterimage;
+package dnd.myOcean.letterimage.application;
 
 import com.amazonaws.services.s3.AmazonS3Client;
 import dnd.myOcean.letterimage.application.FileService;
