@@ -111,27 +111,36 @@ class MemberTest {
     @DisplayName("보낼 수 있는 편지 개수가 0인 경우, true를 반환한다.")
     @Test
     void testExceedLetterLimit() throws Exception {
+        // when
         assertFalse(member.exceedLetterLimit());
-
         Field letterCountField = Member.class.getDeclaredField("letterCount");
         letterCountField.setAccessible(true);
         letterCountField.set(member, 0);
 
+        // then
         assertTrue(member.exceedLetterLimit());
     }
 
     @DisplayName("보낼 수 있는 편지 개수를 n으로 초기화한다.")
     @Test
     void testResetLetterCount() {
+        // when
         member.resetLetterCount(10);
+
+        // then
         assertEquals(10, member.getLetterCount());
     }
 
     @DisplayName("보낼 수 있는 편지 개수를 하나 줄인다.")
     @Test
     void testReduceLetterCount() {
+        // given
         member.resetLetterCount(10);
+
+        // when
         member.reduceLetterCount();
+
+        // then
         assertEquals(9, member.getLetterCount());
     }
 
