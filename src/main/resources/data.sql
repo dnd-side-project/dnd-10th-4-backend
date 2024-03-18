@@ -14,6 +14,6 @@ VALUES (now(), 1, 1, 'oceanLetter1@gmail.com', '낯선 바다', 'MALE', 'USER', 
 
 INSERT INTO letter_image(unique_name, origin_name, image_path)
 VALUES ('oceanImage.jpeg', 'oceanImage.jpeg',
-        'https://letter-img-bucket.s3.ap-northeast-2.amazonaws.com/letter/oceanImage.jpeg');
+        'https://d2bunq4des8hir.cloudfront.net/letter/oceanImage.jpeg');
 
 
