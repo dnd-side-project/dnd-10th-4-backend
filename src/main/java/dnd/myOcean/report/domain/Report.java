@@ -1,10 +1,12 @@
 package dnd.myOcean.report.domain;
 
+import dnd.myOcean.global.common.base.BaseEntity;
 import dnd.myOcean.letter.domain.Letter;
 import dnd.myOcean.member.domain.Member;
-import dnd.myOcean.global.common.base.BaseEntity;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
+import jakarta.persistence.EnumType;
+import jakarta.persistence.Enumerated;
 import jakarta.persistence.FetchType;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
@@ -31,6 +33,9 @@ public class Report extends BaseEntity {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "report_id")
     private Long id;
+
+    @Enumerated(value = EnumType.STRING)
+    private ReportType reportType;
 
     @Column(updatable = false)
     private String content;

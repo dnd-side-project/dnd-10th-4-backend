@@ -21,7 +21,7 @@ public class FileService {
     @Value("${cloud.aws.s3.bucket}")
     private String bucket;
 
-    @Value("${cloud.aws.s3.url}")
+    @Value("${cloud.aws.s3.cloudfront.url}")
     private String bucketUrl;
 
     @Transactional

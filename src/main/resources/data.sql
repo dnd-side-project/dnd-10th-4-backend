@@ -10,10 +10,9 @@ VALUES ('WORK'),
 
 INSERT INTO member(create_Date, update_age_count, update_gender_count, email, nick_name, gender, role, age, birth_day,
                    letter_count)
-VALUES (now(), 1, 1, 'oceanLetter1@gmail.com', '낯선 바다', 'MALE', 'USER', 26, '1999-04-22', 5);
+VALUES (now(), 1, 1, 'oceanLetter1@gmail.com', '낯선 바다', 'MALE', 'USER', 26, '1999-04-22', 5),
+       (now(), 1, 1, 'kdo0422@nate.com', '낯선 바다', 'MALE', 'USER', 26, '1999-04-22', 5);
 
 INSERT INTO letter_image(unique_name, origin_name, image_path)
 VALUES ('oceanImage.jpeg', 'oceanImage.jpeg',
-        'https://letter-img-bucket.s3.ap-northeast-2.amazonaws.com/letter/oceanImage.jpeg');
-
-
+        'https://d2bunq4des8hir.cloudfront.net/letter/oceanImage.jpeg');

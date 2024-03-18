@@ -127,6 +127,7 @@ public class Member extends BaseEntity {
                 .email(email)
                 .role(Role.USER)
                 .gender(Gender.NONE)
+                .worries(new ArrayList<>())
                 .updateAgeCount(0)
                 .updateGenderCount(0)
                 .letterCount(5)

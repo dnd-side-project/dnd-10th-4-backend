@@ -18,6 +18,9 @@ public class ReportSendRequest {
     @NotBlank(message = "신고할 편지 번호를 입력해주세요.")
     private Long letterId;
 
+    @NotBlank(message = "신고유형을 입력해주세요.")
+    private String reportType;
+
     @NotBlank(message = "신고 내용을 입력해주세요.")
     private String reportContent;
 }
