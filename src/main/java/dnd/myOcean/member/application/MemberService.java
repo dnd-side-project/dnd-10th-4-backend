@@ -118,7 +118,7 @@ public class MemberService {
     }
 
     @Transactional
-    public void deleteMember(final CurrentMemberIdRequest request) {
+    public void deleteMember(CurrentMemberIdRequest request) {
         memberRepository.deleteById(request.getMemberId());
     }
 
