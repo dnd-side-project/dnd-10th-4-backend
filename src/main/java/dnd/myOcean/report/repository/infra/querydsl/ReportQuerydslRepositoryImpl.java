@@ -36,14 +36,12 @@ public class ReportQuerydslRepositoryImpl extends QuerydslRepositorySupport impl
 
     private Predicate createPredicate(ReportReadCondition cond) {
         BooleanBuilder builder = new BooleanBuilder();
-        boolean existReporterEmail = String.valueOf(cond.getReporterEmail()).isEmpty();
-        boolean existReportedEmail = String.valueOf(cond.getReportedEmail()).isEmpty();
 
-        if (existReporterEmail) {
+        if (cond.getReporterEmail() != null) {
             builder.and(report.reporter.email.eq(cond.getReporterEmail()));
         }
 
-        if (existReportedEmail) {
+        if (cond.getReportedEmail() != null) {
             builder.and(report.reported.email.eq(cond.getReportedEmail()));
         }
 

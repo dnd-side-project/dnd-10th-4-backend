@@ -3,6 +3,7 @@ package dnd.myOcean.report.api;
 import dnd.myOcean.global.auth.aop.AssignCurrentMemberId;
 import dnd.myOcean.report.application.ReportService;
 import dnd.myOcean.report.dto.request.ReportSendRequest;
+import dnd.myOcean.report.repository.infra.querydsl.dto.PagedReportResponse;
 import dnd.myOcean.report.repository.infra.querydsl.dto.ReportReadCondition;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
@@ -29,8 +30,7 @@ public class ReportController {
     }
 
     @GetMapping
-    public ResponseEntity<Void> findAllReport(@Valid ReportReadCondition cond) {
-        reportService.findAllReports(cond);
-        return new ResponseEntity(HttpStatus.OK);
+    public ResponseEntity<PagedReportResponse> findAllReport(@Valid ReportReadCondition cond) {
+        return new ResponseEntity(reportService.findAllReports(cond), HttpStatus.OK);
     }
 }
