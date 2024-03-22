@@ -11,7 +11,7 @@ import dnd.myOcean.member.domain.dto.request.GenderUpdateRequest;
 import dnd.myOcean.member.domain.dto.request.InfoUpdateRequest;
 import dnd.myOcean.member.domain.dto.request.NicknameUpdateRequest;
 import dnd.myOcean.member.domain.dto.request.WorryCreateRequest;
-import dnd.myOcean.member.domain.dto.response.MemberInfoResponse;
+import dnd.myOcean.member.domain.dto.response.CurrentMemberInfoResponse;
 import dnd.myOcean.member.exception.AlreadyOnBoardingExecutedException;
 import dnd.myOcean.member.exception.BirthdayUpdateLimitExceedException;
 import dnd.myOcean.member.exception.GenderUpdateLimitExceedException;
@@ -20,6 +20,8 @@ import dnd.myOcean.member.exception.WorrySelectionRangeLimitException;
 import dnd.myOcean.member.exception.WorryTypeContainsNotAccepted;
 import dnd.myOcean.member.repository.infra.jpa.MemberRepository;
 import dnd.myOcean.member.repository.infra.jpa.WorryRepository;
+import dnd.myOcean.member.repository.infra.querydsl.dto.MemberReadCondition;
+import dnd.myOcean.member.repository.infra.querydsl.dto.PagedMemberResponse;
 import java.util.List;
 import java.util.stream.Collectors;
 import lombok.RequiredArgsConstructor;
@@ -54,11 +56,11 @@ public class MemberService {
         member.updateInfo(request, worries);
     }
 
-    public MemberInfoResponse getMyInfo(final CurrentMemberIdRequest request) {
+    public CurrentMemberInfoResponse getMyInfo(final CurrentMemberIdRequest request) {
         Member member = memberRepository.findById(request.getMemberId())
                 .orElseThrow(MemberNotFoundException::new);
 
-        return MemberInfoResponse.of(member);
+        return CurrentMemberInfoResponse.of(member);
     }
 
     @Transactional
@@ -118,8 +120,16 @@ public class MemberService {
     }
 
     @Transactional
-    public void deleteMember(CurrentMemberIdRequest request) {
+    public void deleteMember(final CurrentMemberIdRequest request) {
         memberRepository.deleteById(request.getMemberId());
+    }
+
+    @Transactional
+    public void deleteByEmail(final String email) {
+        Member member = memberRepository.findByEmail(email)
+                .orElseThrow(MemberNotFoundException::new);
+
+        memberRepository.delete(member);
     }
 
     private static void validateWorryTypeSize(final List<WorryType> worryTypes,
@@ -128,5 +138,9 @@ public class MemberService {
         if (worryTypes.size() < minSize || worryTypes.size() > maxSize) {
             throw new WorrySelectionRangeLimitException();
         }
+    }
+
+    public PagedMemberResponse findAllMember(final MemberReadCondition cond) {
+        return PagedMemberResponse.of(memberRepository.findAllMember(cond));
     }
 }
