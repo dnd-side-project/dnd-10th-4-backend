@@ -5,6 +5,7 @@ import dnd.myOcean.global.auth.aop.dto.CurrentMemberIdRequest;
 import dnd.myOcean.letter.application.LetterService;
 import dnd.myOcean.letter.domain.dto.request.LetterReplyRequest;
 import dnd.myOcean.letter.domain.dto.request.LetterSendRequest;
+import dnd.myOcean.letter.domain.dto.request.SpecialLetterSendRequest;
 import dnd.myOcean.letter.domain.dto.response.ReceivedLetterResponse;
 import dnd.myOcean.letter.domain.dto.response.RepliedLetterResponse;
 import dnd.myOcean.letter.domain.dto.response.SendLetterResponse;
@@ -32,9 +33,16 @@ public class LetterController {
 
     private final LetterService letterService;
 
+    @PostMapping("/special")
+    @AssignCurrentMemberId
+    public ResponseEntity<Void> sendSpecialLetter(@ModelAttribute SpecialLetterSendRequest request) throws IOException {
+        letterService.sendByEmail(request);
+        return new ResponseEntity(HttpStatus.CREATED);
+    }
+
     @PostMapping
     @AssignCurrentMemberId
-    public ResponseEntity<Void> send(@ModelAttribute LetterSendRequest request) throws IOException {
+    public ResponseEntity<Void> sendLetter(@ModelAttribute LetterSendRequest request) throws IOException {
         letterService.send(request);
         return new ResponseEntity(HttpStatus.CREATED);
     }
