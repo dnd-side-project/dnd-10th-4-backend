@@ -5,6 +5,7 @@ import dnd.myOcean.global.auth.aop.dto.CurrentMemberIdRequest;
 import dnd.myOcean.letter.application.LetterService;
 import dnd.myOcean.letter.domain.dto.request.LetterReplyRequest;
 import dnd.myOcean.letter.domain.dto.request.LetterSendRequest;
+import dnd.myOcean.letter.domain.dto.request.SpecialLetterSendRequest;
 import dnd.myOcean.letter.domain.dto.response.ReceivedLetterResponse;
 import dnd.myOcean.letter.domain.dto.response.RepliedLetterResponse;
 import dnd.myOcean.letter.domain.dto.response.SendLetterResponse;
@@ -17,6 +18,7 @@ import java.util.List;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.PatchMapping;
@@ -32,9 +34,18 @@ public class LetterController {
 
     private final LetterService letterService;
 
-    @PostMapping
+    @PostMapping("/special")
+    @PreAuthorize("hasAuthority('ADMIN')")
     @AssignCurrentMemberId
-    public ResponseEntity<Void> send(@ModelAttribute LetterSendRequest request) throws IOException {
+    public ResponseEntity<Void> sendSpecialLetter(@ModelAttribute SpecialLetterSendRequest request) throws IOException {
+        letterService.sendByEmail(request);
+        return new ResponseEntity(HttpStatus.CREATED);
+    }
+
+    @PostMapping
+    @PreAuthorize("hasAuthority('ADMIN')")
+    @AssignCurrentMemberId
+    public ResponseEntity<Void> sendLetter(@ModelAttribute LetterSendRequest request) throws IOException {
         letterService.send(request);
         return new ResponseEntity(HttpStatus.CREATED);
     }

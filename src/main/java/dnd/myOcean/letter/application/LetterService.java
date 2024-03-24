@@ -7,11 +7,13 @@ import dnd.myOcean.letter.domain.Letter;
 import dnd.myOcean.letter.domain.LetterTag;
 import dnd.myOcean.letter.domain.dto.request.LetterReplyRequest;
 import dnd.myOcean.letter.domain.dto.request.LetterSendRequest;
+import dnd.myOcean.letter.domain.dto.request.SpecialLetterSendRequest;
 import dnd.myOcean.letter.domain.dto.response.ReceivedLetterResponse;
 import dnd.myOcean.letter.domain.dto.response.RepliedLetterResponse;
 import dnd.myOcean.letter.domain.dto.response.SendLetterResponse;
 import dnd.myOcean.letter.exception.AccessDeniedLetterException;
 import dnd.myOcean.letter.exception.AlreadyReplyExistException;
+import dnd.myOcean.letter.exception.PassDeniedLetterException;
 import dnd.myOcean.letter.exception.RepliedLetterPassException;
 import dnd.myOcean.letter.repository.infra.jpa.LetterRepository;
 import dnd.myOcean.letter.repository.infra.querydsl.dto.LetterReadCondition;
@@ -49,6 +51,20 @@ public class LetterService {
     private final ApplicationEventPublisher eventPublisher;
     private final MemberRepository memberRepository;
     private final LetterRepository letterRepository;
+
+    @Transactional
+    public void sendByEmail(final SpecialLetterSendRequest request) throws IOException {
+        Member sender = memberRepository.findById(request.getMemberId())
+                .orElseThrow(MemberNotFoundException::new);
+
+        Member receiver = memberRepository.findByEmail(request.getEmail())
+                .orElseThrow(MemberNotFoundException::new);
+
+        LetterImage letterImage = getLetterImage(request.getImage());
+
+        letterRepository.save(Letter.createSpecialLetter(sender, receiver, letterImage, request.getContent()));
+    }
+
 
     @Transactional
     public void send(final LetterSendRequest request) throws IOException {
@@ -154,11 +170,15 @@ public class LetterService {
 
         if (image != null) {
             letterImage = new LetterImage(image.getOriginalFilename());
-            String imagePath = fileService.uploadImage(image, letterImage.getUniqueName());
-            letterImage.updateImagePath(imagePath);
+            uploadImageToBucket(image, letterImage);
             return letterImage;
         }
         return null;
+    }
+
+    private void uploadImageToBucket(MultipartFile image, LetterImage letterImage) throws IOException {
+        String imagePath = fileService.uploadImage(image, letterImage.getUniqueName());
+        letterImage.updateImagePath(imagePath);
     }
 
     private int generateRandomReceiverCount(final Integer maxCount) {
@@ -205,7 +225,7 @@ public class LetterService {
                         request.getMemberId())
                 .orElseThrow(AccessDeniedLetterException::new);
 
-        if (letter.getReplyContent() != null) {
+        if (letter.isHasReplied()) {
             throw new AlreadyReplyExistException();
         }
 
@@ -221,6 +241,10 @@ public class LetterService {
 
         if (letter.isHasReplied()) {
             throw new RepliedLetterPassException();
+        }
+
+        if (!letter.isNormalLetter()) {
+            throw new PassDeniedLetterException();
         }
 
         List<Long> memberIds = getAllMemberIds();
