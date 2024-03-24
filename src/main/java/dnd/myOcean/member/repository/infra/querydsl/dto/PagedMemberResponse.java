@@ -16,7 +16,7 @@ public class PagedMemberResponse {
     private Long totalElements;
     private Integer totalPage;
     private boolean hasNextPage;
-    private List<MemberInfoResponse> letters;
+    private List<MemberInfoResponse> members;
 
     public static PagedMemberResponse of(Page<MemberInfoResponse> page) {
         return new PagedMemberResponse(page.getTotalElements(),
