@@ -11,7 +11,7 @@ import dnd.myOcean.member.domain.Role;
 import dnd.myOcean.member.domain.Worry;
 import dnd.myOcean.member.domain.WorryType;
 import dnd.myOcean.member.domain.dto.request.InfoUpdateRequest;
-import dnd.myOcean.member.domain.dto.response.MemberInfoResponse;
+import dnd.myOcean.member.domain.dto.response.CurrentMemberInfoResponse;
 import dnd.myOcean.member.repository.infra.jpa.MemberRepository;
 import dnd.myOcean.member.repository.infra.jpa.WorryRepository;
 import java.time.LocalDate;
@@ -87,7 +87,7 @@ public class MemberServiceTest {
         given(memberRepository.findById(member.getId())).willReturn(Optional.of(member));
         CurrentMemberIdRequest request = new CurrentMemberIdRequest(1L);
 
-        MemberInfoResponse response = memberService.getMyInfo(request);
+        CurrentMemberInfoResponse response = memberService.getMyInfo(request);
 
         then(response).isNotNull();
         then(response.getId()).isEqualTo(member.getId());

@@ -3,13 +3,14 @@ package dnd.myOcean.member.repository.infra.jpa;
 import dnd.myOcean.member.domain.Gender;
 import dnd.myOcean.member.domain.Member;
 import dnd.myOcean.member.domain.WorryType;
+import dnd.myOcean.member.repository.infra.querydsl.MemberQuerydslRepository;
 import java.util.List;
 import java.util.Optional;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
 
-public interface MemberRepository extends JpaRepository<Member, Long> {
+public interface MemberRepository extends JpaRepository<Member, Long>, MemberQuerydslRepository {
 
     Optional<Member> findByEmail(String email);
 

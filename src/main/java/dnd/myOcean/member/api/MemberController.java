@@ -8,16 +8,21 @@ import dnd.myOcean.member.domain.dto.request.GenderUpdateRequest;
 import dnd.myOcean.member.domain.dto.request.InfoUpdateRequest;
 import dnd.myOcean.member.domain.dto.request.NicknameUpdateRequest;
 import dnd.myOcean.member.domain.dto.request.WorryCreateRequest;
-import dnd.myOcean.member.domain.dto.response.MemberInfoResponse;
+import dnd.myOcean.member.domain.dto.response.CurrentMemberInfoResponse;
+import dnd.myOcean.member.repository.infra.querydsl.dto.MemberReadCondition;
+import dnd.myOcean.member.repository.infra.querydsl.dto.PagedMemberResponse;
+import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PatchMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 @RestController
@@ -27,9 +32,21 @@ public class MemberController {
 
     private final MemberService memberService;
 
+    @GetMapping("/search")
+    public ResponseEntity<PagedMemberResponse> getMembersInfo(@Valid MemberReadCondition cond) {
+        return new ResponseEntity<>(memberService.findAllMember(cond), HttpStatus.OK);
+    }
+
+    @PreAuthorize("hasAuthority('ADMIN')")
+    @DeleteMapping
+    public ResponseEntity<Void> deleteByEmail(@RequestParam("email") String email) {
+        memberService.deleteByEmail(email);
+        return new ResponseEntity<>(HttpStatus.OK);
+    }
+
     @GetMapping
     @AssignCurrentMemberId
-    public ResponseEntity<MemberInfoResponse> getMyInfo(CurrentMemberIdRequest request) {
+    public ResponseEntity<CurrentMemberInfoResponse> getMyInfo(CurrentMemberIdRequest request) {
         return new ResponseEntity(memberService.getMyInfo(request), HttpStatus.OK);
     }
 
