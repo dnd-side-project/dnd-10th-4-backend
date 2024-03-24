@@ -18,6 +18,7 @@ import java.util.List;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.PatchMapping;
@@ -34,6 +35,7 @@ public class LetterController {
     private final LetterService letterService;
 
     @PostMapping("/special")
+    @PreAuthorize("hasAuthority('ADMIN')")
     @AssignCurrentMemberId
     public ResponseEntity<Void> sendSpecialLetter(@ModelAttribute SpecialLetterSendRequest request) throws IOException {
         letterService.sendByEmail(request);
@@ -41,6 +43,7 @@ public class LetterController {
     }
 
     @PostMapping
+    @PreAuthorize("hasAuthority('ADMIN')")
     @AssignCurrentMemberId
     public ResponseEntity<Void> sendLetter(@ModelAttribute LetterSendRequest request) throws IOException {
         letterService.send(request);
